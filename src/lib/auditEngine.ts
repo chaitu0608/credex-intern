@@ -134,24 +134,6 @@ function analyzeToolEntry(
     }
   }
 
-  if (
-    entry.tool === "github-copilot" &&
-    entry.plan === "enterprise" &&
-    teamSize < 10
-  ) {
-    const entCost = currentSpend;
-    const bizCost = (getPlanPrice("github-copilot", "business") ?? 19) * seats;
-    if (entCost > bizCost) {
-      return buildRecommendation(
-        entry,
-        "Downgrade to GitHub Copilot Business",
-        "downgrade",
-        entCost - bizCost,
-        `At $39/seat Enterprise vs $19/seat Business, you save $${entCost - bizCost}/mo for ${seats} seat(s).`
-      );
-    }
-  }
-
   // STEP 3 — Cross-tool alternatives (use-case based)
   if (useCase === "coding") {
     if (

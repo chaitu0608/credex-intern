@@ -28,61 +28,75 @@ export default function AuditResults({
   aiSummary,
 }: AuditResultsProps) {
   return (
-    <div className="space-y-4">
-      {recommendations.map((rec) => (
-        <Card
-          key={`${rec.tool}-${rec.currentPlan}`}
-          size="sm"
-          className={`rounded-xl border-stone-200 ${rec.savings > 0 ? "border-primary/30 bg-accent/20" : ""}`}
-        >
-          <CardHeader className="flex flex-row items-start justify-between gap-2 pb-2">
-            <div>
-              <CardTitle className="text-base">{rec.toolName}</CardTitle>
-              <CardDescription className="capitalize">
-                {rec.currentPlan} · ${rec.currentSpend}/mo
-              </CardDescription>
-            </div>
-            <Badge variant={rec.savings > 0 ? "default" : "secondary"}>
-              {TYPE_LABELS[rec.recommendationType]}
-            </Badge>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center">
-              <span className="flex-1 rounded-lg bg-stone-100 px-3 py-2 capitalize text-muted-foreground">
-                {rec.currentPlan}
-              </span>
-              <ArrowRight className="hidden h-4 w-4 shrink-0 text-primary sm:block" />
-              <span
-                className={`flex-1 rounded-lg px-3 py-2 font-medium ${
-                  rec.savings > 0
-                    ? "bg-primary/10 text-primary"
-                    : "bg-stone-100 text-foreground"
-                }`}
-              >
-                {rec.recommendedAction}
-              </span>
-            </div>
-            {rec.savings > 0 && (
-              <p className="text-sm font-semibold text-primary">
-                Save ${rec.savings}/mo · ${rec.annualSavings}/yr
-              </p>
-            )}
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {rec.reason}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="space-y-0">
+      <div className="relative space-y-0 border-l-2 border-primary/20 pl-6">
+        {recommendations.map((rec, index) => (
+          <div key={`${rec.tool}-${rec.currentPlan}`} className="relative pb-8">
+            <span className="absolute -left-[1.65rem] top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary bg-white text-[10px] font-bold text-primary">
+              {index + 1}
+            </span>
+            <Card
+              className={`rounded-xl border-border ${
+                rec.savings > 0
+                  ? "border-primary/25 bg-accent/15 shadow-sm"
+                  : "bg-white"
+              }`}
+            >
+              <CardHeader className="flex flex-row items-start justify-between gap-2 pb-2">
+                <div>
+                  <CardTitle className="text-base">{rec.toolName}</CardTitle>
+                  <CardDescription className="capitalize">
+                    {rec.currentPlan} · ${rec.currentSpend}/mo
+                  </CardDescription>
+                </div>
+                <Badge variant={rec.savings > 0 ? "default" : "secondary"}>
+                  {TYPE_LABELS[rec.recommendationType]}
+                </Badge>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center">
+                  <span className="flex-1 rounded-lg bg-muted px-3 py-2 capitalize text-muted-foreground">
+                    {rec.currentPlan}
+                  </span>
+                  <ArrowRight className="hidden h-4 w-4 shrink-0 text-primary sm:block" />
+                  <span
+                    className={`flex-1 rounded-lg px-3 py-2 font-medium ${
+                      rec.savings > 0
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted text-foreground"
+                    }`}
+                  >
+                    {rec.recommendedAction}
+                  </span>
+                </div>
+                {rec.savings > 0 && (
+                  <p className="text-sm font-semibold text-primary">
+                    Save ${rec.savings}/mo · ${rec.annualSavings}/yr
+                  </p>
+                )}
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {rec.reason}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        ))}
+      </div>
 
-      <Separator className="my-6" />
+      <Separator className="my-8" />
 
-      <Card className="rounded-xl border-stone-200">
+      <Card className="rounded-xl border-border bg-white">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            <CardTitle className="text-base">Personalized summary</CardTitle>
+            <CardTitle className="font-display text-base">
+              Personalized summary
+            </CardTitle>
           </div>
-          <Badge variant="outline" className="w-fit border-primary/30 text-primary">
+          <Badge
+            variant="outline"
+            className="w-fit border-primary/30 text-primary"
+          >
             Generated by Claude
           </Badge>
         </CardHeader>

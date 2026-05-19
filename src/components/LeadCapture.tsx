@@ -32,6 +32,7 @@ export default function LeadCapture({
   const [role, setRole] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+  const [emailSent, setEmailSent] = useState(true);
 
   const heading = isHighSavings
     ? `Save your $${totalMonthlySavings.toLocaleString()}/mo audit`
@@ -57,10 +58,11 @@ export default function LeadCapture({
         }),
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error ?? "Failed to submit");
       }
+      setEmailSent(data.emailSent !== false);
       setState("success");
     } catch (err) {
       setState("error");
@@ -73,9 +75,13 @@ export default function LeadCapture({
       <Card className="rounded-2xl border-primary/30">
         <CardContent className="flex flex-col items-center py-10 text-center">
           <CheckCircle2 className="h-10 w-10 text-primary" />
-          <p className="mt-4 font-semibold">Report sent to your email</p>
+          <p className="mt-4 font-semibold">
+            {emailSent ? "Report sent to your email" : "Report saved"}
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Check your inbox for the shareable link.
+            {emailSent
+              ? "Check your inbox for the shareable link."
+              : "Use the share section below to copy your audit link."}
           </p>
         </CardContent>
       </Card>

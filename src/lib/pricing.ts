@@ -43,7 +43,8 @@ export const PRICING: Record<AITool, Record<string, PricingEntry>> = {
   },
   gemini: {
     free: { price: 0, pricePerSeat: false },
-    advanced: { price: 20, pricePerSeat: true },
+    pro: { price: 20, pricePerSeat: false },
+    ultra: { price: 249.99, pricePerSeat: false },
     api: { price: null, pricePerSeat: false },
   },
   windsurf: {
@@ -83,7 +84,7 @@ export const PLAN_OPTIONS: Record<AITool, string[]> = {
   chatgpt: ["free", "plus", "team", "enterprise", "api"],
   "anthropic-api": ["api"],
   "openai-api": ["api"],
-  gemini: ["free", "advanced", "api"],
+  gemini: ["free", "pro", "ultra", "api"],
   windsurf: ["free", "pro", "team", "enterprise"],
 };
 

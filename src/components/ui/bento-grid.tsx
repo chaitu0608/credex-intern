@@ -31,7 +31,7 @@ export function BentoStatCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-center rounded-2xl bg-[hsl(var(--credex-dark))] p-6 text-white",
+        "flex flex-col justify-center rounded-2xl bg-[hsl(var(--spendsense-dark))] p-6 text-white",
         className
       )}
     >
@@ -53,7 +53,7 @@ export function BentoFeatureCard({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between rounded-2xl bg-[hsl(var(--credex-dark))] p-6 text-white lg:col-span-2 lg:row-span-2 lg:p-8",
+        "flex flex-col justify-between rounded-2xl bg-[hsl(var(--spendsense-dark))] p-6 text-white lg:col-span-2 lg:row-span-2 lg:p-8",
         className
       )}
     >

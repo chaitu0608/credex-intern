@@ -55,7 +55,16 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    await saveAudit(audit);
+    const saved = await saveAudit(audit);
+    if (!saved) {
+      return NextResponse.json(
+        {
+          error:
+            "Could not save audit. Check Supabase env vars and that schema.sql was applied.",
+        },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({
       id: audit.id,

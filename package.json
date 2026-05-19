@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify:env": "node scripts/verify-env.mjs",
+    "test:supabase": "node scripts/test-supabase.mjs",
+    "smoke": "node scripts/smoke-e2e.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",

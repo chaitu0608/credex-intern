@@ -1,17 +1,27 @@
 import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const ITEMS = [
-  "Takes under 2 minutes",
+  "Takes under 3 minutes",
   "No login required",
   "Defensible savings math",
   "Shareable audit link",
-  "Email report optional",
-  "Built by Credex",
+  "Email after you see value",
+  "Powered by Credex",
 ];
 
-export function TrustBar() {
+interface TrustBarProps {
+  className?: string;
+}
+
+export function TrustBar({ className }: TrustBarProps) {
   return (
-    <div className="mt-10 overflow-hidden border-y border-stone-200/80 bg-white/50 py-3">
+    <div
+      className={cn(
+        "overflow-hidden border-y border-border/80 bg-white/50 py-3",
+        className
+      )}
+    >
       <div className="flex animate-[marquee_30s_linear_infinite] gap-8 whitespace-nowrap">
         {[...ITEMS, ...ITEMS].map((item, i) => (
           <span

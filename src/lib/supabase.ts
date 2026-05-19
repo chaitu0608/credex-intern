@@ -2,32 +2,35 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { AuditResult, LeadCapture } from "@/types";
 
 function getPublicUrl(): string {
-  return process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  return process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? "";
 }
 
 function getAnonKey(): string {
-  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ?? "";
 }
 
 function getServiceKey(): string {
-  return process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  return process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ?? "";
 }
 
-function isConfigured(): boolean {
+export function isSupabaseConfigured(): boolean {
   return Boolean(getPublicUrl() && getAnonKey());
 }
 
-export const supabaseClient: SupabaseClient | null = isConfigured()
+export function isSupabaseAdminConfigured(): boolean {
+  return Boolean(getPublicUrl() && getServiceKey());
+}
+
+export const supabaseClient: SupabaseClient | null = isSupabaseConfigured()
   ? createClient(getPublicUrl(), getAnonKey())
   : null;
 
-// Only use in API routes, never in client components
-export const supabaseAdmin: SupabaseClient | null =
-  isConfigured() && getServiceKey()
-    ? createClient(getPublicUrl(), getServiceKey())
-    : null;
+// Only use in API routes — never expose service role to the client
+export const supabaseAdmin: SupabaseClient | null = isSupabaseAdminConfigured()
+  ? createClient(getPublicUrl(), getServiceKey())
+  : null;
 
-/** Local fallback when Supabase env vars are not set (dev / first deploy) */
+/** Dev fallback when Supabase is not configured */
 const memoryAudits = new Map<string, AuditResult>();
 
 type AuditRow = {
@@ -54,12 +57,22 @@ function rowToAudit(row: AuditRow): AuditResult {
   };
 }
 
-export async function saveAudit(audit: AuditResult): Promise<void> {
+/**
+ * Persist audit. When Supabase admin is configured, DB is source of truth.
+ * Returns false if configured but insert failed.
+ */
+export async function saveAudit(audit: AuditResult): Promise<boolean> {
   memoryAudits.set(audit.id, audit);
 
   if (!supabaseAdmin) {
-    console.warn("Supabase admin not configured — audit kept in memory only");
-    return;
+    if (isSupabaseConfigured() && !getServiceKey()) {
+      console.warn(
+        "Supabase URL/anon key set but SUPABASE_SERVICE_ROLE_KEY missing — audits will not persist across instances. Add service role key from Supabase → Settings → API."
+      );
+    } else {
+      console.warn("Supabase not configured — audit kept in memory only");
+    }
+    return true;
   }
 
   const { error } = await supabaseAdmin.from("audits").insert({
@@ -72,29 +85,40 @@ export async function saveAudit(audit: AuditResult): Promise<void> {
     is_high_savings: audit.isHighSavings,
   });
 
-  if (error) console.error("saveAudit error:", error.message);
+  if (error) {
+    console.error("saveAudit error:", error.message, error.details);
+    return false;
+  }
+
+  return true;
 }
 
 export async function getAudit(id: string): Promise<AuditResult | null> {
-  const cached = memoryAudits.get(id);
-  if (cached) return cached;
+  if (supabaseClient) {
+    const { data, error } = await supabaseClient
+      .from("audits")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
 
-  if (!supabaseClient) return null;
+    if (!error && data) {
+      const audit = rowToAudit(data as AuditRow);
+      memoryAudits.set(id, audit);
+      return audit;
+    }
 
-  const { data, error } = await supabaseClient
-    .from("audits")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+    if (error) {
+      console.error("getAudit error:", error.message);
+    }
+  }
 
-  if (error || !data) return null;
-  return rowToAudit(data as AuditRow);
+  return memoryAudits.get(id) ?? null;
 }
 
-export async function saveLead(lead: LeadCapture): Promise<void> {
+export async function saveLead(lead: LeadCapture): Promise<boolean> {
   if (!supabaseAdmin) {
     console.warn("Supabase admin not configured — lead not persisted");
-    return;
+    return false;
   }
 
   const { error } = await supabaseAdmin.from("leads").insert({
@@ -105,7 +129,12 @@ export async function saveLead(lead: LeadCapture): Promise<void> {
     audit_id: lead.auditId,
   });
 
-  if (error) console.error("saveLead error:", error.message);
+  if (error) {
+    console.error("saveLead error:", error.message);
+    return false;
+  }
+
+  return true;
 }
 
 /** Max 10 audits per IP per hour. true = allowed. Fail open on errors. */
@@ -121,7 +150,12 @@ export async function checkRateLimit(ip: string): Promise<boolean> {
       .maybeSingle();
 
     if (!data) {
-      await supabaseAdmin.from("rate_limits").insert({ ip, count: 1, window_start: now.toISOString() });
+      const { error } = await supabaseAdmin.from("rate_limits").insert({
+        ip,
+        count: 1,
+        window_start: now.toISOString(),
+      });
+      if (error) console.error("checkRateLimit insert:", error.message);
       return true;
     }
 

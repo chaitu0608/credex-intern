@@ -1,12 +1,5 @@
 import { TrendingDown, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 interface SavingsHeroProps {
   totalMonthlySavings: number;
@@ -23,60 +16,54 @@ export default function SavingsHero({
 }: SavingsHeroProps) {
   if (totalMonthlySavings > 0) {
     return (
-      <Card className="overflow-hidden rounded-2xl border-stone-200 shadow-sm">
-        <div className="h-1 bg-primary" />
-        <CardHeader className="pb-2 text-center">
-          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-accent">
+      <div className="overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-white to-accent/30 shadow-lg">
+        <div className="h-1 bg-gradient-to-r from-primary to-[hsl(var(--spendsense-indigo))]" />
+        <div className="p-8 text-center">
+          <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-primary/10">
             <TrendingDown className="h-5 w-5 text-primary" />
           </div>
-          <CardDescription className="uppercase tracking-widest">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Potential savings
-          </CardDescription>
-          <CardTitle className="text-5xl font-bold tabular-nums text-primary sm:text-6xl">
+          </p>
+          <p className="font-display mt-2 text-5xl font-bold tabular-nums text-foreground sm:text-6xl">
             ${totalMonthlySavings.toLocaleString()}
             <span className="mt-1 block text-xl font-medium text-muted-foreground sm:text-2xl">
               per month
             </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-center">
-          <p className="text-lg text-muted-foreground">
+          </p>
+          <p className="mt-3 text-lg text-muted-foreground">
             <span className="font-semibold text-foreground">
               ${totalAnnualSavings.toLocaleString()}
             </span>{" "}
             per year
           </p>
           {isHighSavings && (
-            <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
-              High savings found
+            <Badge className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90">
+              High savings — Credex can help capture more
             </Badge>
           )}
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-4 text-sm text-muted-foreground">
             Across {toolCount} tool{toolCount === 1 ? "" : "s"} analyzed
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="rounded-2xl border-stone-200 shadow-sm">
-      <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-accent">
-          <CheckCircle2 className="h-5 w-5 text-primary" />
-        </div>
-        <CardTitle className="text-2xl font-bold text-primary sm:text-3xl">
-          Stack optimized
-        </CardTitle>
-        <CardDescription>
-          Your AI tools look right-sized for your team
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="text-center">
-        <p className="text-sm text-muted-foreground">
-          Across {toolCount} tool{toolCount === 1 ? "" : "s"} analyzed
-        </p>
-      </CardContent>
-    </Card>
+    <div className="rounded-2xl border border-border bg-white p-8 text-center shadow-sm">
+      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-accent">
+        <CheckCircle2 className="h-5 w-5 text-primary" />
+      </div>
+      <p className="font-display text-2xl font-bold text-primary sm:text-3xl">
+        Stack optimized
+      </p>
+      <p className="mt-2 text-muted-foreground">
+        Your AI tools look right-sized for your team
+      </p>
+      <p className="mt-4 text-sm text-muted-foreground">
+        Across {toolCount} tool{toolCount === 1 ? "" : "s"} analyzed
+      </p>
+    </div>
   );
 }

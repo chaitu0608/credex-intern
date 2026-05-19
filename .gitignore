@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+lighthouse-local.json
 
 # next.js
 /.next/

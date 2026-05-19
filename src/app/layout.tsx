@@ -1,17 +1,43 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Sans, Outfit } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700", "800"],
+});
+
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "AI Spend Audit | Credex",
+  title: {
+    default: "SpendSense — Free AI Tool Spend Audit",
+    template: "%s | SpendSense",
+  },
   description:
-    "Free instant audit of your startup's AI tool spending. Find savings on Cursor, Claude, ChatGPT, and more.",
+    "Instant audit of your AI tool stack. Find overspend on Cursor, Claude, ChatGPT, Copilot, and more — with defensible savings math.",
+  ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
+  openGraph: {
+    siteName: "SpendSense",
+    type: "website",
+    title: "SpendSense — Free AI Tool Spend Audit",
+    description:
+      "See where you're overspending on AI tools. Free audit in under 3 minutes.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SpendSense — Free AI Tool Spend Audit",
+    description:
+      "See where you're overspending on AI tools. Free audit in under 3 minutes.",
+  },
 };
 
 export default function RootLayout({
@@ -21,7 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} min-h-screen font-sans antialiased`}>
+      <body
+        className={`${dmSans.variable} ${outfit.variable} min-h-screen font-sans antialiased`}
+      >
         {children}
         <Toaster richColors position="top-center" />
       </body>

@@ -14,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils";
 import { getAudit } from "@/lib/supabase";
 
@@ -27,7 +26,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const audit = await getAudit(params.id);
   if (!audit) {
-    return { title: "Audit not found | AI Spend Audit" };
+    return { title: "Audit not found" };
   }
 
   const title =
@@ -35,13 +34,14 @@ export async function generateMetadata({
       ? `$${audit.totalMonthlySavings}/mo AI savings found`
       : "AI stack audit — optimized";
 
-  const description = `Audit of ${audit.input.tools.length} AI tools. Potential savings: $${audit.totalMonthlySavings}/month ($${audit.totalAnnualSavings}/year).`;
+  const description = `SpendSense audit of ${audit.input.tools.length} AI tools. Potential savings: $${audit.totalMonthlySavings}/month ($${audit.totalAnnualSavings}/year).`;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   return {
-    title: `${title} | AI Spend Audit`,
+    title,
     description,
     openGraph: {
+      siteName: "SpendSense",
       title,
       description,
       url: `${appUrl}/audit/${params.id}`,
@@ -58,7 +58,9 @@ export default async function AuditPage({ params }: PageProps) {
     return (
       <PageShell headerBackHref="/" headerBackLabel="← New audit">
         <Card className="rounded-2xl p-12 text-center shadow-sm">
-          <CardTitle className="text-xl font-bold">Audit not found</CardTitle>
+          <CardTitle className="font-display text-xl font-bold">
+            Audit not found
+          </CardTitle>
           <CardDescription className="mt-2">
             This link may have expired or the audit was not saved.
           </CardDescription>
@@ -77,83 +79,90 @@ export default async function AuditPage({ params }: PageProps) {
   }
 
   return (
-    <PageShell headerBackHref="/" headerBackLabel="← New audit" maxWidth="lg">
-      <div className="space-y-10">
-        <SavingsHero
-          totalMonthlySavings={audit.totalMonthlySavings}
-          totalAnnualSavings={audit.totalAnnualSavings}
-          isHighSavings={audit.isHighSavings}
-          toolCount={audit.recommendations.length}
-        />
-
-        <section>
-          <SectionHeading
-            title="Recommended actions"
-            subtitle="Per-tool breakdown with savings math"
+    <PageShell headerBackHref="/" headerBackLabel="← New audit" maxWidth="xl">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <aside className="order-first lg:order-2 lg:sticky lg:top-24">
+          <SavingsHero
+            totalMonthlySavings={audit.totalMonthlySavings}
+            totalAnnualSavings={audit.totalAnnualSavings}
+            isHighSavings={audit.isHighSavings}
+            toolCount={audit.recommendations.length}
           />
-          <AuditResults
-            recommendations={audit.recommendations}
-            aiSummary={audit.aiSummary}
-          />
-        </section>
+        </aside>
 
-        {audit.isHighSavings && (
-          <Card className="overflow-hidden rounded-2xl bg-[hsl(var(--credex-dark))] text-white">
-            <CardHeader>
-              <CardDescription className="text-stone-400">
-                Credex opportunity
-              </CardDescription>
-              <CardTitle className="text-2xl font-bold sm:text-3xl">
-                Capture ${audit.totalAnnualSavings.toLocaleString()}/year
-              </CardTitle>
-              <CardDescription className="max-w-lg text-stone-400">
-                Discounted AI infrastructure credits for Cursor, Claude,
-                ChatGPT Enterprise, and more.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <a
-                href="https://credex.rocks"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants(),
-                  "inline-flex gap-2 rounded-full bg-white text-foreground hover:bg-stone-100"
-                )}
-              >
-                Book consultation
-                <ArrowUpRight className="h-4 w-4" />
-              </a>
-            </CardContent>
-          </Card>
-        )}
+        <div className="order-2 space-y-10 lg:order-1">
+          <section>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Your SpendSense report
+            </p>
+            <AuditResults
+              recommendations={audit.recommendations}
+              aiSummary={audit.aiSummary}
+            />
+          </section>
 
-        {audit.totalMonthlySavings < 100 && !audit.isHighSavings && (
-          <Card className="rounded-xl border-stone-200 bg-accent/30">
-            <CardContent className="py-4">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">
-                  You&apos;re spending well.
-                </span>{" "}
-                Save your report to get notified when new optimizations apply.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+          {audit.isHighSavings && (
+            <Card className="overflow-hidden rounded-2xl bg-spendsense-dark text-white">
+              <CardHeader>
+                <CardDescription className="text-white/50">
+                  Credex opportunity
+                </CardDescription>
+                <CardTitle className="font-display text-2xl font-bold sm:text-3xl">
+                  Capture ${audit.totalAnnualSavings.toLocaleString()}/year
+                </CardTitle>
+                <CardDescription className="max-w-lg text-white/60">
+                  Discounted AI infrastructure credits for Cursor, Claude,
+                  ChatGPT Enterprise, and more.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <a
+                  href="https://credex.rocks"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants(),
+                    "inline-flex gap-2 rounded-full bg-white text-foreground hover:bg-white/90"
+                  )}
+                >
+                  Book Credex consultation
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </CardContent>
+            </Card>
+          )}
 
-        <LeadCapture
-          auditId={audit.id}
-          isHighSavings={audit.isHighSavings}
-          totalMonthlySavings={audit.totalMonthlySavings}
-        />
+          {audit.totalMonthlySavings < 100 && !audit.isHighSavings && (
+            <Card className="rounded-xl border-border bg-accent/40">
+              <CardContent className="py-4">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    You&apos;re spending well.
+                  </span>{" "}
+                  Save your report to get notified when new optimizations apply
+                  to your stack.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
-        <section>
-          <SectionHeading title="Share" subtitle="Copy or post your results" />
-          <ShareSection
+          <LeadCapture
             auditId={audit.id}
+            isHighSavings={audit.isHighSavings}
             totalMonthlySavings={audit.totalMonthlySavings}
           />
-        </section>
+
+          <section>
+            <h2 className="font-display mb-2 text-lg font-bold">Share</h2>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Copy or post your results — no email on the public link
+            </p>
+            <ShareSection
+              auditId={audit.id}
+              totalMonthlySavings={audit.totalMonthlySavings}
+            />
+          </section>
+        </div>
       </div>
     </PageShell>
   );
