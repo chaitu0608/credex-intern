@@ -1,0 +1,400 @@
+{
+  "project": {
+    "name": "Credex AI Spend Audit",
+    "purpose": "End-to-end test specification for the assignment deliverable.",
+    "generated_on": "2026-05-19",
+    "note": "This is a specification/checklist JSON, not an execution report. Actual pass/fail must be verified against the repo and deployed app."
+  },
+  "assignment_requirements": {
+    "mvp_features": [
+      "Spend input form",
+      "Audit engine",
+      "Audit results page",
+      "AI-generated personalized summary",
+      "Lead capture + storage",
+      "Shareable result URL"
+    ],
+    "required_root_files": [
+      "README.md",
+      "ARCHITECTURE.md",
+      "DEVLOG.md",
+      "REFLECTION.md",
+      "TESTS.md",
+      ".github/workflows/ci.yml",
+      "PRICING_DATA.md",
+      "PROMPTS.md",
+      "GTM.md",
+      "ECONOMICS.md",
+      "USER_INTERVIEWS.md",
+      "LANDING_COPY.md",
+      "METRICS.md"
+    ],
+    "git_history_rule": "Commits on at least 5 distinct calendar days within the 7-day window.",
+    "backend_requirement": "Stored in a real backend such as Supabase/Firebase/D1/Postgres.",
+    "ai_requirement": "Use Anthropic API or any LLM for the personalized summary; handle failure gracefully.",
+    "security_requirement": "Basic abuse protection such as rate limiting, honeypot, or hCaptcha.",
+    "share_requirement": "Unique public URL with Open Graph tags and no identifying details exposed."
+  },
+  "stack_assumptions": {
+    "frontend": "Next.js + React",
+    "language": "TypeScript",
+    "ui": "Tailwind/shadcn/ui",
+    "unit_tests": "Vitest",
+    "e2e_tests": "Playwright",
+    "ci": [
+      "GitHub Actions",
+      "Jenkins optional if used"
+    ],
+    "backend": "Supabase"
+  },
+  "test_strategy": {
+    "layers": [
+      "Static checks: typecheck, lint, formatting",
+      "Unit tests: audit engine, pricing logic, helpers, validation",
+      "Integration tests: API routes, database writes, AI fallback, email sending abstraction",
+      "End-to-end tests: user journey from landing page to public share URL",
+      "Security tests: RLS, no secret leakage, abuse protection",
+      "Accessibility and SEO checks: heading structure, form labels, OG tags"
+    ],
+    "ci_gates": [
+      "npm run lint",
+      "npm run typecheck",
+      "npm run test",
+      "npm run test:e2e",
+      "npm run build"
+    ]
+  },
+  "test_files_to_create": [
+    {
+      "filename": "tests/unit/audit-engine.test.ts",
+      "runner": "Vitest",
+      "purpose": "Validate plan-fit logic, downgrade suggestions, savings math, and edge cases."
+    },
+    {
+      "filename": "tests/unit/pricing-data.test.ts",
+      "runner": "Vitest",
+      "purpose": "Validate every required tool and plan exists with current numeric pricing and source metadata."
+    },
+    {
+      "filename": "tests/unit/validation.test.ts",
+      "runner": "Vitest",
+      "purpose": "Validate form input constraints, required fields, min/max values, and empty-state behavior."
+    },
+    {
+      "filename": "tests/unit/summary-fallback.test.ts",
+      "runner": "Vitest",
+      "purpose": "Validate AI summary fallback when the model/API fails or returns invalid output."
+    },
+    {
+      "filename": "tests/unit/rls-policy.test.ts",
+      "runner": "Vitest",
+      "purpose": "Validate backend policy assumptions and that sensitive lead data is not publicly readable."
+    },
+    {
+      "filename": "tests/integration/api-audit.test.ts",
+      "runner": "Vitest or supertest",
+      "purpose": "Validate audit creation endpoint, response shape, persistence, and error handling."
+    },
+    {
+      "filename": "tests/integration/api-lead-capture.test.ts",
+      "runner": "Vitest or supertest",
+      "purpose": "Validate lead capture writes, optional fields, honeypot/rate-limit rejection, and transactional email hooks."
+    },
+    {
+      "filename": "tests/e2e/user-journey.spec.ts",
+      "runner": "Playwright",
+      "purpose": "Validate landing page -> form -> audit result -> lead gate -> share URL flow."
+    },
+    {
+      "filename": "tests/e2e/og-tags.spec.ts",
+      "runner": "Playwright",
+      "purpose": "Validate public audit page metadata, title, description, and social preview tags."
+    },
+    {
+      "filename": "tests/e2e/accessibility.spec.ts",
+      "runner": "Playwright + axe",
+      "purpose": "Validate form labels, button names, heading order, and no critical accessibility violations."
+    }
+  ],
+  "test_matrix": [
+    {
+      "id": "UNIT-001",
+      "type": "unit",
+      "area": "audit-engine",
+      "title": "Calculates savings for a single over-provisioned tool",
+      "given": {
+        "tool": "Claude",
+        "plan": "Team",
+        "monthly_spend": 200,
+        "team_size": 2,
+        "use_case": "coding"
+      },
+      "expect": [
+        "returns a recommended cheaper plan or alternative",
+        "savings.monthly is greater than 0",
+        "reason is one sentence and defensible"
+      ]
+    },
+    {
+      "id": "UNIT-002",
+      "type": "unit",
+      "area": "audit-engine",
+      "title": "Does not manufacture savings when user is already optimal",
+      "given": {
+        "tool": "Cursor",
+        "plan": "Pro",
+        "monthly_spend": 20,
+        "team_size": 1,
+        "use_case": "coding"
+      },
+      "expect": [
+        "result says already optimal or low savings",
+        "monthly savings is 0 or below threshold",
+        "hero copy does not overstate savings"
+      ]
+    },
+    {
+      "id": "UNIT-003",
+      "type": "unit",
+      "area": "audit-engine",
+      "title": "Credits/direct API path is recommended only when cheaper and defensible",
+      "given": {
+        "tool": "OpenAI API direct",
+        "plan": "API direct",
+        "monthly_spend": 500,
+        "team_size": 10,
+        "use_case": "data"
+      },
+      "expect": [
+        "only suggests credits/direct API if supported by pricing logic",
+        "reason references usage-fit or cost-fit",
+        "no unsupported claim about quality"
+      ]
+    },
+    {
+      "id": "UNIT-004",
+      "type": "unit",
+      "area": "form-validation",
+      "title": "Rejects invalid team size and negative spend",
+      "given": {
+        "team_size": -1,
+        "monthly_spend": -50
+      },
+      "expect": [
+        "validation error for team_size",
+        "validation error for monthly_spend"
+      ]
+    },
+    {
+      "id": "UNIT-005",
+      "type": "unit",
+      "area": "form-state",
+      "title": "Persists form state across reloads",
+      "given": {
+        "localStorage": "preloaded with partial form state"
+      },
+      "expect": [
+        "state hydrates on mount",
+        "reload retains selected tools and plans"
+      ]
+    },
+    {
+      "id": "UNIT-006",
+      "type": "unit",
+      "area": "ai-summary",
+      "title": "Falls back cleanly when AI provider fails",
+      "given": {
+        "provider_error": "timeout or 500"
+      },
+      "expect": [
+        "fallback templated summary is returned",
+        "UI does not crash",
+        "error is logged or surfaced for observability"
+      ]
+    },
+    {
+      "id": "INT-001",
+      "type": "integration",
+      "area": "audit-api",
+      "title": "Creates audit record and returns public share ID",
+      "expect": [
+        "API returns 200 or 201",
+        "response contains public share slug",
+        "audit persists to backend"
+      ]
+    },
+    {
+      "id": "INT-002",
+      "type": "integration",
+      "area": "lead-capture",
+      "title": "Captures email after value is shown",
+      "expect": [
+        "lead is stored only after audit is visible",
+        "email is required, optional company/role/team size accepted",
+        "public audit payload excludes private fields"
+      ]
+    },
+    {
+      "id": "INT-003",
+      "type": "integration",
+      "area": "abuse-protection",
+      "title": "Blocks honeypot submissions",
+      "given": {
+        "honeypot_filled": true
+      },
+      "expect": [
+        "request rejected",
+        "no DB write",
+        "no email sent"
+      ]
+    },
+    {
+      "id": "INT-004",
+      "type": "integration",
+      "area": "abuse-protection",
+      "title": "Rate limits repeated submissions",
+      "given": {
+        "requests": "burst above threshold"
+      },
+      "expect": [
+        "429 or equivalent response",
+        "safe retry message"
+      ]
+    },
+    {
+      "id": "E2E-001",
+      "type": "e2e",
+      "area": "landing-to-audit",
+      "title": "Cold visitor can complete the full audit flow",
+      "steps": [
+        "Open landing page",
+        "Fill spend form",
+        "Submit",
+        "See instant audit result",
+        "Capture email",
+        "Open public share URL"
+      ],
+      "expect": [
+        "no login required",
+        "audit appears before email gate",
+        "public URL works"
+      ]
+    },
+    {
+      "id": "E2E-002",
+      "type": "e2e",
+      "area": "results-page",
+      "title": "High-savings cases prominently surface Credex consultation",
+      "given": {
+        "monthly_savings": 600
+      },
+      "expect": [
+        "Credex CTA visible above the fold",
+        "copy frames consultation as next step"
+      ]
+    },
+    {
+      "id": "E2E-003",
+      "type": "e2e",
+      "area": "results-page",
+      "title": "Low-savings cases are honest",
+      "given": {
+        "monthly_savings": 60
+      },
+      "expect": [
+        "copy says spending is already good or close to optimal",
+        "no exaggerated savings",
+        "lead capture still works via notification signup"
+      ]
+    },
+    {
+      "id": "E2E-004",
+      "type": "e2e",
+      "area": "seo-social",
+      "title": "Public audit page has OG and Twitter card metadata",
+      "expect": [
+        "og:title present",
+        "og:description present",
+        "og:image present",
+        "twitter:card present"
+      ]
+    },
+    {
+      "id": "E2E-005",
+      "type": "e2e",
+      "area": "a11y",
+      "title": "Main form is accessible with labels and keyboard interaction",
+      "expect": [
+        "all inputs have labels",
+        "tab order is sensible",
+        "buttons are keyboard reachable",
+        "no critical axe violations"
+      ]
+    }
+  ],
+  "edge_cases": [
+    "Empty form submission",
+    "Partial form submission",
+    "Unknown tool selection",
+    "Missing pricing source metadata",
+    "AI API timeout",
+    "AI API invalid JSON",
+    "Duplicate audit submission",
+    "Very large team size",
+    "Zero spend but valid use case",
+    "Public share URL with deleted/private fields",
+    "Supabase outage or insert failure",
+    "Email service failure",
+    "Browser refresh during form entry",
+    "Mobile viewport layout collapse",
+    "High-savings threshold boundary exactly 500",
+    "Low-savings threshold boundary exactly 100"
+  ],
+  "jenkins_pipeline": {
+    "recommended": true,
+    "stages": [
+      "Install dependencies",
+      "Lint",
+      "Typecheck",
+      "Unit tests",
+      "Integration tests",
+      "E2E tests",
+      "Build"
+    ],
+    "example_steps": [
+      "npm ci",
+      "npm run lint",
+      "npm run typecheck",
+      "npm run test",
+      "npm run test:e2e",
+      "npm run build"
+    ],
+    "note": "GitHub Actions is sufficient for the assignment, but Jenkins can mirror the same gates if you want an extra CI signal."
+  },
+  "repo_verification_checklist": {
+    "frontend_done": [
+      "Landing page exists",
+      "Spend input form exists",
+      "Audit results page exists",
+      "Responsive layout on mobile"
+    ],
+    "backend_done": [
+      "Supabase tables defined",
+      "RLS enabled",
+      "Lead capture endpoint works",
+      "Audit persistence works"
+    ],
+    "api_done": [
+      "AI summary endpoint works",
+      "Share URL endpoint works",
+      "Transactional email hook works",
+      "Rate limit or honeypot works"
+    ],
+    "docs_done": [
+      "All required markdown files exist",
+      "Pricing data has official URLs and dates",
+      "Devlog has 7 dated entries",
+      "Reflection answers are specific"
+    ]
+  }
+}
