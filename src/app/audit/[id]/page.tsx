@@ -35,7 +35,11 @@ export async function generateMetadata({
       : "AI stack audit — optimized";
 
   const description = `SpendSense audit of ${audit.input.tools.length} AI tools. Potential savings: $${audit.totalMonthlySavings}/month ($${audit.totalAnnualSavings}/year).`;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const vercelHost = process.env.VERCEL_URL?.trim();
+  const appUrl =
+    explicitUrl ||
+    (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
 
   return {
     title,
@@ -119,7 +123,7 @@ export default async function AuditPage({ params }: PageProps) {
               </CardHeader>
               <CardContent>
                 <a
-                  href="https://credex.rocks"
+                  href={`https://credex.rocks?utm_source=spendsense&utm_medium=audit&utm_campaign=high_savings&audit_id=${audit.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(

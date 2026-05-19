@@ -43,7 +43,9 @@ export async function generateAISummary(
     const prompt = generateAuditSummaryPrompt(result, input);
 
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      // Verified against Anthropic's published models page.
+      // Override via ANTHROPIC_MODEL if you have access to a newer Sonnet.
+      model: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-20241022",
       max_tokens: 200,
       system:
         "You are a concise financial analyst. Direct, specific. No fluff. No sales pitch. Under 120 words. Plain paragraph, no bullets.",

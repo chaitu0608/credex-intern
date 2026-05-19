@@ -32,7 +32,11 @@ export async function POST(request: NextRequest) {
       auditId: body.auditId,
     });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    const vercelHost = process.env.VERCEL_URL?.trim();
+    const appUrl =
+      explicitUrl ||
+      (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
     const shareUrl = `${appUrl}/audit/${audit.id}`;
     const savings = audit.totalMonthlySavings;
 

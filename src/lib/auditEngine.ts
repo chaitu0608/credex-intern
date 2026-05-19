@@ -185,17 +185,19 @@ function analyzeToolEntry(
     }
   }
 
-  // High spend — Credex credits path
+  // High spend — Credex credits path.
+  // We do NOT claim a fixed %. Credex quotes per stack; we surface this only
+  // when the user is paying close to list and the spend is large enough to
+  // justify a conversation.
   if (currentSpend >= 200 && getPlanPrice(entry.tool, entry.plan) !== null) {
     const estRetail = catalogCost ?? currentSpend;
-    const creditSavings = Math.round(estRetail * 0.15);
-    if (creditSavings > 0 && currentSpend > estRetail * 0.9) {
+    if (currentSpend > estRetail * 0.9) {
       return buildRecommendation(
         entry,
-        "Explore discounted credits via Credex",
+        "Ask Credex for a discounted credit quote",
         "use-credits",
-        creditSavings,
-        `At $${currentSpend}/mo on list pricing (~$${estRetail}/mo catalog), enterprise credit programs often save 10–20% ($${creditSavings}/mo+) without changing tools.`
+        0,
+        `At ~$${currentSpend}/mo on list pricing (catalog ≈ $${estRetail}/mo), you are likely paying full retail. Credex sources discounted credits from companies that overforecast — savings vary by stack; book a quote to see the exact number.`
       );
     }
   }
@@ -208,6 +210,37 @@ function analyzeToolEntry(
   return optimal(
     entry,
     `No stronger same-vendor or alternative move for ${useCase} at this spend.${catalogNote}`
+  );
+}
+
+/**
+ * Detect Cursor + GitHub Copilot overlap for coding teams.
+ * Both tools cover IDE assistance; very few teams genuinely need both seats.
+ * Drop the lower-spend one as the recommendation target.
+ */
+function analyzeCursorCopilotOverlap(
+  input: AuditInput
+): ToolRecommendation | null {
+  if (input.useCase !== "coding" && input.useCase !== "mixed") return null;
+
+  const cursor = input.tools.find((t) => t.tool === "cursor");
+  const copilot = input.tools.find((t) => t.tool === "github-copilot");
+  if (!cursor || !copilot) return null;
+
+  const cheaper =
+    cursor.monthlySpend <= copilot.monthlySpend ? cursor : copilot;
+  const keeper =
+    cursor.monthlySpend <= copilot.monthlySpend ? copilot : cursor;
+
+  if (cheaper.monthlySpend <= 0) return null;
+
+  return buildRecommendation(
+    cheaper,
+    `Pick one IDE assistant — drop ${TOOL_NAMES[cheaper.tool]}, keep ${TOOL_NAMES[keeper.tool]}`,
+    "switch-tool",
+    cheaper.monthlySpend,
+    `${TOOL_NAMES[cursor.tool]} ($${cursor.monthlySpend}/mo) and ${TOOL_NAMES[copilot.tool]} ($${copilot.monthlySpend}/mo) both cover in-editor AI assist. Most coding teams standardise on one — save $${cheaper.monthlySpend}/mo by dropping the lower-usage seat.`,
+    TOOL_NAMES[keeper.tool]
   );
 }
 
@@ -244,12 +277,17 @@ export function runAudit(
 ): Omit<AuditResult, "id" | "aiSummary" | "createdAt"> {
   const perTool = input.tools.map((entry) => analyzeToolEntry(entry, input));
   const duplicateRecs = analyzeWritingDuplicates(input);
+  const overlapRec = analyzeCursorCopilotOverlap(input);
 
   const recommendations = [...perTool];
-  for (const dup of duplicateRecs) {
-    const idx = recommendations.findIndex((r) => r.tool === dup.tool);
-    if (idx >= 0 && recommendations[idx].savings < dup.savings) {
-      recommendations[idx] = dup;
+
+  const upserts: ToolRecommendation[] = [...duplicateRecs];
+  if (overlapRec) upserts.push(overlapRec);
+
+  for (const rec of upserts) {
+    const idx = recommendations.findIndex((r) => r.tool === rec.tool);
+    if (idx >= 0 && recommendations[idx].savings < rec.savings) {
+      recommendations[idx] = rec;
     }
   }
 

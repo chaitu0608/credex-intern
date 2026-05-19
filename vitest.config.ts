@@ -9,6 +9,12 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // server-only throws outside Next's react-server runtime; alias to its
+      // own empty stub so route handlers can be imported by unit tests.
+      "server-only": path.resolve(
+        __dirname,
+        "./node_modules/server-only/empty.js"
+      ),
     },
   },
 });

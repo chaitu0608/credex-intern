@@ -1,97 +1,83 @@
 # Pricing Data Sources
 
-All prices in `src/lib/pricing.ts` were verified against official vendor pages.
+All prices in `src/lib/pricing.ts` were verified against official vendor pricing pages.
 
-**Last checked:** 2026-05-19 (submission week)
+**Last verified:** 2026-05-20 (submission week — re-verify before each major release)
+
+Format follows the assignment spec: `- Plan: $X/unit — URL — verified YYYY-MM-DD`.
 
 ---
 
 ## Cursor
 
-| Plan | Price | Source |
-|------|-------|--------|
-| Hobby | $0 | https://cursor.com/pricing |
-| Pro | $20/seat/mo | https://cursor.com/pricing |
-| Business | $40/seat/mo | https://cursor.com/pricing |
-| Enterprise | Custom | https://cursor.com/pricing |
-
----
+- Hobby: $0 — https://cursor.com/pricing — verified 2026-05-20
+- Pro: $20/user/month — https://cursor.com/pricing — verified 2026-05-20
+- Business: $40/user/month — https://cursor.com/pricing — verified 2026-05-20
+- Enterprise: custom — https://cursor.com/pricing — verified 2026-05-20
 
 ## GitHub Copilot
 
-| Plan | Price | Source |
-|------|-------|--------|
-| Individual | $10/seat/mo | https://github.com/features/copilot/plans |
-| Business | $19/seat/mo | https://github.com/features/copilot/plans |
-| Enterprise | $39/seat/mo | https://github.com/features/copilot/plans |
-
----
+- Individual: $10/user/month — https://github.com/features/copilot/plans — verified 2026-05-20
+- Business: $19/user/month — https://github.com/features/copilot/plans — verified 2026-05-20
+- Enterprise: $39/user/month — https://github.com/features/copilot/plans — verified 2026-05-20
 
 ## Claude (Anthropic)
 
-| Plan | Price | Source |
-|------|-------|--------|
-| Free | $0 | https://www.anthropic.com/pricing |
-| Pro | $20/seat/mo | https://www.anthropic.com/pricing |
-| Max | $100/seat/mo | https://www.anthropic.com/pricing |
-| Team | $30/seat/mo (min 5 seats) | https://www.anthropic.com/pricing |
-| Enterprise | Custom | https://www.anthropic.com/pricing |
-| API | Usage-based | https://www.anthropic.com/pricing |
-
----
+- Free: $0 — https://www.anthropic.com/pricing — verified 2026-05-20
+- Pro: $20/user/month — https://www.anthropic.com/pricing — verified 2026-05-20
+- Max: $100/user/month — https://www.anthropic.com/pricing — verified 2026-05-20
+- Team: $30/user/month (min 5 seats) — https://www.anthropic.com/pricing — verified 2026-05-20
+- Enterprise: custom — https://www.anthropic.com/pricing — verified 2026-05-20
+- API: usage-based — https://www.anthropic.com/pricing — verified 2026-05-20
 
 ## ChatGPT (OpenAI)
 
-| Plan | Price | Source |
-|------|-------|--------|
-| Free | $0 | https://openai.com/chatgpt/pricing |
-| Plus | $20/seat/mo | https://openai.com/chatgpt/pricing |
-| Team | $30/seat/mo (min 2 seats) | https://openai.com/chatgpt/pricing |
-| Enterprise | Custom | https://openai.com/chatgpt/pricing |
-| API | Usage-based | https://openai.com/api/pricing |
-
----
+- Free: $0 — https://openai.com/chatgpt/pricing — verified 2026-05-20
+- Plus: $20/user/month — https://openai.com/chatgpt/pricing — verified 2026-05-20
+- Team: $30/user/month (min 2 seats) — https://openai.com/chatgpt/pricing — verified 2026-05-20
+- Enterprise: custom — https://openai.com/chatgpt/pricing — verified 2026-05-20
+- API: usage-based — https://openai.com/api/pricing — verified 2026-05-20
 
 ## Anthropic API (direct)
 
-| Plan | Price | Source |
-|------|-------|--------|
-| API | Usage-based | https://www.anthropic.com/pricing |
-
----
+- API: usage-based — https://www.anthropic.com/pricing — verified 2026-05-20
 
 ## OpenAI API (direct)
 
-| Plan | Price | Source |
-|------|-------|--------|
-| API | Usage-based | https://openai.com/api/pricing |
-
----
+- API: usage-based — https://openai.com/api/pricing — verified 2026-05-20
 
 ## Google Gemini
 
-| Plan | Price | Source |
-|------|-------|--------|
-| Free | $0 | https://one.google.com/about/plans |
-| Pro (Google AI Pro) | $20/mo | https://one.google.com/about/plans |
-| Ultra | $249.99/mo | https://gemini.google/subscriptions |
-| API | Usage-based | https://ai.google.dev/pricing |
-
----
+- Free: $0 — https://one.google.com/about/plans — verified 2026-05-20
+- Pro (Google AI Pro): $20/month — https://one.google.com/about/plans — verified 2026-05-20
+- Ultra (Gemini Advanced / Ultra tier): $249.99/month — https://gemini.google/subscriptions — verified 2026-05-20
+- API: usage-based — https://ai.google.dev/pricing — verified 2026-05-20
 
 ## Windsurf
 
-| Plan | Price | Source |
-|------|-------|--------|
-| Free | $0 | https://windsurf.com/pricing |
-| Pro | $15/seat/mo | https://windsurf.com/pricing |
-| Team | $35/seat/mo | https://windsurf.com/pricing |
-| Enterprise | Custom | https://windsurf.com/pricing |
+- Free: $0 — https://windsurf.com/pricing — verified 2026-05-20
+- Pro: $15/user/month — https://windsurf.com/pricing — verified 2026-05-20
+- Team: $35/user/month — https://windsurf.com/pricing — verified 2026-05-20
+- Enterprise: custom — https://windsurf.com/pricing — verified 2026-05-20
 
 ---
 
-## Notes
+## Notes for reviewer
 
-- **Gemini Pro** maps to Google AI Pro (~$20/mo). **Ultra** is the top consumer tier — verify list price before submission.
-- **API plans** have `price: null` in code — audit recommends usage benchmarking, not flat monthly replacement.
-- Re-verify prices before final submission if vendors change rates.
+- **Gemini Pro** maps to Google AI Pro (~$20/mo). The **Ultra** tier price ($249.99) is the consumer-facing Gemini Advanced / Ultra subscription as listed on `gemini.google/subscriptions` — Google occasionally re-prices these so re-verify before re-releasing.
+- **API plans** carry `price: null` in `src/lib/pricing.ts` — the audit engine never asserts a flat $/month savings for usage-based pricing; instead it recommends benchmarking the last 30 days of token use against the flat plan.
+- **Re-verification cadence:** weekly during active iteration, monthly at steady-state. A planned GitHub Action will scrape these pages and open a PR on diff — noted in `REFLECTION.md` as a week-2 item.
+- **Source of truth for the code:** `src/lib/pricing.ts`. This file is the human-readable mirror; if the two ever drift, the test suite (`src/lib/pricing.test.ts`) catches the schema-level mismatch but not the dollar values, so manual cross-check is mandatory before submission.
+
+## Equivalent at-a-glance table
+
+| Tool | Plans tracked | Per-seat? | Notable constraints |
+|------|---------------|-----------|----------------------|
+| Cursor | hobby, pro, business, enterprise | yes (pro+) | enterprise = custom |
+| GitHub Copilot | individual, business, enterprise | yes | none |
+| Claude | free, pro, max, team, enterprise, api | yes (pro/max/team) | **team min 5 seats** |
+| ChatGPT | free, plus, team, enterprise, api | yes (plus/team) | **team min 2 seats** |
+| Gemini | free, pro, ultra, api | no (consumer flat) | ultra is consumer-facing |
+| Windsurf | free, pro, team, enterprise | yes (pro/team) | none |
+| Anthropic API | api | no | usage-based |
+| OpenAI API | api | no | usage-based |

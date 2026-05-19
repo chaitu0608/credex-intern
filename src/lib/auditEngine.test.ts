@@ -135,4 +135,23 @@ describe("runAudit", () => {
     const dup = result.recommendations.find((r) => r.savings > 0);
     expect(dup?.reason).toMatch(/writing|duplicate|standardize/i);
   });
+
+  it("flags Cursor + Copilot overlap on a coding team and drops the cheaper seat", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 6,
+        useCase: "coding",
+        tools: [
+          { tool: "cursor", plan: "pro", monthlySpend: 120, seats: 6 },
+          { tool: "github-copilot", plan: "business", monthlySpend: 114, seats: 6 },
+        ],
+      })
+    );
+    const overlap = result.recommendations.find(
+      (r) => r.recommendationType === "switch-tool" && /IDE/i.test(r.recommendedAction)
+    );
+    expect(overlap).toBeDefined();
+    expect(overlap?.savings).toBe(114);
+    expect(overlap?.alternativeTool).toBe("Cursor");
+  });
 });

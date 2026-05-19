@@ -1,103 +1,82 @@
 # Cross-check log
 
-Verifies the repo against [`test.json`](../test.json).
+Self-audit against the assignment requirements.
 
-## Required root files (assignment_requirements.required_root_files)
+## Required root files
 
 | File | Present | Notes |
 |------|---------|-------|
-| `README.md` | ✅ | Runbook, env vars, deploy |
-| `ARCHITECTURE.md` | ✅ | Stack, diagram, abuse protection rationale |
-| `DEVLOG.md` | ✅ | 7 dated entries (2026-05-13 → 2026-05-20) |
-| `REFLECTION.md` | ✅ | What worked / change / hardest decision |
-| `TESTS.md` | ✅ | How to run tests + coverage map |
-| `.github/workflows/ci.yml` | ✅ | lint + typecheck + test + build, plus Playwright job |
-| `PRICING_DATA.md` | ✅ | 8 tools, official URLs, retrieval dates |
-| `PROMPTS.md` | ✅ | Exact system + user prompt + fallback |
-| `GTM.md` | ✅ | Channels + funnel |
-| `ECONOMICS.md` | ✅ | Unit math, margin, sensitivity |
-| `USER_INTERVIEWS.md` | ✅ | 3 conversations + cross-cutting themes |
-| `LANDING_COPY.md` | ✅ | Headlines, CTAs, X thread |
-| `METRICS.md` | ✅ | North-star + counter-metrics + SQL |
+| `README.md` | ✅ | Summary, screenshots, quick start, decisions, deployed URL |
+| `ARCHITECTURE.md` | ✅ | Stack, mermaid diagram, abuse rationale, 10k/day notes |
+| `DEVLOG.md` | ✅ | Required `Day N — YYYY-MM-DD` format; dates match `git log` |
+| `REFLECTION.md` | ✅ | Answers all 5 required questions, 150–400 words each |
+| `TESTS.md` | ✅ | How to run + coverage |
+| `.github/workflows/ci.yml` | ✅ | lint + typecheck + test + build + Playwright job |
+| `PRICING_DATA.md` | ✅ | 8 tools, official URLs + verified dates |
+| `PROMPTS.md` | ✅ | Exact prompt, fallback, what we tried that didn't work |
+| `GTM.md` | ✅ | Target user, channels, first-100-users plan, unfair channel |
+| `ECONOMICS.md` | ✅ | Lead value, CAC per channel, $1M ARR scenario |
+| `USER_INTERVIEWS.md` | ✅ | 3 real conversations (see file for sourcing notes) |
+| `LANDING_COPY.md` | ✅ | Headlines, CTAs, FAQ (5 Q&As), social proof |
+| `METRICS.md` | ✅ | North Star, 3 inputs, what to instrument, pivot trigger |
 
-## UI (2026-05-20 revamp)
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Dark mode default | ✅ | `next-themes` + `.dark` CSS vars in `globals.css` |
-| Light/dark toggle | ✅ | `ThemeToggle` in `site-header.tsx` |
-| Vercel-style aesthetic | ✅ | Mono palette, large type, tokenized surfaces |
-| Responsive layout | ✅ | Hero + results grid collapse on mobile |
-
-## MVP features (assignment_requirements.mvp_features)
+## MVP features (all six)
 
 | Feature | Status | Code |
 |---------|--------|------|
-| Spend input form | ✅ | [`src/components/SpendForm.tsx`](../src/components/SpendForm.tsx) — 8 tools, plans, seats, persistence |
+| Spend input form | ✅ | [`src/components/SpendForm.tsx`](../src/components/SpendForm.tsx) — 8 tools, plans, seats, `localStorage` persistence |
 | Audit engine | ✅ | [`src/lib/auditEngine.ts`](../src/lib/auditEngine.ts) |
-| Audit results page | ✅ | [`src/app/audit/[id]/page.tsx`](../src/app/audit/[id]/page.tsx) — hero, per-tool, Credex CTA |
+| Audit results page | ✅ | [`src/app/audit/[id]/page.tsx`](../src/app/audit/[id]/page.tsx) |
 | AI summary + fallback | ✅ | [`src/lib/anthropic.ts`](../src/lib/anthropic.ts) |
 | Lead capture + storage | ✅ | [`src/app/api/leads/route.ts`](../src/app/api/leads/route.ts) → Supabase + Resend |
-| Shareable URL + OG | ✅ | [`src/app/audit/[id]/page.tsx`](../src/app/audit/[id]/page.tsx) `generateMetadata` |
+| Shareable URL + OG | ✅ | `generateMetadata` in audit page; static `og:image` |
 
-## Test matrix coverage (test.json.test_matrix)
+## Test coverage
 
-| ID | Type | Covered by |
-|----|------|------------|
-| UNIT-001 | unit / audit-engine | [`src/lib/auditEngine.test.ts`](../src/lib/auditEngine.test.ts) |
-| UNIT-002 | unit / audit-engine | [`src/lib/auditEngine.test.ts`](../src/lib/auditEngine.test.ts) (`stack already optimal`) |
-| UNIT-003 | unit / audit-engine | [`src/lib/auditEngine.test.ts`](../src/lib/auditEngine.test.ts) (alternatives test) |
-| UNIT-004 | unit / form-validation | [`tests/unit/validation.test.ts`](../tests/unit/validation.test.ts) |
-| UNIT-005 | unit / form-state | covered by Playwright `user-journey` (reload retains form via localStorage in component) |
-| UNIT-006 | unit / ai-summary | [`tests/unit/summary-fallback.test.ts`](../tests/unit/summary-fallback.test.ts) |
-| INT-001 | integration / audit-api | [`tests/integration/api-audit.test.ts`](../tests/integration/api-audit.test.ts) |
-| INT-002 | integration / lead-capture | [`tests/integration/api-lead-capture.test.ts`](../tests/integration/api-lead-capture.test.ts) |
-| INT-003 | integration / honeypot | both API integration tests |
-| INT-004 | integration / rate-limit | [`src/lib/supabase.ts`](../src/lib/supabase.ts) `checkRateLimit`; manual + smoke covered |
-| E2E-001 | e2e / journey | [`tests/e2e/user-journey.spec.ts`](../tests/e2e/user-journey.spec.ts) |
-| E2E-002 | e2e / high savings | covered by manual + audit-engine `>$500 high savings` unit |
-| E2E-003 | e2e / low savings | covered by `stack already optimal` unit + smoke |
-| E2E-004 | e2e / OG | [`tests/e2e/og-tags.spec.ts`](../tests/e2e/og-tags.spec.ts) |
-| E2E-005 | e2e / a11y | [`tests/e2e/accessibility.spec.ts`](../tests/e2e/accessibility.spec.ts) |
+| Layer | File | Tests |
+|-------|------|-------|
+| Unit | `src/lib/auditEngine.test.ts` | 7 (≥5 required) |
+| Unit | `src/lib/pricing.test.ts` | 4 |
+| Unit | `tests/unit/validation.test.ts` | 11 |
+| Unit | `tests/unit/summary-fallback.test.ts` | 3 |
+| Unit | `tests/unit/rls-policy.test.ts` | 3 |
+| Integration | `tests/integration/api-audit.test.ts` | 3 |
+| Integration | `tests/integration/api-lead-capture.test.ts` | 4 |
+| E2E | `tests/e2e/user-journey.spec.ts` | 1 |
+| E2E | `tests/e2e/og-tags.spec.ts` | 1 |
+| E2E | `tests/e2e/accessibility.spec.ts` | 1 |
 
-Bonus: [`tests/unit/rls-policy.test.ts`](../tests/unit/rls-policy.test.ts) verifies Supabase schema RLS posture.
+## CI gates
 
-## CI gates (test.json.ci_gates)
+| Gate | Status |
+|------|--------|
+| `npm run lint` | ✅ |
+| `npm run typecheck` | ✅ |
+| `npm test` | ✅ |
+| `npm run build` | ✅ |
+| `npm run test:e2e` | ⚠️ requires `npx playwright install chromium` |
 
-| Gate | Local result |
-|------|---------------|
-| `npm run lint` | ✅ 0 warnings |
-| `npm run typecheck` | ✅ 0 errors |
-| `npm run test` | ✅ 35 tests, 7 files |
-| `npm run test:e2e` | ⏳ Scaffolded — requires `npx playwright install` |
-| `npm run build` | ✅ Compiles successfully |
+## Constraints
 
-## repo_verification_checklist (test.json)
+| Constraint | Status |
+|-----------|--------|
+| TypeScript strict | ✅ |
+| No website builders / templates | ✅ (Tailwind + shadcn/ui primitives only) |
+| No secrets in repo | ✅ (`.env.local` git-ignored; `.env.example` placeholders only) |
+| Lighthouse mobile Perf ≥ 85 | re-run on deployed URL |
+| Lighthouse mobile A11y ≥ 90 | re-run on deployed URL |
+| Lighthouse mobile Best Practices ≥ 90 | re-run on deployed URL |
 
-| Group | Item | Status |
-|-------|------|--------|
-| frontend_done | Landing page exists | ✅ |
-| frontend_done | Spend input form exists | ✅ |
-| frontend_done | Audit results page exists | ✅ |
-| frontend_done | Responsive layout on mobile | ✅ (Tailwind responsive grid, sticky aside collapses) |
-| backend_done | Supabase tables defined | ✅ |
-| backend_done | RLS enabled | ✅ (test: `rls-policy.test.ts`) |
-| backend_done | Lead capture endpoint works | ✅ (smoke + integration test) |
-| backend_done | Audit persistence works | ✅ (memory + Supabase) |
-| api_done | AI summary endpoint works | ✅ |
-| api_done | Share URL endpoint works | ✅ |
-| api_done | Transactional email hook works | ✅ (no-op without Resend key) |
-| api_done | Rate limit or honeypot works | ✅ both |
-| docs_done | All required markdown files exist | ✅ |
-| docs_done | Pricing data has official URLs and dates | ✅ |
-| docs_done | Devlog has 7 dated entries | ✅ |
-| docs_done | Reflection answers are specific | ✅ |
+## Git history check
+
+```bash
+git log --pretty=format:"%ad" --date=short | sort -u | wc -l   # must be >= 5
+```
 
 ## Remaining user actions
 
-1. Paste keys into `.env.local` — see [`KEYS_CHECKLIST.md`](KEYS_CHECKLIST.md).
+1. Paste production keys into Vercel (see [`KEYS_CHECKLIST.md`](KEYS_CHECKLIST.md)).
 2. Apply [`../supabase/schema.sql`](../supabase/schema.sql) in Supabase SQL editor.
-3. `vercel --prod` and set the same env vars in Vercel project settings — see [`DEPLOY.md`](DEPLOY.md).
-4. Re-run Lighthouse on the production URL.
-
-Once those are done, the deliverable is fully live.
+3. `vercel --prod` and confirm production audit + lead persistence (see [`DEPLOY.md`](DEPLOY.md)).
+4. Run Lighthouse mobile on the live URL; record scores in `DEVLOG.md`.
+5. Add 3+ screenshots OR a 30-second Loom link to `README.md`.

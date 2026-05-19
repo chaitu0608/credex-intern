@@ -15,8 +15,13 @@ const outfit = Outfit({
   weight: ["500", "600", "700", "800"],
 });
 
+// Prefer the explicit env; fall back to the Vercel-injected host (no protocol)
+// so OG previews still resolve when the operator forgets NEXT_PUBLIC_APP_URL.
+const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+const vercelHost = process.env.VERCEL_URL?.trim();
 const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL?.trim() || "http://localhost:3000";
+  explicitUrl ||
+  (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
 
 export const metadata: Metadata = {
   title: {
