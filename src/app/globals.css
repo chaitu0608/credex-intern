@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 60 9% 98%;
+    --foreground: 160 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 160 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 30% 12%;
+    --primary: 158 45% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 150 20% 94%;
+    --secondary-foreground: 160 30% 20%;
+    --muted: 60 5% 96%;
+    --muted-foreground: 160 8% 45%;
+    --accent: 152 40% 92%;
+    --accent-foreground: 158 45% 28%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 160 10% 90%;
+    --input: 160 10% 90%;
+    --ring: 158 45% 38%;
+    --radius: 0.75rem;
+    --credex-dark: 160 25% 11%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-credex-green {
+    color: hsl(var(--primary));
+  }
+
+  .bg-credex-dark {
+    background-color: hsl(var(--credex-dark));
+  }
+}
