@@ -57,7 +57,7 @@ export default async function AuditPage({ params }: PageProps) {
   if (!audit) {
     return (
       <PageShell headerBackHref="/" headerBackLabel="← New audit">
-        <Card className="rounded-2xl p-12 text-center shadow-sm">
+        <Card className="rounded-lg border-border bg-card p-12 text-center">
           <CardTitle className="font-display text-xl font-bold">
             Audit not found
           </CardTitle>
@@ -68,7 +68,7 @@ export default async function AuditPage({ params }: PageProps) {
             href="/"
             className={cn(
               buttonVariants(),
-              "mt-8 inline-flex rounded-full bg-foreground text-background hover:bg-foreground/90"
+              "mt-8 inline-flex rounded-md bg-foreground text-background hover:bg-foreground/90"
             )}
           >
             Run your own audit
@@ -80,8 +80,12 @@ export default async function AuditPage({ params }: PageProps) {
 
   return (
     <PageShell headerBackHref="/" headerBackLabel="← New audit" maxWidth="xl">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-        <aside className="order-first lg:order-2 lg:sticky lg:top-24">
+      <p className="mb-8 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        Your SpendSense report
+      </p>
+
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+        <aside className="order-first lg:order-2">
           <SavingsHero
             totalMonthlySavings={audit.totalMonthlySavings}
             totalAnnualSavings={audit.totalAnnualSavings}
@@ -90,27 +94,25 @@ export default async function AuditPage({ params }: PageProps) {
           />
         </aside>
 
-        <div className="order-2 space-y-10 lg:order-1">
-          <section>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Your SpendSense report
-            </p>
-            <AuditResults
-              recommendations={audit.recommendations}
-              aiSummary={audit.aiSummary}
-            />
-          </section>
+        <div className="order-2 space-y-12 lg:order-1">
+          <AuditResults
+            recommendations={audit.recommendations}
+            aiSummary={audit.aiSummary}
+          />
 
           {audit.isHighSavings && (
-            <Card className="overflow-hidden rounded-2xl bg-spendsense-dark text-white">
+            <Card className="rounded-lg border-border bg-card">
               <CardHeader>
-                <CardDescription className="text-white/50">
+                <CardDescription className="font-mono text-xs uppercase tracking-widest">
                   Credex opportunity
                 </CardDescription>
-                <CardTitle className="font-display text-2xl font-bold sm:text-3xl">
-                  Capture ${audit.totalAnnualSavings.toLocaleString()}/year
+                <CardTitle className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
+                  ${audit.totalAnnualSavings.toLocaleString()}
+                  <span className="block text-lg font-normal text-muted-foreground">
+                    per year in potential savings
+                  </span>
                 </CardTitle>
-                <CardDescription className="max-w-lg text-white/60">
+                <CardDescription className="max-w-lg">
                   Discounted AI infrastructure credits for Cursor, Claude,
                   ChatGPT Enterprise, and more.
                 </CardDescription>
@@ -122,7 +124,7 @@ export default async function AuditPage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className={cn(
                     buttonVariants(),
-                    "inline-flex gap-2 rounded-full bg-white text-foreground hover:bg-white/90"
+                    "inline-flex gap-2 rounded-md bg-foreground text-background hover:bg-foreground/90"
                   )}
                 >
                   Book Credex consultation
@@ -133,7 +135,7 @@ export default async function AuditPage({ params }: PageProps) {
           )}
 
           {audit.totalMonthlySavings < 100 && !audit.isHighSavings && (
-            <Card className="rounded-xl border-border bg-accent/40">
+            <Card className="rounded-lg border-border bg-card">
               <CardContent className="py-4">
                 <p className="text-sm text-muted-foreground">
                   <span className="font-medium text-foreground">
@@ -152,8 +154,10 @@ export default async function AuditPage({ params }: PageProps) {
             totalMonthlySavings={audit.totalMonthlySavings}
           />
 
-          <section>
-            <h2 className="font-display mb-2 text-lg font-bold">Share</h2>
+          <section className="border-t border-border pt-8">
+            <h2 className="font-display mb-2 text-lg font-bold tracking-tight">
+              Share
+            </h2>
             <p className="mb-4 text-sm text-muted-foreground">
               Copy or post your results — no email on the public link
             </p>

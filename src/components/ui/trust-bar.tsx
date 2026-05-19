@@ -18,7 +18,7 @@ export function TrustBar({ className }: TrustBarProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden border-y border-border/80 bg-white/50 py-3",
+        "overflow-hidden border-y border-border bg-card/40 py-3",
         className
       )}
     >
@@ -26,10 +26,10 @@ export function TrustBar({ className }: TrustBarProps) {
         {[...ITEMS, ...ITEMS].map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground"
+            className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground"
           >
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-primary">
-              <Check className="h-3 w-3" strokeWidth={3} />
+            <span className="flex h-4 w-4 items-center justify-center rounded-sm border border-border bg-muted">
+              <Check className="h-2.5 w-2.5" strokeWidth={3} />
             </span>
             {item}
           </span>

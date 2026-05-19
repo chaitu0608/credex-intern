@@ -38,7 +38,7 @@ export default function ShareSection({
         type="button"
         variant="outline"
         onClick={copyLink}
-        className="rounded-full border-stone-200"
+        className="rounded-md border-border hover:bg-muted"
       >
         <Copy className="mr-2 h-4 w-4" />
         {copied ? "Copied" : "Copy link"}
@@ -47,7 +47,10 @@ export default function ShareSection({
         href={tweetUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className={cn(buttonVariants({ variant: "outline" }), "inline-flex rounded-full border-stone-200")}
+        className={cn(
+          buttonVariants({ variant: "outline" }),
+          "inline-flex rounded-md border-border hover:bg-muted"
+        )}
       >
         <Share2 className="mr-2 h-4 w-4" />
         Share on X

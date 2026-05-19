@@ -126,16 +126,20 @@ Re-running on the Vercel URL after deploy.
 
 ---
 
-## 2026-05-20 — Day 7 · Final cross-check + submission
+## 2026-05-20 — Day 7 · Final cross-check + Vercel-style UI revamp
 
-**Hours:** ~2 (so far)
+**Hours:** ~4
 
-**Done so far:**
-- Iterated against [`test.json`](test.json): every required doc, every required test in `test_matrix`, every CI gate green.
-- Updated [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md).
-- Updated [`README.md`](README.md) with the final runbook.
+**Done:**
+- Iterated against [`test.json`](test.json): every required doc, every test in `test_matrix`, every CI gate green.
+- **Vercel-style dark UI revamp:** near-black default theme, monochrome palette, large typography, thin borders, tokenized grid background.
+- **`next-themes` wired:** `ThemeProvider` in layout, dark default, system preference on first visit, sun/moon toggle in header.
+- Rebuilt landing hero (`text-8xl`), sample stat card, how-it-works tiles, form section, results page, `SavingsHero`, `AuditResults`, `LeadCapture`, `ShareSection`.
+- All 35 tests + smoke E2E pass after UI change.
 
-**Status:** Code is submission-ready. Awaiting user to paste Supabase/Anthropic/Resend keys into `.env.local` and Vercel project envs for final live verification.
+**Learned:** Semantic CSS variables (`bg-background`, `border-border`) make a full theme swap possible without touching business logic.
+
+**Status:** Code submission-ready. User still needs to paste Supabase/Anthropic/Resend keys and confirm Vercel deploy + Lighthouse on prod URL.
 
 ---
 

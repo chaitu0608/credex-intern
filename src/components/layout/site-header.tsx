@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 interface SiteHeaderProps {
@@ -15,27 +16,25 @@ const NAV_LINKS = [
 
 export function SiteHeader({ backHref, backLabel }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-50 px-4 py-4 sm:px-6">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-full border border-border/80 bg-white/90 px-4 py-2.5 shadow-[0_2px_24px_rgba(15,23,42,0.06)] backdrop-blur-md sm:px-5">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         {backHref ? (
           <Link
             href={backHref}
-            className="shrink-0 text-sm font-medium text-muted-foreground hover:text-foreground"
+            className="shrink-0 font-mono text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             {backLabel ?? "← Back"}
           </Link>
         ) : (
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-[hsl(var(--spendsense-indigo))] text-sm font-bold text-white shadow-sm">
-              S
-            </span>
-            <span className="font-display text-lg font-bold tracking-tight text-foreground">
-              SpendSense
-            </span>
+          <Link
+            href="/"
+            className="font-display shrink-0 text-lg font-bold tracking-tight text-foreground"
+          >
+            SpendSense
           </Link>
         )}
 
-        <nav className="hidden items-center gap-0.5 rounded-full bg-muted/80 p-1 md:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.label}
@@ -46,22 +45,25 @@ export function SiteHeader({ backHref, backLabel }: SiteHeaderProps) {
                   ? "noopener noreferrer"
                   : undefined
               }
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-white hover:text-foreground"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <Link
-          href="/#audit-form"
-          className={cn(
-            buttonVariants({ size: "sm" }),
-            "hidden rounded-full bg-foreground px-5 text-background hover:bg-foreground/90 sm:inline-flex"
-          )}
-        >
-          Start audit
-        </Link>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Link
+            href="/#audit-form"
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "hidden rounded-md bg-foreground px-4 text-background hover:bg-foreground/90 sm:inline-flex"
+            )}
+          >
+            Start audit
+          </Link>
+        </div>
       </div>
     </header>
   );

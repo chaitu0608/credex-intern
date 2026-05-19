@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
 
-/** Light grid background — Credex.rocks style */
+/** Token-aware grid — works in light and dark */
 export function GridBackground({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-0 -z-10 h-full w-full bg-[#FAFAF9]",
-        "[background-image:linear-gradient(to_right,#e7e5e4_1px,transparent_1px),linear-gradient(to_bottom,#e7e5e4_1px,transparent_1px)]",
+        "pointer-events-none fixed inset-0 -z-10 h-full w-full bg-background",
+        "[background-image:linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)]",
         "[background-size:4rem_4rem]",
-        "[mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]",
+        "[mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]",
         className
       )}
       aria-hidden

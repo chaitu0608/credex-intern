@@ -115,11 +115,15 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
     onSubmit({ tools, teamSize, useCase, website });
   };
 
+  const labelClass = "text-xs font-medium uppercase tracking-wide text-muted-foreground";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center justify-end">
         {draftVisible && (
-          <Badge variant="secondary">Draft saved</Badge>
+          <Badge variant="outline" className="font-mono text-xs">
+            Draft saved
+          </Badge>
         )}
       </div>
 
@@ -132,9 +136,13 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
               : null;
 
           return (
-            <Card key={index} size="sm" className="rounded-xl border-stone-200 bg-stone-50/50">
+            <Card
+              key={index}
+              size="sm"
+              className="rounded-lg border-border bg-muted/30"
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
                   Tool {index + 1}
                 </CardTitle>
                 {rows.length > 1 && (
@@ -142,7 +150,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
                     onClick={() => removeRow(index)}
                     aria-label="Remove tool"
                   >
@@ -152,7 +160,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
               </CardHeader>
               <CardContent className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Tool</Label>
+                  <Label className={labelClass}>Tool</Label>
                   <Select
                     value={row.tool ?? ""}
                     onValueChange={(v) =>
@@ -172,7 +180,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Plan</Label>
+                  <Label className={labelClass}>Plan</Label>
                   <Select
                     value={row.plan ?? ""}
                     disabled={!tool}
@@ -192,7 +200,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Monthly spend ($)</Label>
+                  <Label className={labelClass}>Monthly spend ($)</Label>
                   <Input
                     type="number"
                     min={0}
@@ -206,7 +214,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Seats</Label>
+                  <Label className={labelClass}>Seats</Label>
                   <Input
                     type="number"
                     min={1}
@@ -217,11 +225,9 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
                   />
                 </div>
                 {estimate !== null && (
-                  <p className="text-xs text-muted-foreground sm:col-span-2">
+                  <p className="font-mono text-xs text-muted-foreground sm:col-span-2">
                     List price estimate:{" "}
-                    <span className="font-medium text-foreground">
-                      ${estimate}/mo
-                    </span>
+                    <span className="text-foreground">${estimate}/mo</span>
                   </p>
                 )}
               </CardContent>
@@ -234,7 +240,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
         type="button"
         variant="outline"
         onClick={addRow}
-        className="w-full border-dashed"
+        className="w-full border-dashed border-border"
       >
         <Plus className="mr-2 h-4 w-4" />
         Add another tool
@@ -242,14 +248,16 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
 
       <Separator />
 
-      <Card size="sm" className="rounded-xl border-stone-200 bg-stone-50/50">
+      <Card size="sm" className="rounded-lg border-border bg-muted/30">
         <CardHeader>
-          <CardTitle className="text-sm">Team context</CardTitle>
-          <CardDescription>Used to right-size plan recommendations</CardDescription>
+          <CardTitle className="text-sm font-semibold">Team context</CardTitle>
+          <CardDescription>
+            Used to right-size plan recommendations
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label>Team size</Label>
+            <Label className={labelClass}>Team size</Label>
             <Input
               type="number"
               min={1}
@@ -258,7 +266,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Primary use case</Label>
+            <Label className={labelClass}>Primary use case</Label>
             <Select value={useCase} onValueChange={(v) => setUseCase(v as UseCase)}>
               <SelectTrigger>
                 <SelectValue />
@@ -290,7 +298,7 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
         type="submit"
         size="lg"
         disabled={!isValid || isLoading}
-        className="h-12 w-full rounded-full bg-foreground text-base font-semibold text-background hover:bg-foreground/90"
+        className="h-14 w-full rounded-md bg-foreground text-base font-semibold text-background hover:bg-foreground/90"
       >
         {isLoading ? "Running audit…" : "Run my audit →"}
       </Button>

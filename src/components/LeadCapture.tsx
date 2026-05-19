@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -72,13 +72,13 @@ export default function LeadCapture({
 
   if (state === "success") {
     return (
-      <Card className="rounded-2xl border-primary/30">
+      <Card className="rounded-lg border-border bg-card">
         <CardContent className="flex flex-col items-center py-10 text-center">
-          <CheckCircle2 className="h-10 w-10 text-primary" />
-          <p className="mt-4 font-semibold">
+          <span className="mb-4 inline-flex h-2 w-2 rounded-full bg-accent" />
+          <p className="font-semibold text-foreground">
             {emailSent ? "Report sent to your email" : "Report saved"}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-2 font-mono text-xs text-muted-foreground">
             {emailSent
               ? "Check your inbox for the shareable link."
               : "Use the share section below to copy your audit link."}
@@ -89,14 +89,14 @@ export default function LeadCapture({
   }
 
   return (
-    <Card className="rounded-2xl border-stone-200 shadow-sm">
+    <Card className="rounded-lg border-border bg-card">
       <CardHeader>
         <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent">
-            <Mail className="h-4 w-4 text-primary" />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted">
+            <Mail className="h-4 w-4 text-muted-foreground" />
           </span>
           <div>
-            <CardTitle className="text-base">{heading}</CardTitle>
+            <CardTitle className="text-base font-semibold">{heading}</CardTitle>
             <CardDescription className="mt-1">
               {isHighSavings
                 ? "Credex can help capture additional savings via discounted credits."
@@ -108,7 +108,9 @@ export default function LeadCapture({
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Work email</Label>
+            <Label htmlFor="email" className="text-xs uppercase tracking-wide text-muted-foreground">
+              Work email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -120,7 +122,9 @@ export default function LeadCapture({
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="company">Company (optional)</Label>
+              <Label htmlFor="company" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Company (optional)
+              </Label>
               <Input
                 id="company"
                 value={companyName}
@@ -128,7 +132,9 @@ export default function LeadCapture({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="role">Role (optional)</Label>
+              <Label htmlFor="role" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Role (optional)
+              </Label>
               <Input
                 id="role"
                 value={role}
@@ -152,7 +158,7 @@ export default function LeadCapture({
           <Button
             type="submit"
             disabled={state === "submitting"}
-            className="h-11 w-full rounded-full bg-foreground text-background hover:bg-foreground/90"
+            className="h-12 w-full rounded-md bg-foreground text-background hover:bg-foreground/90"
           >
             {state === "submitting" ? "Sending…" : "Save report"}
           </Button>

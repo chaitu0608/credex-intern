@@ -20,6 +20,15 @@ Verifies the repo against [`test.json`](../test.json).
 | `LANDING_COPY.md` | ✅ | Headlines, CTAs, X thread |
 | `METRICS.md` | ✅ | North-star + counter-metrics + SQL |
 
+## UI (2026-05-20 revamp)
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Dark mode default | ✅ | `next-themes` + `.dark` CSS vars in `globals.css` |
+| Light/dark toggle | ✅ | `ThemeToggle` in `site-header.tsx` |
+| Vercel-style aesthetic | ✅ | Mono palette, large type, tokenized surfaces |
+| Responsive layout | ✅ | Hero + results grid collapse on mobile |
+
 ## MVP features (assignment_requirements.mvp_features)
 
 | Feature | Status | Code |
