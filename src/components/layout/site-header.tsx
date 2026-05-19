@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLockup } from "@/components/ui/brand-lockup";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -26,12 +27,7 @@ export function SiteHeader({ backHref, backLabel }: SiteHeaderProps) {
             {backLabel ?? "← Back"}
           </Link>
         ) : (
-          <Link
-            href="/"
-            className="font-display shrink-0 text-lg font-bold tracking-tight text-foreground"
-          >
-            SpendSense
-          </Link>
+          <BrandLockup />
         )}
 
         <nav className="hidden items-center gap-6 md:flex">

@@ -62,10 +62,25 @@ const config: Config = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        "aurora-drift-a": {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "50%": { transform: "translate3d(8%, 6%, 0) scale(1.08)" },
+        },
+        "aurora-drift-b": {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "50%": { transform: "translate3d(-6%, 8%, 0) scale(1.05)" },
+        },
+        "aurora-drift-c": {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "50%": { transform: "translate3d(4%, -5%, 0) scale(1.1)" },
+        },
       },
       animation: {
         shimmer: "shimmer 4s linear infinite",
         marquee: "marquee 30s linear infinite",
+        "aurora-drift-a": "aurora-drift-a 32s ease-in-out infinite alternate",
+        "aurora-drift-b": "aurora-drift-b 28s ease-in-out infinite alternate",
+        "aurora-drift-c": "aurora-drift-c 36s ease-in-out infinite alternate",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

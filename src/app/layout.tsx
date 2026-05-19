@@ -20,22 +20,22 @@ const appUrl =
 
 export const metadata: Metadata = {
   title: {
-    default: "SpendSense — Free AI Tool Spend Audit",
-    template: "%s | SpendSense",
+    default: "SpendSense by Credex — Free AI Tool Spend Audit",
+    template: "%s | SpendSense by Credex",
   },
   description:
     "Instant audit of your AI tool stack. Find overspend on Cursor, Claude, ChatGPT, Copilot, and more — with defensible savings math.",
   ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
   openGraph: {
-    siteName: "SpendSense",
+    siteName: "SpendSense by Credex",
     type: "website",
-    title: "SpendSense — Free AI Tool Spend Audit",
+    title: "SpendSense by Credex — Free AI Tool Spend Audit",
     description:
       "See where you're overspending on AI tools. Free audit in under 3 minutes.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SpendSense — Free AI Tool Spend Audit",
+    title: "SpendSense by Credex — Free AI Tool Spend Audit",
     description:
       "See where you're overspending on AI tools. Free audit in under 3 minutes.",
   },

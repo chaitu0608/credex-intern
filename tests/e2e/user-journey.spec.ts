@@ -6,9 +6,8 @@ test("E2E-001 cold visitor completes audit flow", async ({ page }) => {
     /AI budget leaks/i
   );
 
-  // Find first tool select
-  await page.getByLabel("Tool").first().click();
-  await page.getByRole("option", { name: "Cursor" }).click();
+  // Add Cursor from tool palette
+  await page.getByRole("button", { name: /Cursor/i }).first().click();
 
   await page.getByLabel("Plan").first().click();
   await page.getByRole("option", { name: /Business/ }).click();

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,24 +20,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  calculateCurrentCost,
-  formatPlanLabel,
-  PLAN_OPTIONS,
-  TOOL_NAMES,
-} from "@/lib/pricing";
+import { EmptyStack } from "@/components/spend-form/empty-stack";
+import { StackCard } from "@/components/spend-form/stack-card";
+import { ToolCard } from "@/components/spend-form/tool-card";
+import { ALL_TOOLS } from "@/lib/tool-meta";
+import { PLAN_OPTIONS } from "@/lib/pricing";
 import type { AITool, AuditInput, ToolEntry, UseCase } from "@/types";
+import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "credex-audit-form-v1";
-const TOOLS = Object.keys(TOOL_NAMES) as AITool[];
 const USE_CASES: UseCase[] = ["coding", "writing", "data", "research", "mixed"];
 
-const emptyRow = (): Partial<ToolEntry> => ({
-  tool: undefined,
-  plan: "",
-  monthlySpend: 0,
-  seats: 1,
-});
+function defaultEntry(tool: AITool): ToolEntry {
+  const defaultPlan = PLAN_OPTIONS[tool][0] ?? "";
+  return {
+    tool,
+    plan: defaultPlan,
+    monthlySpend: 0,
+    seats: 1,
+  };
+}
+
+type StoredDraft = {
+  stack?: ToolEntry[];
+  rows?: Partial<ToolEntry>[];
+  teamSize?: number;
+  useCase?: UseCase;
+};
 
 interface SpendFormProps {
   onSubmit: (input: AuditInput) => void;
@@ -46,22 +54,31 @@ interface SpendFormProps {
 }
 
 export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
-  const [rows, setRows] = useState<Partial<ToolEntry>[]>([emptyRow()]);
+  const [stack, setStack] = useState<ToolEntry[]>([]);
   const [teamSize, setTeamSize] = useState(5);
   const [useCase, setUseCase] = useState<UseCase>("coding");
   const [website, setWebsite] = useState("");
   const [draftVisible, setDraftVisible] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
-      const parsed = JSON.parse(raw) as {
-        rows?: Partial<ToolEntry>[];
-        teamSize?: number;
-        useCase?: UseCase;
-      };
-      if (parsed.rows?.length) setRows(parsed.rows);
+      const parsed = JSON.parse(raw) as StoredDraft;
+      if (parsed.stack?.length) {
+        setStack(parsed.stack);
+      } else if (parsed.rows?.length) {
+        const migrated = parsed.rows
+          .filter((r): r is ToolEntry => Boolean(r.tool && r.plan && r.seats))
+          .map((r) => ({
+            tool: r.tool as AITool,
+            plan: r.plan as string,
+            monthlySpend: Number(r.monthlySpend) || 0,
+            seats: Number(r.seats) || 1,
+          }));
+        if (migrated.length) setStack(migrated);
+      }
       if (parsed.teamSize) setTeamSize(parsed.teamSize);
       if (parsed.useCase) setUseCase(parsed.useCase);
     } catch {
@@ -72,53 +89,104 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ rows, teamSize, useCase })
+      JSON.stringify({ stack, teamSize, useCase })
     );
     setDraftVisible(true);
     const t = setTimeout(() => setDraftVisible(false), 2000);
     return () => clearTimeout(t);
-  }, [rows, teamSize, useCase]);
+  }, [stack, teamSize, useCase]);
 
-  const updateRow = useCallback(
-    (index: number, patch: Partial<ToolEntry>) => {
-      setRows((prev) =>
-        prev.map((row, i) => (i === index ? { ...row, ...patch } : row))
-      );
-    },
-    []
+  const isInStack = useCallback(
+    (tool: AITool) => stack.some((e) => e.tool === tool),
+    [stack]
   );
 
-  const addRow = () => setRows((prev) => [...prev, emptyRow()]);
-  const removeRow = (index: number) =>
-    setRows((prev) => (prev.length <= 1 ? prev : prev.filter((_, i) => i !== index)));
+  const toggleTool = useCallback((tool: AITool) => {
+    setStack((prev) => {
+      if (prev.some((e) => e.tool === tool)) {
+        return prev.filter((e) => e.tool !== tool);
+      }
+      return [...prev, defaultEntry(tool)];
+    });
+  }, []);
 
-  const isValid = rows.some(
-    (r) =>
-      r.tool &&
-      r.plan &&
-      (r.monthlySpend ?? 0) >= 0 &&
-      (r.seats ?? 0) >= 1
-  );
+  const addToolFromDrag = useCallback((tool: AITool) => {
+    setStack((prev) => {
+      if (prev.some((e) => e.tool === tool)) return prev;
+      return [...prev, defaultEntry(tool)];
+    });
+  }, []);
+
+  const handleDragStart = (e: React.DragEvent, tool: AITool) => {
+    e.dataTransfer.setData("application/x-spendsense-tool", tool);
+    e.dataTransfer.effectAllowed = "copy";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => setIsDragOver(false);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const tool = e.dataTransfer.getData(
+      "application/x-spendsense-tool"
+    ) as AITool;
+    if (tool && ALL_TOOLS.includes(tool)) {
+      addToolFromDrag(tool);
+    }
+  };
+
+  const updateEntry = (index: number, patch: Partial<ToolEntry>) => {
+    setStack((prev) =>
+      prev.map((entry, i) => (i === index ? { ...entry, ...patch } : entry))
+    );
+  };
+
+  const removeEntry = (index: number) => {
+    setStack((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const moveUp = (index: number) => {
+    if (index === 0) return;
+    setStack((prev) => {
+      const next = [...prev];
+      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      return next;
+    });
+  };
+
+  const moveDown = (index: number) => {
+    setStack((prev) => {
+      if (index >= prev.length - 1) return prev;
+      const next = [...prev];
+      [next[index], next[index + 1]] = [next[index + 1], next[index]];
+      return next;
+    });
+  };
+
+  const isValid =
+    stack.length > 0 &&
+    stack.every(
+      (e) => e.plan && e.monthlySpend >= 0 && e.seats >= 1
+    ) &&
+    teamSize >= 1;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const tools: ToolEntry[] = rows
-      .filter((r): r is ToolEntry => Boolean(r.tool && r.plan && r.seats))
-      .map((r) => ({
-        tool: r.tool as AITool,
-        plan: r.plan as string,
-        monthlySpend: Number(r.monthlySpend) || 0,
-        seats: Number(r.seats) || 1,
-      }));
-
-    if (!tools.length || teamSize < 1) return;
-    onSubmit({ tools, teamSize, useCase, website });
+    if (!isValid) return;
+    onSubmit({ tools: stack, teamSize, useCase, website });
   };
 
-  const labelClass = "text-xs font-medium uppercase tracking-wide text-muted-foreground";
+  const labelClass =
+    "text-xs font-medium uppercase tracking-wide text-muted-foreground";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8">
       <div className="flex items-center justify-end">
         {draftVisible && (
           <Badge variant="outline" className="font-mono text-xs">
@@ -127,128 +195,66 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
         )}
       </div>
 
-      <div className="space-y-4">
-        {rows.map((row, index) => {
-          const tool = row.tool as AITool | undefined;
-          const estimate =
-            tool && row.plan
-              ? calculateCurrentCost(tool, row.plan, row.seats ?? 1)
-              : null;
+      <section>
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-foreground">Add your tools</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Click to add, or drag a card into your stack below
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {ALL_TOOLS.map((tool) => (
+            <ToolCard
+              key={tool}
+              tool={tool}
+              selected={isInStack(tool)}
+              onToggle={toggleTool}
+              onDragStart={handleDragStart}
+            />
+          ))}
+        </div>
+      </section>
 
-          return (
-            <Card
-              key={index}
-              size="sm"
-              className="rounded-lg border-border bg-muted/30"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
-                  Tool {index + 1}
-                </CardTitle>
-                {rows.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                    onClick={() => removeRow(index)}
-                    aria-label="Remove tool"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
-              </CardHeader>
-              <CardContent className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label className={labelClass}>Tool</Label>
-                  <Select
-                    value={row.tool ?? ""}
-                    onValueChange={(v) =>
-                      updateRow(index, { tool: v as AITool, plan: "" })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select tool" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TOOLS.map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {TOOL_NAMES[t]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className={labelClass}>Plan</Label>
-                  <Select
-                    value={row.plan ?? ""}
-                    disabled={!tool}
-                    onValueChange={(v) => updateRow(index, { plan: v ?? "" })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select plan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {tool &&
-                        PLAN_OPTIONS[tool].map((p) => (
-                          <SelectItem key={p} value={p}>
-                            {formatPlanLabel(tool, p)}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className={labelClass}>Monthly spend ($)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    placeholder="240"
-                    value={row.monthlySpend ?? ""}
-                    onChange={(e) =>
-                      updateRow(index, {
-                        monthlySpend: Number(e.target.value),
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className={labelClass}>Seats</Label>
-                  <Input
-                    type="number"
-                    min={1}
-                    value={row.seats ?? 1}
-                    onChange={(e) =>
-                      updateRow(index, { seats: Number(e.target.value) })
-                    }
-                  />
-                </div>
-                {estimate !== null && (
-                  <p className="font-mono text-xs text-muted-foreground sm:col-span-2">
-                    List price estimate:{" "}
-                    <span className="text-foreground">${estimate}/mo</span>
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      <Button
-        type="button"
-        variant="outline"
-        onClick={addRow}
-        className="w-full border-dashed border-border"
-      >
-        <Plus className="mr-2 h-4 w-4" />
-        Add another tool
-      </Button>
+      <section>
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-foreground">Your stack</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Configure plan, seats, and monthly spend for each tool
+          </p>
+        </div>
+        <div
+          role="region"
+          aria-label="Your stack"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={cn(
+            "space-y-3 rounded-lg transition-colors",
+            isDragOver && stack.length > 0 && "ring-2 ring-accent/30"
+          )}
+        >
+          {stack.length === 0 ? (
+            <EmptyStack isDragOver={isDragOver} />
+          ) : (
+            stack.map((entry, index) => (
+              <StackCard
+                key={entry.tool}
+                entry={entry}
+                index={index}
+                total={stack.length}
+                onUpdate={updateEntry}
+                onRemove={removeEntry}
+                onMoveUp={moveUp}
+                onMoveDown={moveDown}
+              />
+            ))
+          )}
+        </div>
+      </section>
 
       <Separator />
 
-      <Card size="sm" className="rounded-lg border-border bg-muted/30">
+      <Card className="rounded-lg border-border bg-muted/30">
         <CardHeader>
           <CardTitle className="text-sm font-semibold">Team context</CardTitle>
           <CardDescription>
@@ -267,7 +273,10 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
           </div>
           <div className="space-y-2">
             <Label className={labelClass}>Primary use case</Label>
-            <Select value={useCase} onValueChange={(v) => setUseCase(v as UseCase)}>
+            <Select
+              value={useCase}
+              onValueChange={(v) => setUseCase(v as UseCase)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

@@ -1,3 +1,4 @@
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import { GridBackground } from "@/components/ui/grid-background";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -23,6 +24,7 @@ export function PageShell({
 }: PageShellProps) {
   return (
     <div className="relative min-h-screen">
+      <AuroraBackground />
       <GridBackground />
       <SiteHeader backHref={headerBackHref} backLabel={headerBackLabel} />
       <main
