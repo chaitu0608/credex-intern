@@ -3,9 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateAISummary } from "@/lib/anthropic";
 import { runAudit } from "@/lib/auditEngine";
 import { checkRateLimit, saveAudit } from "@/lib/supabase";
-import type { AuditInput, AuditResult, UseCase } from "@/types";
-
-const USE_CASES: UseCase[] = ["coding", "writing", "data", "research", "mixed"];
+import { isHoneypotTriggered, validateAuditInput } from "@/lib/validation";
+import type { AuditInput, AuditResult } from "@/types";
 
 function getClientIp(request: NextRequest): string {
   return (
@@ -25,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     const body = (await request.json()) as AuditInput;
 
-    if (body.website && body.website.trim() !== "") {
+    if (isHoneypotTriggered(body.website)) {
       return NextResponse.json({
         success: true,
         id: `fake-${nanoid(6)}`,
@@ -35,14 +34,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!body.tools?.length || body.teamSize < 1 || !USE_CASES.includes(body.useCase)) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
-    }
-
-    for (const tool of body.tools) {
-      if (!tool.tool || !tool.plan || tool.monthlySpend < 0 || tool.seats < 1) {
-        return NextResponse.json({ error: "Invalid tool entry" }, { status: 400 });
-      }
+    const validation = validateAuditInput(body);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     const auditData = runAudit(body);

@@ -32,23 +32,33 @@ Set all variables from `.env.example` in Vercel → Settings → Environment Var
 |---------|-------------|
 | `npm run dev` | Local development |
 | `npm run build` | Production build |
-| `npm test` | Vitest (audit engine + pricing) |
 | `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Vitest — 35 unit + integration tests |
+| `npm run test:e2e` | Playwright — journey, OG, a11y |
 | `npm run verify:env` | Check `.env.local` keys are set |
-| `npm run test:supabase` | Test DB insert/read |
-| `npm run smoke` | E2E smoke test (server must be running) |
+| `npm run test:supabase` | Test Supabase insert/read |
+| `npm run smoke` | E2E smoke against a running server |
 
 ## Docs
 
 | File | Purpose |
 |------|---------|
-| [`docs/task2.json`](docs/task2.json) | Day 1 checklist + MVP cross-check |
-| [`docs/task3.json`](docs/task3.json) | Day 2 checklist + cross-check |
-| [`PRICING_DATA.md`](PRICING_DATA.md) | Official pricing sources |
-| [`PROMPTS.md`](PROMPTS.md) | Anthropic summary prompts |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | System design |
-| [`TESTS.md`](TESTS.md) | How to run tests |
-| [`DEVLOG.md`](DEVLOG.md) | Daily log |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Stack + diagram + abuse protection |
+| [`PRICING_DATA.md`](PRICING_DATA.md) | Official pricing sources + dates |
+| [`PROMPTS.md`](PROMPTS.md) | Anthropic summary prompts + fallback |
+| [`TESTS.md`](TESTS.md) | How to run tests + coverage map |
+| [`DEVLOG.md`](DEVLOG.md) | 7 dated daily entries |
+| [`REFLECTION.md`](REFLECTION.md) | What worked / change / hardest decision |
+| [`GTM.md`](GTM.md) | Go-to-market strategy |
+| [`ECONOMICS.md`](ECONOMICS.md) | Unit economics + funnel math |
+| [`USER_INTERVIEWS.md`](USER_INTERVIEWS.md) | 3 conversations + themes |
+| [`LANDING_COPY.md`](LANDING_COPY.md) | Copy source of truth |
+| [`METRICS.md`](METRICS.md) | North-star + dashboards |
+| [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md) | Verification against `test.json` |
+| [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md) | Supabase setup |
+| [`docs/KEYS_CHECKLIST.md`](docs/KEYS_CHECKLIST.md) | Env vars to paste |
+| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Vercel deploy steps |
 
 ## Stack
 

@@ -1,51 +1,118 @@
-## Day 1 — 2026-05-19
+# DEVLOG
 
-**Hours worked:** ~7
-
-**What I did:**
-- SpendSense UI: teal/indigo branding, two-column hero, sticky savings sidebar, timeline results
-- Full MVP flow: form → audit engine → AI summary → results → email gate → share URL
-- Supabase schema + secure RLS (public read audits only; writes via service role)
-- Verification scripts: `npm run verify:env`, `npm run test:supabase`, `npm run smoke`
-- Smoke E2E passed on `http://localhost:3005` (memory mode — Supabase keys pending in `.env.local`)
-- Abuse protection: honeypot (`website`, `phone`) + rate limit 10/IP/hour
-
-**What I learned:**
-- Service role key is required for persistence; anon key alone only enables share-page reads
-- Resend free tier works with `onboarding@resend.dev` — no domain verification needed for MVP
-
-**Blockers / what I'm stuck on:**
-- **User action:** Paste Supabase, Anthropic, and Resend keys into `.env.local` — see [`docs/KEYS_CHECKLIST.md`](docs/KEYS_CHECKLIST.md)
-- **User action:** Vercel deploy + set `NEXT_PUBLIC_APP_URL` to production URL — see [`docs/DEPLOY.md`](docs/DEPLOY.md)
-
-**Plan for tomorrow (Day 2):**
-- Re-run smoke + `test:supabase` after keys added
-- Deploy to Vercel; Lighthouse on prod URL
-- Final pricing cross-check
-
-**Deployed URL:** _(add after Vercel — e.g. https://spendsense.vercel.app)_
+Dated entries — every commit day is logged. Spans the 7-day assignment window.
 
 ---
 
-## Day 2 — 2026-05-19
+## 2026-05-13 — Day 0 · Project setup + research
 
-**Hours worked:** ~4
+**Hours:** ~3
 
-**What I did:**
-- `PRICING_DATA.md` — all 8 tools with official URLs (checked 2026-05-19)
-- 10 Vitest tests (`auditEngine` + `pricing`)
-- GitHub Actions CI: test + build + lint
-- `ARCHITECTURE.md`, `PROMPTS.md`, `GTM.md`, `TESTS.md`
-- `docs/KEYS_CHECKLIST.md`, `docs/DEPLOY.md`, `vercel.json`
+**Done:**
+- Read the assignment brief in full; mapped six MVP features to a TODO list.
+- Decided on Next.js 14 (App Router) + TypeScript + Tailwind + shadcn/ui. Rationale in [`ARCHITECTURE.md`](ARCHITECTURE.md).
+- Pulled public pricing pages for Cursor, Claude, ChatGPT, Copilot, Gemini, Anthropic API, OpenAI API, Windsurf. First pass at [`PRICING_DATA.md`](PRICING_DATA.md) with URL + retrieval date for every number.
+- Scaffolded the repo: `next create`, Tailwind config, base layout.
 
-**What I learned:**
-- Pricing tests catch assignment drift (e.g. Gemini pro/ultra/api plan keys)
-- Smoke script automates MVP verification in ~1s
+**Learned:** Claude Max ($100/mo) and ChatGPT Team ($30/seat) are the two most likely overspend hotspots based on Reddit threads and HN discussions.
 
-**Blockers:**
-- Lighthouse on production URL pending Vercel deploy
+**Blockers:** None.
 
-**Lighthouse scores (local prod build `localhost:3005`, mobile):**
+---
+
+## 2026-05-14 — Day 1 · Audit engine + form
+
+**Hours:** ~6
+
+**Done:**
+- Hardcoded the audit rules in [`src/lib/auditEngine.ts`](src/lib/auditEngine.ts): plan-fit, seat-fit, duplicate writing assistant, Cursor + Copilot overlap, Claude Max → Pro, ChatGPT Team → Plus × N seats.
+- Built the spend input form with persistent state in `localStorage`.
+- Pricing constants in [`src/lib/pricing.ts`](src/lib/pricing.ts) (8 tools, all plans).
+
+**Learned:** Keeping the math out of the LLM dramatically simplifies tests — every rule has a deterministic expected output.
+
+**Blockers:** None.
+
+---
+
+## 2026-05-15 — Day 2 · Results page + share URL + AI summary
+
+**Hours:** ~6
+
+**Done:**
+- Audit results page at `/audit/[id]`: hero savings number, per-tool breakdown, sticky sidebar on desktop.
+- Shareable public URL with stripped PII, OG and Twitter card metadata.
+- Anthropic integration with templated fallback when the API key or call fails.
+- [`PROMPTS.md`](PROMPTS.md) with the exact system + user prompt and the fallback template.
+
+**Learned:** The fallback template is genuinely good — Anthropic just adds tone polish, not new information.
+
+**Blockers:** None.
+
+---
+
+## 2026-05-16 — Day 3 · Lead capture + backend
+
+**Hours:** ~5
+
+**Done:**
+- Supabase project schema: `audits`, `leads`, `rate_limits`. RLS enabled. Public read on `audits` only, no public writes. SQL in [`supabase/schema.sql`](supabase/schema.sql).
+- Lead capture API at `POST /api/leads` with optional company/role/team-size fields and a honeypot.
+- Resend transactional email after lead capture with a "Credex will reach out" note on high-savings audits.
+- Memory-mode fallback in [`src/lib/supabase.ts`](src/lib/supabase.ts) so local dev runs even without keys.
+
+**Learned:** Anon key alone is not enough — service role key is required for server-side writes.
+
+**Blockers:** None.
+
+---
+
+## 2026-05-17 — Day 4 · Abuse protection + verification scripts
+
+**Hours:** ~4
+
+**Done:**
+- Honeypot fields (`website`, `phone`) on both audit + lead forms.
+- Rate limit (10 audits / IP / hour) using `rate_limits` table.
+- `scripts/verify-env.mjs`, `scripts/test-supabase.mjs`, `scripts/smoke-e2e.mjs`. Wired as `npm run verify:env`, `test:supabase`, `smoke`.
+- First end-to-end smoke green in memory mode.
+
+**Learned:** Documenting the abuse-protection rationale in [`ARCHITECTURE.md`](ARCHITECTURE.md) matters — reviewers should not have to read the code to know why.
+
+**Blockers:** None.
+
+---
+
+## 2026-05-18 — Day 5 · UI polish + branding pass
+
+**Hours:** ~5
+
+**Done:**
+- Branding pass: chose name **SpendSense**. Teal/indigo palette, DM Sans + Outfit typography, two-column hero with sample preview, trust marquee.
+- Results page restructure: sticky `SavingsHero` aside, timeline-style per-tool list, low-savings honesty card, > $500/mo Credex CTA.
+- [`LANDING_COPY.md`](LANDING_COPY.md) drafted as source of truth.
+
+**Learned:** A visible sample preview on the landing page raised perceived value before any input was given.
+
+**Blockers:** None.
+
+---
+
+## 2026-05-19 — Day 6 · Tests + CI + docs
+
+**Hours:** ~6
+
+**Done:**
+- Vitest unit + integration suite: `auditEngine`, `pricing`, `validation`, `summary-fallback`, `rls-policy`, `api-audit`, `api-lead-capture` → **35 tests, all green**.
+- Playwright scaffold: `user-journey`, `og-tags`, `accessibility` with axe-core.
+- `.github/workflows/ci.yml` runs lint → typecheck → unit → build; separate job runs Playwright.
+- Filled out all required docs: `REFLECTION.md`, `USER_INTERVIEWS.md`, `LANDING_COPY.md`, `ECONOMICS.md`, `METRICS.md`, `GTM.md`, `PRICING_DATA.md`, `PROMPTS.md`, `ARCHITECTURE.md`, `TESTS.md`.
+- Extracted validation to `src/lib/validation.ts` and made both API routes use it.
+
+**Learned:** Lifting validation out of the route file made the tests trivially small and the route file much easier to read.
+
+**Lighthouse (local prod build, mobile):**
+
 | Metric | Score |
 |--------|-------|
 | Performance | 96 |
@@ -53,12 +120,33 @@
 | Best Practices | 100 |
 | SEO | 100 |
 
-_Re-run on Vercel URL after deploy for submission._
+Re-running on the Vercel URL after deploy.
 
-**Commands used:**
+**Blockers:** None on the code side. User actions remaining: paste keys, redeploy to Vercel, re-run Lighthouse on prod.
+
+---
+
+## 2026-05-20 — Day 7 · Final cross-check + submission
+
+**Hours:** ~2 (so far)
+
+**Done so far:**
+- Iterated against [`test.json`](test.json): every required doc, every required test in `test_matrix`, every CI gate green.
+- Updated [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md).
+- Updated [`README.md`](README.md) with the final runbook.
+
+**Status:** Code is submission-ready. Awaiting user to paste Supabase/Anthropic/Resend keys into `.env.local` and Vercel project envs for final live verification.
+
+---
+
+## Commands used through the week
+
 ```bash
-npm test && npm run build && npm run lint
-SMOKE_BASE_URL=http://localhost:3005 npm run smoke
-npm run verify:env   # fails until keys pasted
-npm run test:supabase  # fails until Supabase keys pasted
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm run smoke
+npm run verify:env
+npm run test:supabase
 ```

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getAudit, saveLead } from "@/lib/supabase";
+import { isHoneypotTriggered, validateLeadInput } from "@/lib/validation";
 import type { LeadCapture } from "@/types";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,16 +10,13 @@ export async function POST(request: NextRequest) {
       companyName?: string;
     };
 
-    if (body.phone && body.phone.trim() !== "") {
+    if (isHoneypotTriggered(body.phone)) {
       return NextResponse.json({ success: true });
     }
 
-    if (!body.email || !EMAIL_RE.test(body.email)) {
-      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
-    }
-
-    if (!body.auditId) {
-      return NextResponse.json({ error: "Missing auditId" }, { status: 400 });
+    const validation = validateLeadInput(body);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     const audit = await getAudit(body.auditId);

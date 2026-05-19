@@ -3,43 +3,78 @@
 ## Run locally
 
 ```bash
-npm test          # single run
-npm run test:watch  # watch mode
+npm run lint
+npm run typecheck
+npm test                              # all 35 unit + integration tests
+npm run test:e2e                      # Playwright (requires browsers)
+npm run smoke                         # full HTTP smoke against running server
+```
+
+To start the server for smoke or Playwright manually:
+
+```bash
+npm run build && PORT=3025 npm run start
+SMOKE_BASE_URL=http://localhost:3025 npm run smoke
 ```
 
 ## What's covered
 
-`src/lib/auditEngine.test.ts` — **6 unit tests** on pure audit logic:
+### Unit (Vitest)
 
-1. High savings flag (`> $500/mo`)
-2. Already-optimal solo stack (zero savings)
-3. Claude Team → Pro seat optimization
-4. Cursor Business → Pro downgrade
-5. Windsurf alternative for Copilot Business (coding)
-6. Duplicate writing assistant detection
+| File | Tests | Test-matrix IDs |
+|------|-------|-----------------|
+| `src/lib/auditEngine.test.ts` | 6 | UNIT-001, UNIT-002, UNIT-003 |
+| `src/lib/pricing.test.ts` | 4 | pricing freshness |
+| `tests/unit/validation.test.ts` | 11 | UNIT-004, INT-003 (honeypot) |
+| `tests/unit/summary-fallback.test.ts` | 3 | UNIT-006 |
+| `tests/unit/rls-policy.test.ts` | 3 | security baseline |
+
+### Integration (Vitest + NextRequest)
+
+| File | Tests | Test-matrix IDs |
+|------|-------|-----------------|
+| `tests/integration/api-audit.test.ts` | 3 | INT-001, INT-003 |
+| `tests/integration/api-lead-capture.test.ts` | 4 | INT-002, INT-003 |
+
+**Total: 35 tests across 7 files — all green.**
+
+### E2E (Playwright)
+
+| File | Test-matrix IDs |
+|------|-----------------|
+| `tests/e2e/user-journey.spec.ts` | E2E-001 |
+| `tests/e2e/og-tags.spec.ts` | E2E-004 |
+| `tests/e2e/accessibility.spec.ts` | E2E-005 |
+
+Run via `npm run test:e2e` after `npx playwright install chromium`.
+
+### Smoke (`scripts/smoke-e2e.mjs`)
+
+Six HTTP-level checks against a running server:
+
+1. `GET /` 200
+2. `POST /api/audit` returns id + savings
+3. `GET /audit/[id]` renders results
+4. OG / Twitter metadata present
+5. `POST /api/leads` succeeds with valid input
+6. Honeypot on `/api/audit` returns a fake id and does not persist
 
 ## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) runs on push/PR:
+`.github/workflows/ci.yml`:
 
-- `npm test`
-- `npm run build`
-- `npm run lint`
+- **build-and-test job:** lint → typecheck → test → build
+- **e2e job:** Playwright with Chromium
 
-## Automated smoke test
+## Live backend tests
 
-```bash
-npm run build && PORT=3005 npm run start
-# another terminal:
-SMOKE_BASE_URL=http://localhost:3005 npm run smoke
-```
-
-## Manual E2E (not automated)
-
-See `docs/task2.json` step 2.4 — cold visit through share URL in incognito.
-
-After Supabase keys are set:
+After Supabase keys are pasted into `.env.local`:
 
 ```bash
-npm run test:supabase
+npm run verify:env       # all 6 env vars set
+npm run test:supabase    # insert + read round-trip
 ```
+
+## Coverage map vs `test.json`
+
+See [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md) for a row-by-row map of every test-matrix item to the file that covers it.
