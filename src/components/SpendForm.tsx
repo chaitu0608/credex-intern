@@ -199,7 +199,12 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
         <div className="mb-4">
           <h3 className="text-sm font-semibold text-foreground">Add your tools</h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            Click to add, or drag a card into your stack below
+            <span className="hidden [@media(hover:hover)]:inline">
+              Click to add, or drag a card into your stack below
+            </span>
+            <span className="[@media(hover:hover)]:hidden">
+              Tap a tool to add it to your stack below
+            </span>
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

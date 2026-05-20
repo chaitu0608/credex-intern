@@ -45,6 +45,8 @@ export default function HomePage() {
 
   const handleSubmit = async (input: AuditInput) => {
     setIsLoading(true);
+    const minLoaderMs = 600;
+    const started = Date.now();
     try {
       const res = await fetch("/api/audit", {
         method: "POST",
@@ -53,6 +55,10 @@ export default function HomePage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Audit failed");
+      const elapsed = Date.now() - started;
+      if (elapsed < minLoaderMs) {
+        await new Promise((r) => setTimeout(r, minLoaderMs - elapsed));
+      }
       router.push(`/audit/${data.id}`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
