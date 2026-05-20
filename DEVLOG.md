@@ -74,23 +74,38 @@ git log --pretty=format:"%ad" --date=short | sort -u
 
 ---
 
-## Day 3 — 2026-05-21 _(in progress — update at end of day)_
+## Day 3 — 2026-05-21
 
-**Hours worked:** _add at end of day_
+**Hours worked:** 6 (code + docs; deploy/interviews pending your account setup)
 
 **What I did:**
-- _[planned]_ Supabase project provisioned + schema applied + all keys pasted into Vercel env.
-- _[planned]_ Production deployment verified end-to-end.
-- _[planned]_ First two real user interview DMs sent.
+- Added **10k audits/day** scale-out section to [`ARCHITECTURE.md`](ARCHITECTURE.md) (edge cache, async pipeline, Redis rate limits, cost ceiling).
+- Replaced placeholder Credex **"C"** with gradient SVG mark at `public/credex-mark.svg` and updated [`CredexMark`](src/components/ui/credex-mark.tsx).
+- UX fixes: honest "You're spending well" card only at **$0** savings; **modest savings** ($1–$99) hero copy; **600ms minimum** loader dwell; touch-only palette hint (no false "drag" on mobile).
+- A11y prep: bumped dark-mode `--muted-foreground` contrast; high-savings badge uses foreground text instead of green-on-muted.
+- Edge cache hint: `export const revalidate = 3600` on audit results page.
+- Created [`docs/task3.md`](docs/task3.md) day tracker + [`docs/screenshots/README.md`](docs/screenshots/README.md).
+- Verified: lint, typecheck, **36 tests**, production build all green.
+
+**Still needs you today (cannot be automated):**
+- Supabase + Anthropic + Resend keys → `.env.local` + Vercel envs
+- `npx vercel --prod` + E2E verification on live URL
+- 3+ mobile screenshots → `docs/screenshots/` + README
+- Lighthouse mobile on prod (target A11y ≥ 90)
+- ≥ 1 real user interview transcribed into [`USER_INTERVIEWS.md`](USER_INTERVIEWS.md)
 
 **What I learned:**
-- _add at end of day_
+- `revalidate` on immutable audit pages is the cheapest win before touching Redis or queues — most share traffic is re-reads of the same URL.
+- Touch-only users never see HTML5 drag events; copy must not promise drag on mobile even when click-to-add works fine.
 
 **Blockers / what I'm stuck on:**
-- _add at end of day_
+- `.env.local` still empty — production share URLs and email flow cannot be verified until keys are pasted.
+- Lighthouse A11y on local prod was 89 before today's contrast tweak; must re-run on deployed URL.
 
-**Plan for tomorrow:**
-- _add at end of day_
+**Plan for tomorrow (2026-05-22):**
+- Finish deploy + screenshots + Lighthouse if not done tonight.
+- Conduct interviews 2 and 3; fill cross-cutting themes in `USER_INTERVIEWS.md`.
+- Fourth distinct commit day with interview + README screenshot commit.
 
 ---
 
