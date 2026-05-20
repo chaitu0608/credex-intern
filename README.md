@@ -6,7 +6,7 @@
 **Stack:** Next.js 14 App Router · TypeScript strict · Tailwind · shadcn/ui · Supabase · Anthropic Claude · Resend · Vercel
 **Tests:** 36 passing (Vitest unit + integration, Playwright e2e + axe-core a11y)
 
-> Audits and leads persist only after Supabase keys are set in Vercel → Settings → Environment Variables. Walkthrough in [`docs/DAY3_QUICKSTART.md`](docs/DAY3_QUICKSTART.md).
+> **To finish the production build:** keys aren't pasted yet, so the live URL serves audits but does not persist them. The full input checklist is in [`docs/INPUTS_NEEDED.md`](docs/INPUTS_NEEDED.md) — ~75 minutes of your time, no code changes needed.
 
 ---
 
