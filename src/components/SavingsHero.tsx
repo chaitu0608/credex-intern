@@ -13,16 +13,25 @@ export default function SavingsHero({
   isHighSavings,
   toolCount,
 }: SavingsHeroProps) {
+  const isModestSavings =
+    totalMonthlySavings > 0 && totalMonthlySavings < 100 && !isHighSavings;
+
   if (totalMonthlySavings > 0) {
     return (
       <div className="rounded-lg border border-border bg-card p-8 lg:sticky lg:top-24">
         <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-          Potential savings
+          {isModestSavings ? "Small wins available" : "Potential savings"}
         </p>
         <p className="font-display mt-4 text-5xl font-bold tabular-nums tracking-tight text-foreground md:text-6xl lg:text-7xl">
           ${totalMonthlySavings.toLocaleString()}
         </p>
         <p className="mt-2 text-lg text-muted-foreground">per month</p>
+        {isModestSavings && (
+          <p className="mt-3 text-sm text-muted-foreground">
+            Your stack is mostly right-sized — a few line items are worth
+            revisiting.
+          </p>
+        )}
         <p className="mt-4 font-mono text-sm text-muted-foreground">
           <span className="text-foreground">
             ${totalAnnualSavings.toLocaleString()}
@@ -32,7 +41,7 @@ export default function SavingsHero({
         {isHighSavings && (
           <Badge
             variant="outline"
-            className="mt-6 border-accent/50 font-mono text-xs text-savings"
+            className="mt-6 border-accent/50 font-mono text-xs text-foreground"
           >
             High savings — Credex can help capture more
           </Badge>
