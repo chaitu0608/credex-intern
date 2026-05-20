@@ -21,6 +21,9 @@ interface PageProps {
   params: { id: string };
 }
 
+/** Audits are immutable after creation — safe to cache at the edge. */
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -138,7 +141,7 @@ export default async function AuditPage({ params }: PageProps) {
             </Card>
           )}
 
-          {audit.totalMonthlySavings < 100 && !audit.isHighSavings && (
+          {audit.totalMonthlySavings === 0 && !audit.isHighSavings && (
             <Card className="rounded-lg border-border bg-card">
               <CardContent className="py-4">
                 <p className="text-sm text-muted-foreground">
