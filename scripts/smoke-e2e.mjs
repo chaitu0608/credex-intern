@@ -59,7 +59,17 @@ async function main() {
   }
   const pageRes = await fetch(`${BASE}/audit/${audit.json.id}`);
   const pageHtml = await pageRes.text();
-  if (!pageHtml.includes("Potential savings") && !pageHtml.includes("Stack optimized")) {
+  if (pageHtml.includes("Audit not found")) {
+    console.error(
+      "✗ GET /audit/[id] — audit not found (set Supabase keys on Vercel for persistence)"
+    );
+    process.exit(1);
+  }
+  if (
+    !pageHtml.includes("Potential savings") &&
+    !pageHtml.includes("Small wins available") &&
+    !pageHtml.includes("Stack optimized")
+  ) {
     console.error("✗ Results page missing savings hero");
     process.exit(1);
   }
