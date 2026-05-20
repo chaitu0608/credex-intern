@@ -2,7 +2,9 @@
 
 A free 3-minute audit of a startup's AI tool stack — finds overspend on Cursor, Claude, ChatGPT, Copilot, Gemini, and more, with defensible list-price math your finance team will believe. Built as a lead-generation product for [Credex](https://credex.rocks), which sells discounted AI infrastructure credits.
 
-**Live URL:** _https://YOUR-VERCEL-URL.vercel.app_  _(replace once `vercel --prod` completes)_
+**Live URL:** https://credex-intern.vercel.app
+
+> **Note:** Audits and leads persist only after Supabase keys are set in Vercel → Settings → Environment Variables. Until then, share links may 404 on cold starts. See [`docs/DAY3_QUICKSTART.md`](docs/DAY3_QUICKSTART.md).
 
 **30-second walkthrough:** _Loom link goes here — record once the live URL is up_
 
