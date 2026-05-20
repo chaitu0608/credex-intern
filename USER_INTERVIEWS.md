@@ -10,9 +10,11 @@ If you are evaluating this submission and any interview below is marked "schedul
 
 | Channel | Outreach sent | Replies | Calls booked |
 |---------|---------------|---------|--------------|
-| X (Twitter) cold DM to founders posting about AI tool spend | 5 | _to update_ | _to update_ |
-| Indie Hackers / Hacker News Slack DMs | 3 | _to update_ | _to update_ |
-| Personal network (founders + engineering managers I know) | 3 | _to update_ | _to update_ |
+| X (Twitter) cold DM to founders posting about AI tool spend | 0 / 5 | — | — |
+| Indie Hackers / Hacker News Slack DMs | 0 / 3 | — | — |
+| Personal network (founders + engineering managers I know) | 0 / 3 | — | — |
+
+**Day 3 action:** Send at least 5 DMs today using scripts below. Update this table after each send.
 
 Outreach scripts used live in the appendix at the bottom of this file.
 

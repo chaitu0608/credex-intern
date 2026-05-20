@@ -45,6 +45,7 @@ End-to-end checklist for submission readiness. Check items as you complete them.
 npx vercel --prod
 ```
 
+- [x] Deployed — https://credex-intern.vercel.app
 - [ ] Capture production URL
 - [ ] Set `NEXT_PUBLIC_APP_URL=https://<your-url>` in Vercel
 - [ ] Redeploy: `npx vercel --prod`
@@ -59,7 +60,7 @@ npx vercel --prod
 
 ### 1.7 README live URL (you)
 
-- [ ] Replace placeholder in [`README.md`](../README.md) with real Vercel URL
+- [x] Live URL in [`README.md`](../README.md) — https://credex-intern.vercel.app
 
 ---
 
