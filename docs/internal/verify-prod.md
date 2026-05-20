@@ -11,7 +11,7 @@
 
 ## Fix (required for full submission)
 
-1. Add all keys in Vercel → Settings → Environment Variables (see [`DAY3_QUICKSTART.md`](DAY3_QUICKSTART.md))
+1. Add all keys in Vercel → Settings → Environment Variables (see [`../setup/inputs-needed.md`](../setup/inputs-needed.md))
 2. Set `NEXT_PUBLIC_APP_URL=https://credex-intern.vercel.app`
 3. Redeploy: `npx vercel --prod`
 4. Re-run:

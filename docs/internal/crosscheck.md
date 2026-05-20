@@ -51,7 +51,7 @@ git log --pretty=format:"%ad" --date=short | sort -u | wc -l
 
 ## Submission blockers (user action)
 
-1. Deploy + paste keys — see [`task3.md`](task3.md) Phase 1
+1. Deploy + paste keys — see [`../setup/inputs-needed.md`](../setup/inputs-needed.md)
 2. README live URL + screenshots
 3. 3 real user interviews
 4. 3 more distinct commit days (5/22, 5/23, 5/24)

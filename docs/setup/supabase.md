@@ -8,7 +8,7 @@
 ## 2. Run schema
 
 1. Supabase dashboard → **SQL Editor** → New query
-2. Paste entire contents of [`supabase/schema.sql`](../supabase/schema.sql)
+2. Paste entire contents of [`supabase/schema.sql`](../../supabase/schema.sql)
 3. Click **Run**
 
 If you ran an older schema with `audits service insert` policies, re-run the new schema file — it drops the unsafe insert policy.

@@ -20,7 +20,7 @@ End-to-end checklist for submission readiness. Check items as you complete them.
 ### 1.1 Supabase (you)
 
 - [ ] Create project at supabase.com
-- [ ] Run [`supabase/schema.sql`](../supabase/schema.sql) in SQL Editor
+- [ ] Run [`supabase/schema.sql`](../../supabase/schema.sql) in SQL Editor
 - [ ] Copy URL, anon key, service role key
 
 ### 1.2 Anthropic (you)
@@ -60,7 +60,7 @@ npx vercel --prod
 
 ### 1.7 README live URL (you)
 
-- [x] Live URL in [`README.md`](../README.md) — https://credex-intern.vercel.app
+- [x] Live URL in [`README.md`](../../README.md) — https://credex-intern.vercel.app
 
 ---
 
@@ -78,7 +78,7 @@ npx vercel --prod
 
 ## Phase 3 — User interviews (you)
 
-- [ ] Send 10 cold DMs (templates in [`USER_INTERVIEWS.md`](../USER_INTERVIEWS.md))
+- [ ] Send 10 cold DMs (templates in [`USER_INTERVIEWS.md`](../../USER_INTERVIEWS.md))
 - [ ] Complete ≥ 1 interview today; transcribe quotes into `USER_INTERVIEWS.md`
 - [ ] Commit interview update same day as the call
 
@@ -115,13 +115,13 @@ docs(task3): day 3 tracker and deploy checklist
 ## Phase 6 — DEVLOG & final review
 
 - [ ] Fill DEVLOG Day 3 with real hours, learnings, blockers, plan for 5/22
-- [ ] Walk [`docs/CROSSCHECK.md`](CROSSCHECK.md) — all boxes checked
+- [ ] Walk [`crosscheck.md`](crosscheck.md) — all boxes checked
 
 ---
 
 ## Phase 7 — Optional bonus
 
-- [ ] Publish Twitter thread from [`LANDING_COPY.md`](../LANDING_COPY.md) with live URL
+- [ ] Publish Twitter thread from [`LANDING_COPY.md`](../../LANDING_COPY.md) with live URL
 
 ---
 

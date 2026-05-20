@@ -32,7 +32,7 @@ Without this, audits and leads do not persist on the live URL. This is the only 
    - Region: closest to you.
    - Database password: store it in a password manager (you won't need it for the app, but Supabase makes you set one).
 2. Wait ~2 minutes for the project to provision.
-3. Left sidebar → **SQL Editor** → **New query** → paste the contents of [`supabase/schema.sql`](../supabase/schema.sql) → **Run**.
+3. Left sidebar → **SQL Editor** → **New query** → paste the contents of [`supabase/schema.sql`](../../supabase/schema.sql) → **Run**.
    - You should see "Success. No rows returned." with `audits`, `leads`, `rate_limits` created.
 4. Left sidebar → **Settings → API**. Copy three values:
    - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
@@ -149,7 +149,7 @@ Once 1-3 are done, I'll update README.md to embed the screenshots and the Lighth
 
 The rubric explicitly requires `USER_INTERVIEWS.md` to have **three** conversations transcribed. The current file has the outreach scripts and templates ready. You need to:
 
-1. Send the cold DMs from the appendix in [`USER_INTERVIEWS.md`](../USER_INTERVIEWS.md) — 4 X DMs, 3 Slack/Discord, 3 personal email.
+1. Send the cold DMs from the appendix in [`USER_INTERVIEWS.md`](../../USER_INTERVIEWS.md) — 4 X DMs, 3 Slack/Discord, 3 personal email.
 2. Get at least one 15-min call today. Use the script (also in that file).
 3. Transcribe **what they said, in their words**, not your paraphrase. Paste under "Interview 1".
 

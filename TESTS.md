@@ -77,4 +77,4 @@ npm run test:supabase    # insert + read round-trip
 
 ## Coverage map vs `test.json`
 
-See [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md) for a row-by-row map of every test-matrix item to the file that covers it.
+See [`docs/internal/crosscheck.md`](docs/internal/crosscheck.md) for a row-by-row map of every test-matrix item to the file that covers it.

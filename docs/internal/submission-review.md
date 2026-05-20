@@ -7,7 +7,7 @@ Assignment checklist against current repo state.
 | Requirement | Status | Action |
 |-------------|--------|--------|
 | Public GitHub repo | ✅ | Push today's commits |
-| Live deployed URL | ❌ | [`DAY3_QUICKSTART.md`](DAY3_QUICKSTART.md) |
+| Live deployed URL | ❌ | [`../setup/inputs-needed.md`](../setup/inputs-needed.md) |
 | All required root `.md` files | ✅ | 13 files present |
 | README: summary | ✅ | |
 | README: 3+ screenshots or Loom | ❌ | After deploy |

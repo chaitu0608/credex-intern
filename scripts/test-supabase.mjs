@@ -30,7 +30,7 @@ const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!url || !anon || !service) {
-  console.error("Supabase keys missing in .env.local — see docs/KEYS_CHECKLIST.md");
+  console.error("Supabase keys missing in .env.local — see docs/setup/inputs-needed.md");
   process.exit(1);
 }
 

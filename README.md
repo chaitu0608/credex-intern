@@ -6,7 +6,7 @@
 **Stack:** Next.js 14 App Router · TypeScript strict · Tailwind · shadcn/ui · Supabase · Anthropic Claude · Resend · Vercel
 **Tests:** 36 passing (Vitest unit + integration, Playwright e2e + axe-core a11y)
 
-> **To finish the production build:** keys aren't pasted yet, so the live URL serves audits but does not persist them. The full input checklist is in [`docs/INPUTS_NEEDED.md`](docs/INPUTS_NEEDED.md) — ~75 minutes of your time, no code changes needed.
+> **To finish the production build:** keys aren't pasted yet, so the live URL serves audits but does not persist them. The full input checklist is in [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) — ~75 minutes of your time, no code changes needed.
 
 ---
 
@@ -194,7 +194,7 @@ Capture instructions: [`docs/screenshots/README.md`](docs/screenshots/README.md)
 nvm use 20
 npm install
 cp .env.example .env.local
-# Fill in keys — see docs/KEYS_CHECKLIST.md
+# Fill in keys — see docs/setup/inputs-needed.md
 npm run dev
 ```
 
@@ -229,7 +229,7 @@ After the first deploy, set every variable from `.env.example` in Vercel → Set
 npx vercel --prod
 ```
 
-Full walkthrough: [`docs/DAY3_QUICKSTART.md`](docs/DAY3_QUICKSTART.md). Production verification log: [`docs/VERIFY_PROD.md`](docs/VERIFY_PROD.md).
+Full walkthrough: [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md). Production verification log: [`docs/internal/verify-prod.md`](docs/internal/verify-prod.md).
 
 ---
 
@@ -266,7 +266,7 @@ npm run smoke            # HTTP smoke against a running server
 | API lead capture | `tests/integration/api-lead-capture.test.ts` | 4 |
 | E2E + a11y | `tests/e2e/*.spec.ts` | 3 |
 
-Coverage map: [`TESTS.md`](TESTS.md). Cross-check against the assignment: [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md).
+Coverage map: [`TESTS.md`](TESTS.md). Cross-check against the assignment: [`docs/internal/crosscheck.md`](docs/internal/crosscheck.md).
 
 ---
 
@@ -305,7 +305,10 @@ src/
 supabase/schema.sql             tables + RLS
 tests/                          unit + integration + e2e
 scripts/                        verify-env, test-supabase, smoke-e2e
-docs/                           DAY3_QUICKSTART, CROSSCHECK, SUBMISSION_REVIEW
+docs/
+  setup/                        inputs-needed, supabase, deploy
+  internal/                     crosscheck, submission-review, verify-prod, task3
+  screenshots/                  README + mobile screenshots
 ```
 
 ---
@@ -350,18 +353,22 @@ docs/                           DAY3_QUICKSTART, CROSSCHECK, SUBMISSION_REVIEW
 | [`LANDING_COPY.md`](LANDING_COPY.md) | Hero, sub, CTAs, FAQ, social proof, X thread |
 | [`METRICS.md`](METRICS.md) | North Star, 3 input metrics, what triggers a pivot |
 
-### Operations
+### Setup ([`docs/setup/`](docs/setup))
 
 | File | Purpose |
 |------|---------|
-| [`docs/DAY3_QUICKSTART.md`](docs/DAY3_QUICKSTART.md) | The fastest path to a live URL |
-| [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md) | Supabase setup walkthrough |
-| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Vercel deploy walkthrough |
-| [`docs/KEYS_CHECKLIST.md`](docs/KEYS_CHECKLIST.md) | Every env var with where to get it |
-| [`docs/CROSSCHECK.md`](docs/CROSSCHECK.md) | Self-audit against the assignment |
-| [`docs/VERIFY_PROD.md`](docs/VERIFY_PROD.md) | Production smoke results |
-| [`docs/SUBMISSION_REVIEW.md`](docs/SUBMISSION_REVIEW.md) | Assignment-checklist walkthrough |
-| [`docs/task3.md`](docs/task3.md) | Day 3 task tracker |
+| [`inputs-needed.md`](docs/setup/inputs-needed.md) | Canonical "what I need from you" checklist to finish the prod build |
+| [`supabase.md`](docs/setup/supabase.md) | Provision a Supabase project and apply the schema |
+| [`deploy.md`](docs/setup/deploy.md) | Vercel deploy walkthrough |
+
+### Internal ([`docs/internal/`](docs/internal))
+
+| File | Purpose |
+|------|---------|
+| [`crosscheck.md`](docs/internal/crosscheck.md) | Self-audit against the assignment rubric |
+| [`submission-review.md`](docs/internal/submission-review.md) | Assignment-checklist walkthrough |
+| [`verify-prod.md`](docs/internal/verify-prod.md) | Production smoke results log |
+| [`task3.md`](docs/internal/task3.md) | Day 3 task tracker |
 
 ---
 

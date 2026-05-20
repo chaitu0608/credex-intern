@@ -84,7 +84,7 @@ git log --pretty=format:"%ad" --date=short | sort -u
 - UX fixes: honest "You're spending well" card only at **$0** savings; **modest savings** ($1–$99) hero copy; **600ms minimum** loader dwell; touch-only palette hint (no false "drag" on mobile).
 - A11y prep: bumped dark-mode `--muted-foreground` contrast; high-savings badge uses foreground text instead of green-on-muted.
 - Edge cache hint: `export const revalidate = 3600` on audit results page.
-- Created [`docs/task3.md`](docs/task3.md) day tracker + [`docs/screenshots/README.md`](docs/screenshots/README.md).
+- Created [`docs/internal/task3.md`](docs/internal/task3.md) day tracker + [`docs/screenshots/README.md`](docs/screenshots/README.md).
 - Verified: lint, typecheck, **36 tests**, production build all green.
 
 **Still needs you today (cannot be automated):**
