@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface CredexMarkProps {
@@ -5,21 +6,18 @@ interface CredexMarkProps {
   size?: "sm" | "md";
 }
 
-/** Placeholder Credex logo — swap inner SVG when brand asset is available */
+/** Credex brand mark — gradient monogram from public/credex-mark.svg */
 export function CredexMark({ className, size = "sm" }: CredexMarkProps) {
-  const dim = size === "md" ? "h-6 w-6 text-xs" : "h-5 w-5 text-[10px]";
+  const dim = size === "md" ? 24 : 20;
 
   return (
-    <span
-      className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-md border border-border bg-muted font-bold text-foreground",
-        dim,
-        className
-      )}
-      aria-label="Credex"
-      role="img"
-    >
-      C
-    </span>
+    <Image
+      src="/credex-mark.svg"
+      alt="Credex"
+      width={dim}
+      height={dim}
+      className={cn("shrink-0 rounded-md", className)}
+      priority={false}
+    />
   );
 }
