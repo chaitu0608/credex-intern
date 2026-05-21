@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { calculateCurrentCost } from "@/lib/pricing";
 import {
   HIGH_SAVINGS_THRESHOLD_MONTHLY,
   runAudit,
@@ -165,6 +166,163 @@ describe("runAudit", () => {
         r.recommendationType === "switch-tool"
     );
     expect(claudeDrop).toBeUndefined();
+  });
+
+  it("downgrades Gemini Ultra to Pro using list prices from PRICING_DATA", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 3,
+        useCase: "writing",
+        tools: [
+          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+        ],
+      })
+    );
+    const ultraList = calculateCurrentCost("gemini", "ultra", 1)!;
+    const proList = calculateCurrentCost("gemini", "pro", 1)!;
+    const gemini = result.recommendations.find((r) => r.tool === "gemini");
+    expect(gemini?.recommendationType).toBe("downgrade");
+    expect(gemini?.recommendedAction).toMatch(/Gemini Pro/i);
+    expect(gemini?.savings).toBe(ultraList - proList);
+    expect(gemini?.savings).toBeCloseTo(229.99, 2);
+    expect(gemini?.reason).toMatch(/\$249\.99|\$250/);
+  });
+
+  it("downgrades solo Gemini Ultra regardless of use case", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 1,
+        useCase: "coding",
+        tools: [
+          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+        ],
+      })
+    );
+    const gemini = result.recommendations.find((r) => r.tool === "gemini");
+    expect(gemini?.savings).toBeCloseTo(229.99, 2);
+  });
+
+  it("surfaces API benchmark guidance for anthropic-api with zero fabricated savings", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 5,
+        useCase: "data",
+        tools: [
+          { tool: "anthropic-api", plan: "api", monthlySpend: 1200, seats: 1 },
+        ],
+      })
+    );
+    const api = result.recommendations.find((r) => r.tool === "anthropic-api");
+    expect(api?.recommendationType).toBe("use-credits");
+    expect(api?.savings).toBe(0);
+    expect(api?.reason).toMatch(/usage-based|token/i);
+    expect(api?.reason).toMatch(/Anthropic API/i);
+  });
+
+  it("surfaces API benchmark guidance for gemini api plan", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 2,
+        useCase: "data",
+        tools: [{ tool: "gemini", plan: "api", monthlySpend: 300, seats: 1 }],
+      })
+    );
+    const api = result.recommendations.find((r) => r.tool === "gemini");
+    expect(api?.recommendationType).toBe("use-credits");
+    expect(api?.savings).toBe(0);
+    expect(api?.reason).toMatch(/Google Gemini/i);
+  });
+
+  it("does not downgrade Gemini Ultra for coding teams with multiple seats", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 5,
+        useCase: "coding",
+        tools: [
+          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+        ],
+      })
+    );
+    const gemini = result.recommendations.find((r) => r.tool === "gemini");
+    expect(gemini?.recommendationType).not.toBe("downgrade");
+    expect(gemini?.savings).toBe(0);
+  });
+
+  it("surfaces API benchmark guidance for openai-api", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 3,
+        useCase: "data",
+        tools: [{ tool: "openai-api", plan: "api", monthlySpend: 800, seats: 1 }],
+      })
+    );
+    const api = result.recommendations.find((r) => r.tool === "openai-api");
+    expect(api?.savings).toBe(0);
+    expect(api?.reason).toMatch(/token|usage-based/i);
+  });
+
+  it("mentions Credex credits on high-spend direct API usage", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 10,
+        useCase: "data",
+        tools: [
+          { tool: "openai-api", plan: "api", monthlySpend: 600, seats: 1 },
+        ],
+      })
+    );
+    const api = result.recommendations.find((r) => r.tool === "openai-api");
+    expect(api?.reason).toMatch(/Credex/i);
+  });
+
+  it("caps writing-duplicate savings at catalog list price not reported overspend", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 2,
+        useCase: "writing",
+        tools: [
+          { tool: "gemini", plan: "pro", monthlySpend: 50, seats: 1 },
+          { tool: "chatgpt", plan: "plus", monthlySpend: 200, seats: 4 },
+        ],
+      })
+    );
+    const listCap = calculateCurrentCost("gemini", "pro", 1)!;
+    const dup = result.recommendations.find((r) => r.tool === "gemini");
+    expect(dup?.savings).toBe(listCap);
+    expect(dup?.savings).toBe(20);
+    expect(dup?.savings).toBeLessThan(50);
+  });
+
+  it("includes Gemini in writing-duplicate consolidation", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 2,
+        useCase: "writing",
+        tools: [
+          { tool: "gemini", plan: "pro", monthlySpend: 20, seats: 1 },
+          { tool: "claude", plan: "pro", monthlySpend: 80, seats: 4 },
+        ],
+      })
+    );
+    const drop = result.recommendations.find((r) => r.tool === "gemini");
+    expect(drop?.savings).toBe(20);
+    expect(drop?.alternativeTool).toBe("Claude");
+  });
+
+  it("does not double-count per-tool and overlap savings beyond one line per tool", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 6,
+        useCase: "coding",
+        tools: [
+          { tool: "cursor", plan: "pro", monthlySpend: 120, seats: 6 },
+          { tool: "github-copilot", plan: "business", monthlySpend: 114, seats: 6 },
+        ],
+      })
+    );
+    const toolsWithSavings = result.recommendations.filter((r) => r.savings > 0);
+    const toolIds = toolsWithSavings.map((r) => r.tool);
+    expect(new Set(toolIds).size).toBe(toolIds.length);
   });
 
   it("flags Cursor + Copilot overlap on a coding team and drops the cheaper seat", () => {

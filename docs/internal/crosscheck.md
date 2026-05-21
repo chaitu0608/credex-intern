@@ -25,7 +25,7 @@ Self-audit against the assignment requirements. Last updated: **2026-05-21 (Day 
 | Feature | Status | Code |
 |---------|--------|------|
 | Spend input form | ✅ | `SpendForm.tsx` — palette, localStorage, touch copy |
-| Audit engine | ✅ | `auditEngine.ts` — overlap rule, no fake % savings |
+| Audit engine | ✅ | `auditEngine.ts` — P2: Gemini ultra/pro, API $0, list-price caps — see [`p2-crosscheck.md`](p2-crosscheck.md) |
 | Audit results page | ✅ | `audit/[id]/page.tsx` — revalidate 3600 |
 | AI summary + fallback | ✅ | `anthropic.ts` — verified model id |
 | Lead capture + storage | ⚠️ | Code ✅ — **needs live Supabase** |
@@ -45,7 +45,7 @@ git log --pretty=format:"%ad" --date=short | sort -u | wc -l
 |------|--------|
 | lint | ✅ |
 | typecheck | ✅ |
-| test (36) | ✅ |
+| test (60) | ✅ |
 | build | ✅ |
 | e2e (Playwright) | run after `npx playwright install chromium` |
 

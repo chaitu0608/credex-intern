@@ -2,6 +2,7 @@ import {
   calculateCurrentCost,
   getMinSeats,
   getPlanPrice,
+  PRICING,
   TOOL_NAMES,
 } from "@/lib/pricing";
 import type {
@@ -46,6 +47,29 @@ function optimal(entry: ToolEntry, reason: string): ToolRecommendation {
     "right-sized",
     0,
     reason
+  );
+}
+
+/** Cap savings at list/catalog spend so we never exceed defensible pricing. */
+function savingsCapFromListPrice(entry: ToolEntry): number {
+  const catalog = calculateCurrentCost(entry.tool, entry.plan, entry.seats);
+  if (catalog !== null) {
+    return Math.min(entry.monthlySpend, catalog);
+  }
+  const unit = getPlanPrice(entry.tool, entry.plan);
+  if (unit === null) return entry.monthlySpend;
+  const perSeat = PRICING[entry.tool]?.[entry.plan]?.pricePerSeat;
+  const estimated = perSeat ? unit * entry.seats : unit;
+  return Math.min(entry.monthlySpend, estimated);
+}
+
+function isDirectApiTool(entry: ToolEntry): boolean {
+  return (
+    entry.tool === "anthropic-api" ||
+    entry.tool === "openai-api" ||
+    (entry.tool === "gemini" && entry.plan === "api") ||
+    (entry.tool === "claude" && entry.plan === "api") ||
+    (entry.tool === "chatgpt" && entry.plan === "api")
   );
 }
 
@@ -138,6 +162,38 @@ function analyzeToolEntry(
     }
   }
 
+  if (entry.tool === "gemini" && entry.plan === "ultra" && teamSize === 1) {
+    const ultraCost = calculateCurrentCost("gemini", "ultra", 1) ?? 249.99;
+    const proCost = calculateCurrentCost("gemini", "pro", 1) ?? 20;
+    if (ultraCost > proCost) {
+      return buildRecommendation(
+        entry,
+        "Downgrade to Gemini Pro",
+        "downgrade",
+        ultraCost - proCost,
+        `Gemini Ultra ($${ultraCost}/mo) is for heavy single-user workflows. Pro ($${proCost}/mo) fits a solo ${useCase} setup — save $${ultraCost - proCost}/mo.`
+      );
+    }
+  }
+
+  if (
+    entry.tool === "gemini" &&
+    entry.plan === "ultra" &&
+    ["writing", "research", "mixed"].includes(useCase)
+  ) {
+    const ultraCost = calculateCurrentCost("gemini", "ultra", seats) ?? 249.99;
+    const proCost = calculateCurrentCost("gemini", "pro", seats) ?? 20;
+    if (ultraCost > proCost) {
+      return buildRecommendation(
+        entry,
+        "Downgrade to Gemini Pro",
+        "downgrade",
+        ultraCost - proCost,
+        `Gemini Ultra ($${ultraCost}/mo) targets power users. For ${useCase} work, Pro ($${proCost}/mo) covers most teams — save $${ultraCost - proCost}/mo.`
+      );
+    }
+  }
+
   // STEP 3 — Cross-tool alternatives (use-case based)
   if (useCase === "coding") {
     if (
@@ -176,6 +232,20 @@ function analyzeToolEntry(
     }
   }
 
+  if (isDirectApiTool(entry)) {
+    const credexHint =
+      currentSpend >= 500
+        ? " At this spend level, Credex discounted infrastructure credits may beat retail API rates — request a quote."
+        : "";
+    return buildRecommendation(
+      entry,
+      "Benchmark API usage vs flat plans",
+      "use-credits",
+      0,
+      `Direct ${TOOL_NAMES[entry.tool]} billing ($${currentSpend}/mo reported) is usage-based — export the last 30 days of token usage and compare to any flat ${useCase} subscriptions before switching vendors.${credexHint}`
+    );
+  }
+
   if (useCase === "data" && getPlanPrice(entry.tool, entry.plan) !== null) {
     const flat = catalogCost ?? currentSpend;
     if (flat > 0 && entry.plan !== "api") {
@@ -184,7 +254,7 @@ function analyzeToolEntry(
         "Evaluate API-direct pricing",
         "use-credits",
         0,
-        `For intermittent ${useCase} work, flat ${TOOL_NAMES[entry.tool]} ${entry.plan} ($${flat}/mo list) may exceed pay-as-you-go API spend — benchmark last 30 days of tokens.`
+        `For intermittent ${useCase} work, flat ${TOOL_NAMES[entry.tool]} ${entry.plan} ($${flat}/mo list) may exceed pay-as-you-go API spend — benchmark last 30 days of token usage.`
       );
     }
   }
@@ -255,7 +325,8 @@ function analyzeWritingDuplicates(input: AuditInput): ToolRecommendation[] {
   const flatAssistants = input.tools.filter(
     (t) =>
       (t.tool === "claude" && ["pro", "max"].includes(t.plan)) ||
-      (t.tool === "chatgpt" && ["plus", "team"].includes(t.plan))
+      (t.tool === "chatgpt" && ["plus", "team"].includes(t.plan)) ||
+      (t.tool === "gemini" && ["pro", "ultra"].includes(t.plan))
   );
 
   if (flatAssistants.length < 2) return [];
@@ -263,7 +334,7 @@ function analyzeWritingDuplicates(input: AuditInput): ToolRecommendation[] {
   const sorted = [...flatAssistants].sort((a, b) => a.monthlySpend - b.monthlySpend);
   const toDrop = sorted[0];
   const keeper = sorted[sorted.length - 1];
-  const savings = Math.min(toDrop.monthlySpend, 20 * toDrop.seats);
+  const savings = savingsCapFromListPrice(toDrop);
 
   return [
     buildRecommendation(
