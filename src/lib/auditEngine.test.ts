@@ -219,6 +219,33 @@ describe("runAudit", () => {
     expect(api?.reason).toMatch(/Anthropic API/i);
   });
 
+  it("surfaces API benchmark guidance for claude api plan", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 4,
+        useCase: "data",
+        tools: [{ tool: "claude", plan: "api", monthlySpend: 900, seats: 1 }],
+      })
+    );
+    const api = result.recommendations.find((r) => r.tool === "claude");
+    expect(api?.recommendationType).toBe("use-credits");
+    expect(api?.savings).toBe(0);
+    expect(api?.reason).toMatch(/Claude/i);
+  });
+
+  it("surfaces API benchmark guidance for chatgpt api plan", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 3,
+        useCase: "data",
+        tools: [{ tool: "chatgpt", plan: "api", monthlySpend: 450, seats: 1 }],
+      })
+    );
+    const api = result.recommendations.find((r) => r.tool === "chatgpt");
+    expect(api?.savings).toBe(0);
+    expect(api?.reason).toMatch(/ChatGPT/i);
+  });
+
   it("surfaces API benchmark guidance for gemini api plan", () => {
     const result = runAudit(
       baseInput({

@@ -3,7 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateAISummary } from "@/lib/anthropic";
 import { runAudit } from "@/lib/auditEngine";
 import { checkRateLimit, saveAudit } from "@/lib/supabase";
-import { isHoneypotTriggered, validateAuditInput } from "@/lib/validation";
+import {
+  isHoneypotTriggered,
+  toPersistedAuditInput,
+  validateAuditInput,
+} from "@/lib/validation";
 import type { AuditInput, AuditResult } from "@/types";
 
 function getClientIp(request: NextRequest): string {
@@ -39,11 +43,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const auditData = runAudit(body);
-    const { summary, source } = await generateAISummary(auditData, body);
+    const persisted = toPersistedAuditInput(body);
+    const auditData = runAudit(persisted);
+    const { summary, source } = await generateAISummary(auditData, persisted);
 
     const audit: AuditResult = {
       ...auditData,
+      input: persisted,
       id: nanoid(10),
       aiSummary: summary,
       summarySource: source,

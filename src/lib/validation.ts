@@ -76,6 +76,15 @@ export function validateAuditInput(input: unknown): ValidationResult {
   return { ok: true };
 }
 
+/** Strip honeypot and other non-persisted fields before engine + DB. */
+export function toPersistedAuditInput(input: AuditInput): AuditInput {
+  return {
+    tools: input.tools,
+    teamSize: input.teamSize,
+    useCase: input.useCase,
+  };
+}
+
 /** Honeypot — bots fill hidden fields. */
 export function isHoneypotTriggered(value: unknown): boolean {
   return typeof value === "string" && value.trim().length > 0;

@@ -61,6 +61,25 @@ describe("POST /api/audit (INT-001)", () => {
     expect(json.error).toMatch(/invalid plan/i);
   });
 
+  it("persists audit input without website honeypot field", async () => {
+    const res = await POST(
+      makeRequest({
+        website: "",
+        tools: [
+          { tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 },
+        ],
+        teamSize: 2,
+        useCase: "writing",
+      })
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    const { getAudit } = await import("@/lib/supabase");
+    const audit = await getAudit(json.id as string);
+    expect(audit?.input).toBeDefined();
+    expect(audit!.input).not.toHaveProperty("website");
+  });
+
   it("INT-003 returns fake id when honeypot is filled (no DB write)", async () => {
     const res = await POST(
       makeRequest({

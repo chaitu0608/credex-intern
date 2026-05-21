@@ -95,12 +95,17 @@ export function StackCard({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2 sm:col-span-1">
-          <Label className={labelClass}>Plan</Label>
+          <Label htmlFor={`plan-${index}`} className={labelClass}>
+            Plan
+          </Label>
           <Select
             value={entry.plan}
             onValueChange={(v) => onUpdate(index, { plan: v ?? entry.plan })}
           >
-            <SelectTrigger>
+            <SelectTrigger
+              id={`plan-${index}`}
+              aria-label={`Plan for ${meta.name}`}
+            >
               <SelectValue placeholder="Select plan" />
             </SelectTrigger>
             <SelectContent>
@@ -113,8 +118,11 @@ export function StackCard({
           </Select>
         </div>
         <div className="space-y-2">
-          <Label className={labelClass}>Monthly spend ($)</Label>
+          <Label htmlFor={`spend-${index}`} className={labelClass}>
+            Monthly spend ($)
+          </Label>
           <Input
+            id={`spend-${index}`}
             type="number"
             min={0}
             value={entry.monthlySpend || ""}
@@ -124,8 +132,11 @@ export function StackCard({
           />
         </div>
         <div className="space-y-2">
-          <Label className={labelClass}>Seats</Label>
+          <Label htmlFor={`seats-${index}`} className={labelClass}>
+            Seats
+          </Label>
           <Input
+            id={`seats-${index}`}
             type="number"
             min={1}
             value={entry.seats}

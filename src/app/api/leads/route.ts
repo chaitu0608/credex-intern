@@ -59,22 +59,27 @@ export async function POST(request: NextRequest) {
         "\nCredex may reach out to help you capture additional savings through discounted AI infrastructure credits.\n";
     }
 
+    let emailSent = false;
     const resendKey = process.env.RESEND_API_KEY;
     if (resendKey) {
       try {
         const resend = new Resend(resendKey);
-        await resend.emails.send({
+        const { error } = await resend.emails.send({
           from: "onboarding@resend.dev",
           to: body.email,
           subject,
           text,
         });
+        emailSent = !error;
+        if (error) {
+          console.error("Resend error:", error);
+        }
       } catch (emailError) {
         console.error("Resend error:", emailError);
       }
     }
 
-    return NextResponse.json({ success: true, emailSent: Boolean(resendKey) });
+    return NextResponse.json({ success: true, emailSent });
   } catch (error) {
     console.error("POST /api/leads error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

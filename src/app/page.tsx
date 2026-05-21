@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import SpendForm from "@/components/SpendForm";
+import { SampleAuditPreview } from "@/components/SampleAuditPreview";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
-import { ToolLogo } from "@/components/ui/tool-logo";
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { AITool, AuditInput } from "@/types";
+import type { AuditInput } from "@/types";
 
 const LOADING_MESSAGES = [
   "Analyzing your tools...",
@@ -55,7 +55,19 @@ export default function HomePage() {
         body: JSON.stringify(input),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Audit failed");
+
+      if (res.status === 429) {
+        toast.error(
+          "Too many audits from this network. Try again in about an hour."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error ?? "Audit failed");
+      }
+
       const elapsed = Date.now() - started;
       if (elapsed < minLoaderMs) {
         await new Promise((r) => setTimeout(r, minLoaderMs - elapsed));
@@ -107,58 +119,15 @@ export default function HomePage() {
         </div>
 
         <div className="relative hidden lg:block">
-          <Card className="overflow-hidden rounded-lg border-border bg-card">
-            <CardHeader className="border-b border-border pb-6">
-              <CardDescription className="font-mono text-xs uppercase tracking-widest">
-                Sample audit preview
-              </CardDescription>
-              <p className="font-display mt-4 text-6xl font-bold tabular-nums tracking-tight text-foreground">
-                $847
-                <span className="text-2xl font-medium text-muted-foreground">
-                  /mo
-                </span>
-              </p>
-              <p className="mt-2 font-mono text-sm text-muted-foreground">
-                $10,164/year potential savings
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-0 divide-y divide-border p-0">
-              {[
-                {
-                  tool: "cursor" as AITool,
-                  label: "Cursor Business → Pro",
-                  save: "$20/mo",
-                },
-                {
-                  tool: "claude" as AITool,
-                  label: "Claude Team → Pro",
-                  save: "$70/mo",
-                },
-                {
-                  tool: "chatgpt" as AITool,
-                  label: "Duplicate ChatGPT seat",
-                  save: "$30/mo",
-                },
-              ].map((row) => (
-                <div
-                  key={row.label}
-                  className="flex items-center justify-between gap-3 px-6 py-3 text-sm"
-                >
-                  <span className="flex items-center gap-3 text-muted-foreground">
-                    <ToolLogo tool={row.tool} className="h-7 w-7" />
-                    {row.label}
-                  </span>
-                  <span className="font-mono font-medium text-savings">
-                    {row.save}
-                  </span>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+          <SampleAuditPreview />
         </div>
       </section>
 
-      <section id="audit-form" className="scroll-mt-24 border-t border-border pt-12">
+      <div className="mb-8 lg:hidden" data-testid="sample-preview-mobile">
+        <SampleAuditPreview compact />
+      </div>
+
+      <section id="audit-form" className="scroll-mt-24 border-t border-border pt-12 lg:pt-12">
         <Card
           id="tools"
           className="overflow-hidden rounded-lg border-border bg-card"

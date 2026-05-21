@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "env -u PLAYWRIGHT_BROWSERS_PATH playwright test",
     "verify:env": "node scripts/verify-env.mjs",
     "test:supabase": "node scripts/test-supabase.mjs",
     "smoke": "node scripts/smoke-e2e.mjs"

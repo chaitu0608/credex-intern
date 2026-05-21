@@ -268,8 +268,11 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label className={labelClass}>Team size</Label>
+            <Label htmlFor="team-size" className={labelClass}>
+              Team size
+            </Label>
             <Input
+              id="team-size"
               type="number"
               min={1}
               value={teamSize}
@@ -277,12 +280,14 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label className={labelClass}>Primary use case</Label>
+            <Label htmlFor="use-case" className={labelClass}>
+              Primary use case
+            </Label>
             <Select
               value={useCase}
               onValueChange={(v) => setUseCase(v as UseCase)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="use-case" aria-label="Primary use case">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

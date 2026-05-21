@@ -64,7 +64,7 @@ Local dev without Supabase uses an **in-memory fallback** in `src/lib/supabase.t
 |---------|-------|-----|
 | **Honeypot `website`** | Audit form → `POST /api/audit` | Bots fill hidden fields; returns fake success |
 | **Honeypot `phone`** | Lead form → `POST /api/leads` | Same pattern for lead spam |
-| **Rate limit 10/IP/hour** | `checkRateLimit` in Supabase | Stops audit API abuse; fails open on DB error |
+| **Rate limit 10/IP/hour** | `checkRateLimit` in Supabase | Stops audit API abuse; **fails closed in production** (429 if DB/admin unavailable), permissive in dev |
 
 Documented choice: honeypot + rate limit (no hCaptcha) — low friction for a free lead-gen tool while blocking naive bots.
 

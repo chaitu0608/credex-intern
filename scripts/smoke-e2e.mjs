@@ -111,6 +111,55 @@ async function main() {
   }
   console.log("✓ Honeypot on /api/audit");
 
+  const invalidTool = await req("/api/audit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...auditPayload,
+      tools: [{ tool: "fake-tool", plan: "pro", monthlySpend: 10, seats: 1 }],
+    }),
+  });
+  if (invalidTool.status !== 400) {
+    console.error("✗ Unknown tool should return 400", invalidTool.status, invalidTool.json);
+    process.exit(1);
+  }
+  console.log("✓ Unknown tool rejected (400)");
+
+  const geminiUltra = await req("/api/audit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      tools: [{ tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 }],
+      teamSize: 1,
+      useCase: "writing",
+    }),
+  });
+  if (geminiUltra.status !== 200) {
+    console.error("✗ Gemini Ultra audit", geminiUltra.status, geminiUltra.json);
+    process.exit(1);
+  }
+  const geminiSavings = geminiUltra.json.totalMonthlySavings;
+  if (typeof geminiSavings !== "number" || Math.abs(geminiSavings - 229.99) > 0.02) {
+    console.error("✗ Gemini Ultra → Pro savings expected ~229.99, got", geminiSavings);
+    process.exit(1);
+  }
+  console.log("✓ P2 Gemini Ultra downgrade $229.99/mo");
+
+  const apiOnly = await req("/api/audit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      tools: [{ tool: "anthropic-api", plan: "api", monthlySpend: 1200, seats: 1 }],
+      teamSize: 5,
+      useCase: "data",
+    }),
+  });
+  if (apiOnly.status !== 200 || apiOnly.json.totalMonthlySavings !== 0) {
+    console.error("✗ API tool audit should have $0 savings", apiOnly.json);
+    process.exit(1);
+  }
+  console.log("✓ P2 direct API $0 fabricated savings");
+
   console.log("\nAll smoke checks passed.");
 }
 

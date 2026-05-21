@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { allowsMemoryOnlyPersistence } from "@/lib/runtime";
+import { allowsMemoryOnlyPersistence, isProductionRuntime } from "@/lib/runtime";
 import type { AuditResult, LeadCapture, SummarySource } from "@/types";
 
 function getPublicUrl(): string {
@@ -23,14 +23,28 @@ export function isSupabaseAdminConfigured(): boolean {
   return Boolean(getPublicUrl() && getServiceKey());
 }
 
-export const supabaseClient: SupabaseClient | null = isSupabaseConfigured()
-  ? createClient(getPublicUrl(), getAnonKey())
-  : null;
+let supabaseClientMemo: SupabaseClient | null | undefined;
+let supabaseAdminMemo: SupabaseClient | null | undefined;
 
-// Only use in API routes — never expose service role to the client
-export const supabaseAdmin: SupabaseClient | null = isSupabaseAdminConfigured()
-  ? createClient(getPublicUrl(), getServiceKey())
-  : null;
+/** Lazy-init public client (anon key). */
+export function getSupabaseClient(): SupabaseClient | null {
+  if (supabaseClientMemo === undefined) {
+    supabaseClientMemo = isSupabaseConfigured()
+      ? createClient(getPublicUrl(), getAnonKey())
+      : null;
+  }
+  return supabaseClientMemo;
+}
+
+/** Lazy-init admin client (service role). Only use in API routes. */
+export function getSupabaseAdmin(): SupabaseClient | null {
+  if (supabaseAdminMemo === undefined) {
+    supabaseAdminMemo = isSupabaseAdminConfigured()
+      ? createClient(getPublicUrl(), getServiceKey())
+      : null;
+  }
+  return supabaseAdminMemo;
+}
 
 /** Dev fallback when Supabase is not configured */
 const memoryAudits = new Map<string, AuditResult>();
@@ -72,6 +86,7 @@ function rowToAudit(row: AuditRow): AuditResult {
 export async function saveAudit(audit: AuditResult): Promise<boolean> {
   memoryAudits.set(audit.id, audit);
 
+  const supabaseAdmin = getSupabaseAdmin();
   if (!supabaseAdmin) {
     if (isSupabaseConfigured() && !getServiceKey()) {
       console.warn(
@@ -103,6 +118,7 @@ export async function saveAudit(audit: AuditResult): Promise<boolean> {
 }
 
 export async function getAudit(id: string): Promise<AuditResult | null> {
+  const supabaseClient = getSupabaseClient();
   if (supabaseClient) {
     const { data, error } = await supabaseClient
       .from("audits")
@@ -125,6 +141,7 @@ export async function getAudit(id: string): Promise<AuditResult | null> {
 }
 
 export async function saveLead(lead: LeadCapture): Promise<boolean> {
+  const supabaseAdmin = getSupabaseAdmin();
   if (!supabaseAdmin) {
     if (isSupabaseConfigured()) {
       console.warn(
@@ -152,17 +169,27 @@ export async function saveLead(lead: LeadCapture): Promise<boolean> {
   return true;
 }
 
-/** Max 10 audits per IP per hour. true = allowed. Fail open on errors. */
+/** Max 10 audits per IP per hour. true = allowed. Fail-closed in production. */
 export async function checkRateLimit(ip: string): Promise<boolean> {
-  if (!supabaseAdmin) return true;
+  const supabaseAdmin = getSupabaseAdmin();
+  const failClosed = isProductionRuntime();
+
+  if (!supabaseAdmin) {
+    return !failClosed;
+  }
 
   try {
     const now = new Date();
-    const { data } = await supabaseAdmin
+    const { data, error: selectError } = await supabaseAdmin
       .from("rate_limits")
       .select("*")
       .eq("ip", ip)
       .maybeSingle();
+
+    if (selectError) {
+      console.error("checkRateLimit select:", selectError.message);
+      return !failClosed;
+    }
 
     if (!data) {
       const { error } = await supabaseAdmin.from("rate_limits").insert({
@@ -170,7 +197,10 @@ export async function checkRateLimit(ip: string): Promise<boolean> {
         count: 1,
         window_start: now.toISOString(),
       });
-      if (error) console.error("checkRateLimit insert:", error.message);
+      if (error) {
+        console.error("checkRateLimit insert:", error.message);
+        return !failClosed;
+      }
       return true;
     }
 
@@ -179,22 +209,30 @@ export async function checkRateLimit(ip: string): Promise<boolean> {
       (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
 
     if (hoursElapsed >= 1) {
-      await supabaseAdmin
+      const { error } = await supabaseAdmin
         .from("rate_limits")
         .update({ count: 1, window_start: now.toISOString() })
         .eq("ip", ip);
+      if (error) {
+        console.error("checkRateLimit reset:", error.message);
+        return !failClosed;
+      }
       return true;
     }
 
     if ((data.count as number) >= 10) return false;
 
-    await supabaseAdmin
+    const { error: updateError } = await supabaseAdmin
       .from("rate_limits")
       .update({ count: (data.count as number) + 1 })
       .eq("ip", ip);
+    if (updateError) {
+      console.error("checkRateLimit update:", updateError.message);
+      return !failClosed;
+    }
     return true;
   } catch (e) {
     console.error("checkRateLimit error:", e);
-    return true;
+    return !failClosed;
   }
 }

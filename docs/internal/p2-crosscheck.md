@@ -48,6 +48,11 @@ npm run build
 
 All green on 2026-05-21.
 
+## Production (end-to-end)
+
+- Deploy: `npx vercel --prod` → https://credex-intern.vercel.app
+- Smoke: 9/9 passed including P2 Gemini $229.99 and API $0 on prod
+
 ## Intentional non-goals (P2)
 
 - No fabricated % off API spend

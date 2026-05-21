@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   isHoneypotTriggered,
+  toPersistedAuditInput,
   validateAuditInput,
   validateLeadInput,
 } from "@/lib/validation";
@@ -126,6 +127,23 @@ describe("validateLeadInput", () => {
     expect(
       validateLeadInput({ email: "a@b.co", auditId: "abc", teamSize: 0 }).ok
     ).toBe(false);
+  });
+});
+
+describe("toPersistedAuditInput", () => {
+  it("strips website honeypot from persisted audit input", () => {
+    const persisted = toPersistedAuditInput({
+      tools: [{ tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 }],
+      teamSize: 2,
+      useCase: "coding",
+      website: "spam@bot.com",
+    });
+    expect(persisted).toEqual({
+      tools: [{ tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 }],
+      teamSize: 2,
+      useCase: "coding",
+    });
+    expect("website" in persisted).toBe(false);
   });
 });
 

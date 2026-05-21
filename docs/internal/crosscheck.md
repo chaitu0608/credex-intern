@@ -26,6 +26,9 @@ Self-audit against the assignment requirements. Last updated: **2026-05-21 (Day 
 |---------|--------|------|
 | Spend input form | ✅ | `SpendForm.tsx` — palette, localStorage, touch copy |
 | Audit engine | ✅ | `auditEngine.ts` — P2: Gemini ultra/pro, API $0, list-price caps — see [`p2-crosscheck.md`](p2-crosscheck.md) |
+| API/storage (P3) | ✅ | Honeypot stripped from `audits.input`, honest `emailSent`, fail-closed rate limit in prod, lazy Supabase |
+| Frontend (P4) | ✅ | Mobile sample preview, audit a11y e2e, 429 toast, lead error copy — see [`p4-crosscheck.md`](p4-crosscheck.md) |
+| Tests/CI (P5) | ✅ | 68 Vitest + 7 e2e (desktop + mobile), CI green, prod smoke |
 | Audit results page | ✅ | `audit/[id]/page.tsx` — revalidate 3600 |
 | AI summary + fallback | ✅ | `anthropic.ts` — verified model id |
 | Lead capture + storage | ⚠️ | Code ✅ — **needs live Supabase** |
@@ -45,7 +48,8 @@ git log --pretty=format:"%ad" --date=short | sort -u | wc -l
 |------|--------|
 | lint | ✅ |
 | typecheck | ✅ |
-| test (60) | ✅ |
+| test (68 vitest) | ✅ |
+| e2e (7 specs × 2 projects) | ✅ |
 | build | ✅ |
 | e2e (Playwright) | run after `npx playwright install chromium` |
 

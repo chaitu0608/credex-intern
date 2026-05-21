@@ -4,7 +4,7 @@
 
 **Live:** https://credex-intern.vercel.app
 **Stack:** Next.js 14 App Router · TypeScript strict · Tailwind · shadcn/ui · Supabase · Anthropic Claude · Resend · Vercel
-**Tests:** 36 passing (Vitest unit + integration, Playwright e2e + axe-core a11y)
+**Tests:** 68 passing (Vitest unit + integration, Playwright e2e + axe-core a11y on landing and audit results)
 
 > **To finish the production build:** keys aren't pasted yet, so the live URL serves audits but does not persist them. The full input checklist is in [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) — ~75 minutes of your time, no code changes needed.
 
@@ -239,7 +239,7 @@ Full walkthrough: [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md). 
 
 2. **In-memory fallback in [`src/lib/supabase.ts`](src/lib/supabase.ts) for local dev only.** Lets the dev loop run without a Supabase project, but the route now returns 503 if `saveAudit` fails on a configured deploy, and a loud warning fires when `SUPABASE_SERVICE_ROLE_KEY` is missing in production. Serverless functions don't share memory across requests, so "memory fallback in prod" is a silent landmine — not a feature.
 
-3. **Honeypot + rate limit instead of hCaptcha.** This is a free public lead-gen tool — every step of friction kills the conversion rate. Honeypot fields (`website` on the audit form, `phone` on the lead form) catch naive bots; a Supabase-backed 10/IP/hour rate limit catches abuse. Rate limit fails open if Supabase is down — deliberate trade-off documented in [`ARCHITECTURE.md`](ARCHITECTURE.md). hCaptcha is for if real abuse surfaces.
+3. **Honeypot + rate limit instead of hCaptcha.** This is a free public lead-gen tool — every step of friction kills the conversion rate. Honeypot fields (`website` on the audit form, `phone` on the lead form) catch naive bots; `website` is never stored on the audit row. A Supabase-backed 10/IP/hour rate limit catches abuse — **fails closed in production** (429 when rate-limit DB is unavailable), permissive in local dev. See [`ARCHITECTURE.md`](ARCHITECTURE.md). hCaptcha is for if real abuse surfaces.
 
 4. **Email gate placed strictly after value is shown.** Every cold visitor sees the full savings number and per-tool breakdown on `/audit/[id]` *before* the lead form. The brief says the email gate should never come before value. Conversion suffers a little; lead quality jumps a lot, and a captured email is qualified by self-selection.
 
@@ -250,7 +250,7 @@ Full walkthrough: [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md). 
 ## Tests
 
 ```bash
-npm test                 # 36 tests across 7 files
+npm test                 # 68 Vitest tests across 11 files
 npm run test:e2e         # Playwright (requires `npx playwright install chromium`)
 npm run smoke            # HTTP smoke against a running server
 ```

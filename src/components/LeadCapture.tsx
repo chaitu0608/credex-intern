@@ -66,6 +66,14 @@ export default function LeadCapture({
       });
 
       const data = await res.json();
+      if (res.status === 503) {
+        throw new Error(
+          "Could not save your email right now. Try again in a few minutes."
+        );
+      }
+      if (res.status === 400) {
+        throw new Error(data.error ?? "Please check your email and try again.");
+      }
       if (!res.ok) {
         throw new Error(data.error ?? "Failed to submit");
       }
