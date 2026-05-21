@@ -35,6 +35,32 @@ describe("POST /api/audit (INT-001)", () => {
     expect(res.status).toBe(400);
   });
 
+  it("returns 400 for unknown tool", async () => {
+    const res = await POST(
+      makeRequest({
+        tools: [{ tool: "fake-tool", plan: "pro", monthlySpend: 20, seats: 1 }],
+        teamSize: 1,
+        useCase: "coding",
+      })
+    );
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/unknown tool/i);
+  });
+
+  it("returns 400 for invalid plan", async () => {
+    const res = await POST(
+      makeRequest({
+        tools: [{ tool: "claude", plan: "hobby", monthlySpend: 20, seats: 1 }],
+        teamSize: 1,
+        useCase: "writing",
+      })
+    );
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/invalid plan/i);
+  });
+
   it("INT-003 returns fake id when honeypot is filled (no DB write)", async () => {
     const res = await POST(
       makeRequest({

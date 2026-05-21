@@ -1,21 +1,20 @@
-# Production verification log (2026-05-20)
+# Production verification log
 
-**URL:** https://credex-intern.vercel.app
+**URL:** https://credex-intern.vercel.app  
+**Last verified:** 2026-05-22 (P0 + P1 complete in repo; redeploy after each P1 push)
 
 | Check | Result | Notes |
 |-------|--------|-------|
 | `GET /` | ✅ 200 | Landing loads |
 | `POST /api/audit` | ✅ 200 | Returns audit id + savings |
-| `GET /audit/{id}` | ⚠️ 200 | Works immediately; may 404 on cold start without Supabase |
-| `POST /api/leads` | ❌ 400 | `Audit not found` — **Supabase keys required on Vercel** |
+| `GET /audit/{id}` | ✅ 200 | Persists with Supabase on Vercel |
+| `POST /api/leads` | ✅ 200 | Lead + optional Resend email |
+| `POST /api/audit` unknown tool | ✅ 400 | After P1-3 deploy |
+| Smoke script | ✅ | `SMOKE_BASE_URL=https://credex-intern.vercel.app npm run smoke` |
 
-## Fix (required for full submission)
-
-1. Add all keys in Vercel → Settings → Environment Variables (see [`../setup/inputs-needed.md`](../setup/inputs-needed.md))
-2. Set `NEXT_PUBLIC_APP_URL=https://credex-intern.vercel.app`
-3. Redeploy: `npx vercel --prod`
-4. Re-run:
+## Redeploy after code changes
 
 ```bash
+npx vercel --prod
 SMOKE_BASE_URL=https://credex-intern.vercel.app npm run smoke
 ```

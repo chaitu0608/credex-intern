@@ -59,6 +59,52 @@ describe("validateAuditInput", () => {
       }).ok
     ).toBe(true);
   });
+
+  it("rejects unknown tool", () => {
+    const result = validateAuditInput({
+      tools: [{ tool: "fake-tool", plan: "pro", monthlySpend: 20, seats: 1 }],
+      teamSize: 1,
+      useCase: "coding",
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toMatch(/unknown tool/i);
+  });
+
+  it("rejects invalid plan for tool", () => {
+    const result = validateAuditInput({
+      tools: [{ tool: "cursor", plan: "plus", monthlySpend: 20, seats: 1 }],
+      teamSize: 1,
+      useCase: "coding",
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toMatch(/invalid plan/i);
+  });
+
+  it("accepts gemini ultra and anthropic-api", () => {
+    expect(
+      validateAuditInput({
+        tools: [
+          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+          { tool: "anthropic-api", plan: "api", monthlySpend: 100, seats: 1 },
+        ],
+        teamSize: 2,
+        useCase: "data",
+      }).ok
+    ).toBe(true);
+  });
+
+  it("rejects duplicate tool in stack", () => {
+    const result = validateAuditInput({
+      tools: [
+        { tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 },
+        { tool: "cursor", plan: "business", monthlySpend: 40, seats: 1 },
+      ],
+      teamSize: 2,
+      useCase: "coding",
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toMatch(/duplicate tool/i);
+  });
 });
 
 describe("validateLeadInput", () => {

@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { allowsMemoryOnlyPersistence } from "@/lib/runtime";
 import type { AuditResult, LeadCapture, SummarySource } from "@/types";
 
 function getPublicUrl(): string {
@@ -79,7 +80,7 @@ export async function saveAudit(audit: AuditResult): Promise<boolean> {
     } else {
       console.warn("Supabase not configured — audit kept in memory only");
     }
-    return true;
+    return allowsMemoryOnlyPersistence();
   }
 
   const { error } = await supabaseAdmin.from("audits").insert({
@@ -132,7 +133,7 @@ export async function saveLead(lead: LeadCapture): Promise<boolean> {
       return false;
     }
     console.warn("Supabase not configured — lead accepted but not persisted");
-    return true;
+    return allowsMemoryOnlyPersistence();
   }
 
   const { error } = await supabaseAdmin.from("leads").insert({
