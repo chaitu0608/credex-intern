@@ -16,6 +16,8 @@ import { Label } from "@/components/ui/label";
 interface LeadCaptureProps {
   auditId: string;
   isHighSavings: boolean;
+  /** <$100/mo and not high-savings — honest path per spec */
+  isHonestPath?: boolean;
   totalMonthlySavings: number;
 }
 
@@ -24,21 +26,25 @@ type State = "idle" | "submitting" | "success" | "error";
 export default function LeadCapture({
   auditId,
   isHighSavings,
+  isHonestPath = false,
   totalMonthlySavings,
 }: LeadCaptureProps) {
   const [state, setState] = useState<State>("idle");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [role, setRole] = useState("");
+  const [teamSize, setTeamSize] = useState<string>("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [emailSent, setEmailSent] = useState(true);
 
   const heading = isHighSavings
     ? `Save your $${totalMonthlySavings.toLocaleString()}/mo audit`
-    : totalMonthlySavings > 0
-      ? "Email me this report"
-      : "Get optimization updates";
+    : isHonestPath
+      ? "Notify me when new optimizations apply"
+      : totalMonthlySavings > 0
+        ? "Email me this report"
+        : "Save your audit report";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +59,7 @@ export default function LeadCapture({
           email,
           companyName: companyName || undefined,
           role: role || undefined,
+          teamSize: teamSize ? Number(teamSize) : undefined,
           auditId,
           phone,
         }),
@@ -100,7 +107,9 @@ export default function LeadCapture({
             <CardDescription className="mt-1">
               {isHighSavings
                 ? "Credex can help capture additional savings via discounted credits."
-                : "No spam — we only email your audit link."}
+                : isHonestPath
+                  ? "We'll email you when pricing changes or new stack optimizations match your tools."
+                  : "No spam — we only email your audit link."}
             </CardDescription>
           </div>
         </div>
@@ -120,7 +129,7 @@ export default function LeadCapture({
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="company" className="text-xs uppercase tracking-wide text-muted-foreground">
                 Company (optional)
@@ -139,6 +148,19 @@ export default function LeadCapture({
                 id="role"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lead-team-size" className="text-xs uppercase tracking-wide text-muted-foreground">
+                Team size (optional)
+              </Label>
+              <Input
+                id="lead-team-size"
+                type="number"
+                min={1}
+                placeholder="e.g. 8"
+                value={teamSize}
+                onChange={(e) => setTeamSize(e.target.value)}
               />
             </div>
           </div>

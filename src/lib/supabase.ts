@@ -118,8 +118,14 @@ export async function getAudit(id: string): Promise<AuditResult | null> {
 
 export async function saveLead(lead: LeadCapture): Promise<boolean> {
   if (!supabaseAdmin) {
-    console.warn("Supabase admin not configured — lead not persisted");
-    return false;
+    if (isSupabaseConfigured()) {
+      console.warn(
+        "Supabase URL/anon set but SUPABASE_SERVICE_ROLE_KEY missing — leads will not persist."
+      );
+      return false;
+    }
+    console.warn("Supabase not configured — lead accepted but not persisted");
+    return true;
   }
 
   const { error } = await supabaseAdmin.from("leads").insert({

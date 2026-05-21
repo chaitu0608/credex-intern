@@ -15,35 +15,31 @@ const outfit = Outfit({
   weight: ["500", "600", "700", "800"],
 });
 
-// Prefer the explicit env; fall back to the Vercel-injected host (no protocol)
-// so OG previews still resolve when the operator forgets NEXT_PUBLIC_APP_URL.
-const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-const vercelHost = process.env.VERCEL_URL?.trim();
-const appUrl =
-  explicitUrl ||
-  (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
+import {
+  baseMetadata,
+  buildOpenGraph,
+  buildTwitterCard,
+} from "@/lib/og-metadata";
+
+const defaultTitle = "SpendSense by Credex — Free AI Tool Spend Audit";
+const defaultDescription =
+  "See where you're overspending on AI tools. Free audit in under 3 minutes.";
 
 export const metadata: Metadata = {
+  ...baseMetadata(),
   title: {
-    default: "SpendSense by Credex — Free AI Tool Spend Audit",
+    default: defaultTitle,
     template: "%s | SpendSense by Credex",
   },
   description:
     "Instant audit of your AI tool stack. Find overspend on Cursor, Claude, ChatGPT, Copilot, and more — with defensible savings math.",
-  ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
-  openGraph: {
-    siteName: "SpendSense by Credex",
-    type: "website",
-    title: "SpendSense by Credex — Free AI Tool Spend Audit",
-    description:
-      "See where you're overspending on AI tools. Free audit in under 3 minutes.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "SpendSense by Credex — Free AI Tool Spend Audit",
-    description:
-      "See where you're overspending on AI tools. Free audit in under 3 minutes.",
-  },
+  openGraph: buildOpenGraph({
+    title: defaultTitle,
+    description: defaultDescription,
+    path: "/",
+    imagePath: "/opengraph-image",
+  }),
+  twitter: buildTwitterCard(defaultTitle, defaultDescription, "/opengraph-image"),
 };
 
 export default function RootLayout({

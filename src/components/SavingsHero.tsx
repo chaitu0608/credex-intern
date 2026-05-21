@@ -1,3 +1,4 @@
+import { HONEST_PATH_MAX_MONTHLY } from "@/lib/auditEngine";
 import { Badge } from "@/components/ui/badge";
 
 interface SavingsHeroProps {
@@ -14,7 +15,9 @@ export default function SavingsHero({
   toolCount,
 }: SavingsHeroProps) {
   const isModestSavings =
-    totalMonthlySavings > 0 && totalMonthlySavings < 100 && !isHighSavings;
+    totalMonthlySavings > 0 &&
+    totalMonthlySavings < HONEST_PATH_MAX_MONTHLY &&
+    !isHighSavings;
 
   if (totalMonthlySavings > 0) {
     return (

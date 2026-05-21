@@ -1,7 +1,8 @@
 import type { AITool } from "@/types";
-import { TOOL_DESCRIPTIONS, TOOL_NAMES } from "@/lib/pricing";
+import { PRICING, TOOL_DESCRIPTIONS, TOOL_NAMES } from "@/lib/pricing";
 
-export const ALL_TOOLS = Object.keys(TOOL_NAMES) as AITool[];
+/** Single source of truth — every tool in PRICING appears in the form palette */
+export const ALL_TOOLS = Object.keys(PRICING) as AITool[];
 
 export function getToolMeta(tool: AITool) {
   return {

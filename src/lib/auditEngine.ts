@@ -12,6 +12,10 @@ import type {
   ToolRecommendation,
 } from "@/types";
 
+/** Threshold for Credex high-savings CTA — used across engine, UI, and metadata */
+export const HIGH_SAVINGS_THRESHOLD_MONTHLY = 500;
+export const HONEST_PATH_MAX_MONTHLY = 100;
+
 function buildRecommendation(
   entry: ToolEntry,
   recommendedAction: string,
@@ -301,7 +305,7 @@ export function runAudit(
     recommendations,
     totalMonthlySavings,
     totalAnnualSavings: totalMonthlySavings * 12,
-    isHighSavings: totalMonthlySavings > 500,
+    isHighSavings: totalMonthlySavings > HIGH_SAVINGS_THRESHOLD_MONTHLY,
   };
 }
 

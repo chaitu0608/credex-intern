@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { getAppUrl } from "@/lib/app-url";
 import { getAudit, saveLead } from "@/lib/supabase";
 import { isHoneypotTriggered, validateLeadInput } from "@/lib/validation";
 import type { LeadCapture } from "@/types";
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Audit not found" }, { status: 400 });
     }
 
-    await saveLead({
+    const saved = await saveLead({
       email: body.email,
       companyName: body.companyName,
       role: body.role,
@@ -32,12 +33,14 @@ export async function POST(request: NextRequest) {
       auditId: body.auditId,
     });
 
-    const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-    const vercelHost = process.env.VERCEL_URL?.trim();
-    const appUrl =
-      explicitUrl ||
-      (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
-    const shareUrl = `${appUrl}/audit/${audit.id}`;
+    if (!saved) {
+      return NextResponse.json(
+        { error: "Could not save lead. Check Supabase configuration." },
+        { status: 503 }
+      );
+    }
+
+    const shareUrl = `${getAppUrl()}/audit/${audit.id}`;
     const savings = audit.totalMonthlySavings;
 
     const subject =

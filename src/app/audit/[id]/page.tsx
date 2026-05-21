@@ -15,6 +15,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { HONEST_PATH_MAX_MONTHLY } from "@/lib/auditEngine";
+import {
+  baseMetadata,
+  buildOpenGraph,
+  buildTwitterCard,
+} from "@/lib/og-metadata";
 import { getAudit } from "@/lib/supabase";
 
 interface PageProps {
@@ -38,23 +44,21 @@ export async function generateMetadata({
       : "AI stack audit — optimized";
 
   const description = `SpendSense audit of ${audit.input.tools.length} AI tools. Potential savings: $${audit.totalMonthlySavings}/month ($${audit.totalAnnualSavings}/year).`;
-  const explicitUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-  const vercelHost = process.env.VERCEL_URL?.trim();
-  const appUrl =
-    explicitUrl ||
-    (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
+  const path = `/audit/${params.id}`;
+  const imagePath = `${path}/opengraph-image`;
 
   return {
+    ...baseMetadata(),
     title,
     description,
-    openGraph: {
-      siteName: "SpendSense",
+    openGraph: buildOpenGraph({
       title,
       description,
-      url: `${appUrl}/audit/${params.id}`,
-      type: "website",
-    },
-    twitter: { card: "summary_large_image", title, description },
+      path,
+      imagePath,
+      siteName: "SpendSense",
+    }),
+    twitter: buildTwitterCard(title, description, imagePath),
   };
 }
 
@@ -84,6 +88,9 @@ export default async function AuditPage({ params }: PageProps) {
       </PageShell>
     );
   }
+
+  const isHonestPath =
+    !audit.isHighSavings && audit.totalMonthlySavings < HONEST_PATH_MAX_MONTHLY;
 
   return (
     <PageShell headerBackHref="/" headerBackLabel="← New audit" maxWidth="xl">
@@ -141,15 +148,18 @@ export default async function AuditPage({ params }: PageProps) {
             </Card>
           )}
 
-          {audit.totalMonthlySavings === 0 && !audit.isHighSavings && (
+          {isHonestPath && (
             <Card className="rounded-lg border-border bg-card">
               <CardContent className="py-4">
                 <p className="text-sm text-muted-foreground">
                   <span className="font-medium text-foreground">
                     You&apos;re spending well.
                   </span>{" "}
-                  Save your report to get notified when new optimizations apply
-                  to your stack.
+                  {audit.totalMonthlySavings === 0
+                    ? "Your stack looks right-sized for your team size and use case."
+                    : `We found about $${audit.totalMonthlySavings}/mo in small optimizations — nothing urgent.`}{" "}
+                  Save your report below and we&apos;ll notify you when new
+                  optimizations apply to your stack.
                 </p>
               </CardContent>
             </Card>
@@ -158,6 +168,7 @@ export default async function AuditPage({ params }: PageProps) {
           <LeadCapture
             auditId={audit.id}
             isHighSavings={audit.isHighSavings}
+            isHonestPath={isHonestPath}
             totalMonthlySavings={audit.totalMonthlySavings}
           />
 

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { runAudit } from "@/lib/auditEngine";
+import {
+  HIGH_SAVINGS_THRESHOLD_MONTHLY,
+  runAudit,
+} from "@/lib/auditEngine";
 import type { AuditInput } from "@/types";
 
 const baseInput = (overrides: Partial<AuditInput> = {}): AuditInput => ({
@@ -32,7 +35,9 @@ describe("runAudit", () => {
       })
     );
     expect(result.isHighSavings).toBe(true);
-    expect(result.totalMonthlySavings).toBeGreaterThan(500);
+    expect(result.totalMonthlySavings).toBeGreaterThan(
+      HIGH_SAVINGS_THRESHOLD_MONTHLY
+    );
   });
 
   it("returns zero savings for an already-optimal solo stack", () => {

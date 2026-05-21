@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getAppHostname } from "@/lib/app-url";
 
 export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
@@ -6,6 +7,8 @@ export const contentType = "image/png";
 export const alt = "SpendSense by Credex — Free AI Tool Spend Audit";
 
 export default function Image() {
+  const hostname = getAppHostname();
+
   return new ImageResponse(
     (
       <div
@@ -86,7 +89,7 @@ export default function Image() {
             fontFamily: "monospace",
           }}
         >
-          <span>spendsense.app</span>
+          <span>{hostname}</span>
           <span>No login · Email after value</span>
         </div>
       </div>

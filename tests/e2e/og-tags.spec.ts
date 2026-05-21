@@ -20,8 +20,17 @@ test("E2E-004 audit page has OG + Twitter card meta", async ({ request, page }) 
   const tw = await page
     .locator('meta[name="twitter:card"]')
     .getAttribute("content");
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute("content");
+  const ogUrl = await page
+    .locator('meta[property="og:url"]')
+    .getAttribute("content");
 
   expect(og).toBeTruthy();
   expect(ogDesc).toBeTruthy();
   expect(tw).toBe("summary_large_image");
+  expect(ogImage).toContain(`/audit/${id}/opengraph-image`);
+  expect(ogImage).toMatch(/^https?:\/\//);
+  expect(ogUrl).toContain(`/audit/${id}`);
 });
