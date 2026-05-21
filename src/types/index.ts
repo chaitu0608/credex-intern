@@ -51,6 +51,9 @@ export interface ToolRecommendation {
   alternativeTool?: string;
 }
 
+/** How the personalized summary paragraph was produced */
+export type SummarySource = "ai" | "template";
+
 /** Complete audit result stored and displayed */
 export interface AuditResult {
   id: string;
@@ -59,6 +62,8 @@ export interface AuditResult {
   totalMonthlySavings: number;
   totalAnnualSavings: number;
   aiSummary: string;
+  /** Claude API vs deterministic fallback */
+  summarySource: SummarySource;
   createdAt: string;
   /** true when totalMonthlySavings > 500 */
   isHighSavings: boolean;

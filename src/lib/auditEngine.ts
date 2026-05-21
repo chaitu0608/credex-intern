@@ -260,8 +260,9 @@ function analyzeWritingDuplicates(input: AuditInput): ToolRecommendation[] {
 
   if (flatAssistants.length < 2) return [];
 
-  const sorted = [...flatAssistants].sort((a, b) => b.monthlySpend - a.monthlySpend);
+  const sorted = [...flatAssistants].sort((a, b) => a.monthlySpend - b.monthlySpend);
   const toDrop = sorted[0];
+  const keeper = sorted[sorted.length - 1];
   const savings = Math.min(toDrop.monthlySpend, 20 * toDrop.seats);
 
   return [
@@ -270,8 +271,8 @@ function analyzeWritingDuplicates(input: AuditInput): ToolRecommendation[] {
       `Consolidate writing tools — drop duplicate ${TOOL_NAMES[toDrop.tool]}`,
       "switch-tool",
       savings,
-      `You pay for ${flatAssistants.length} writing assistants. Most teams standardize on one — save ~$${savings}/mo by dropping the lower-usage seat.`,
-      TOOL_NAMES[sorted[1].tool]
+      `You pay for ${flatAssistants.length} writing assistants. Most teams standardize on one — save ~$${savings}/mo by dropping ${TOOL_NAMES[toDrop.tool]} and keeping ${TOOL_NAMES[keeper.tool]}.`,
+      TOOL_NAMES[keeper.tool]
     ),
   ];
 }

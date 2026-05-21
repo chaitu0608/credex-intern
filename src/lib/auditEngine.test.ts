@@ -141,6 +141,32 @@ describe("runAudit", () => {
     expect(dup?.reason).toMatch(/writing|duplicate|standardize/i);
   });
 
+  it("drops the lower-spend writing assistant, not the higher", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 4,
+        useCase: "writing",
+        tools: [
+          { tool: "claude", plan: "pro", monthlySpend: 80, seats: 4 },
+          { tool: "chatgpt", plan: "plus", monthlySpend: 20, seats: 4 },
+        ],
+      })
+    );
+
+    const dup = result.recommendations.find((r) => r.tool === "chatgpt");
+    expect(dup).toBeDefined();
+    expect(dup?.savings).toBe(20);
+    expect(dup?.alternativeTool).toBe("Claude");
+
+    const claudeDrop = result.recommendations.find(
+      (r) =>
+        r.tool === "claude" &&
+        r.savings > 0 &&
+        r.recommendationType === "switch-tool"
+    );
+    expect(claudeDrop).toBeUndefined();
+  });
+
   it("flags Cursor + Copilot overlap on a coding team and drops the cheaper seat", () => {
     const result = runAudit(
       baseInput({
