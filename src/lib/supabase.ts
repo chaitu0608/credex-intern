@@ -170,6 +170,47 @@ export async function saveLead(lead: LeadCapture): Promise<boolean> {
 }
 
 /** Max 10 audits per IP per hour. true = allowed. Fail-closed in production. */
+type RateLimitRow = {
+  count: number;
+  window_start: string;
+};
+
+async function applyRateLimitForRow(
+  supabaseAdmin: NonNullable<ReturnType<typeof getSupabaseAdmin>>,
+  ip: string,
+  data: RateLimitRow,
+  now: Date,
+  failClosed: boolean
+): Promise<boolean> {
+  const windowStart = new Date(data.window_start);
+  const hoursElapsed =
+    (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
+
+  if (hoursElapsed >= 1) {
+    const { error } = await supabaseAdmin
+      .from("rate_limits")
+      .update({ count: 1, window_start: now.toISOString() })
+      .eq("ip", ip);
+    if (error) {
+      console.error("checkRateLimit reset:", error.message);
+      return !failClosed;
+    }
+    return true;
+  }
+
+  if (data.count >= 10) return false;
+
+  const { error: updateError } = await supabaseAdmin
+    .from("rate_limits")
+    .update({ count: data.count + 1 })
+    .eq("ip", ip);
+  if (updateError) {
+    console.error("checkRateLimit update:", updateError.message);
+    return !failClosed;
+  }
+  return true;
+}
+
 export async function checkRateLimit(ip: string): Promise<boolean> {
   const supabaseAdmin = getSupabaseAdmin();
   const failClosed = isProductionRuntime();
@@ -197,40 +238,39 @@ export async function checkRateLimit(ip: string): Promise<boolean> {
         count: 1,
         window_start: now.toISOString(),
       });
-      if (error) {
-        console.error("checkRateLimit insert:", error.message);
-        return !failClosed;
+      if (!error) return true;
+
+      // Concurrent first request for this IP — retry read instead of failing closed.
+      if (error.code === "23505") {
+        const { data: raced, error: retrySelectError } = await supabaseAdmin
+          .from("rate_limits")
+          .select("*")
+          .eq("ip", ip)
+          .maybeSingle();
+        if (retrySelectError || !raced) {
+          console.error("checkRateLimit race retry:", retrySelectError?.message);
+          return !failClosed;
+        }
+        return applyRateLimitForRow(
+          supabaseAdmin,
+          ip,
+          raced as RateLimitRow,
+          now,
+          failClosed
+        );
       }
-      return true;
-    }
 
-    const windowStart = new Date(data.window_start as string);
-    const hoursElapsed =
-      (now.getTime() - windowStart.getTime()) / (1000 * 60 * 60);
-
-    if (hoursElapsed >= 1) {
-      const { error } = await supabaseAdmin
-        .from("rate_limits")
-        .update({ count: 1, window_start: now.toISOString() })
-        .eq("ip", ip);
-      if (error) {
-        console.error("checkRateLimit reset:", error.message);
-        return !failClosed;
-      }
-      return true;
-    }
-
-    if ((data.count as number) >= 10) return false;
-
-    const { error: updateError } = await supabaseAdmin
-      .from("rate_limits")
-      .update({ count: (data.count as number) + 1 })
-      .eq("ip", ip);
-    if (updateError) {
-      console.error("checkRateLimit update:", updateError.message);
+      console.error("checkRateLimit insert:", error.message);
       return !failClosed;
     }
-    return true;
+
+    return applyRateLimitForRow(
+      supabaseAdmin,
+      ip,
+      data as RateLimitRow,
+      now,
+      failClosed
+    );
   } catch (e) {
     console.error("checkRateLimit error:", e);
     return !failClosed;

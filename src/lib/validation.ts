@@ -90,6 +90,11 @@ export function isHoneypotTriggered(value: unknown): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+/** Audit API returns fake-* ids for honeypot hits — no persisted audit. */
+export function isHoneypotResponseId(id: unknown): boolean {
+  return typeof id === "string" && id.startsWith("fake-");
+}
+
 export function validateLeadInput(input: unknown): ValidationResult {
   if (!input || typeof input !== "object") {
     return { ok: false, error: "Invalid input" };

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isHoneypotResponseId,
   isHoneypotTriggered,
   toPersistedAuditInput,
   validateAuditInput,
@@ -156,5 +157,14 @@ describe("isHoneypotTriggered", () => {
     expect(isHoneypotTriggered("")).toBe(false);
     expect(isHoneypotTriggered(undefined)).toBe(false);
     expect(isHoneypotTriggered("   ")).toBe(false);
+  });
+});
+
+describe("isHoneypotResponseId", () => {
+  it("detects fake audit ids from honeypot API responses", () => {
+    expect(isHoneypotResponseId("fake-abc123")).toBe(true);
+    expect(isHoneypotResponseId("xFake-abc")).toBe(false);
+    expect(isHoneypotResponseId("abc1234567")).toBe(false);
+    expect(isHoneypotResponseId(undefined)).toBe(false);
   });
 });

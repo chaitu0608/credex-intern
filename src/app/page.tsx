@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { AuditInput } from "@/types";
+import { isHoneypotResponseId } from "@/lib/validation";
 
 const LOADING_MESSAGES = [
   "Analyzing your tools...",
@@ -66,6 +67,11 @@ export default function HomePage() {
 
       if (!res.ok) {
         throw new Error(data.error ?? "Audit failed");
+      }
+
+      if (isHoneypotResponseId(data.id)) {
+        setIsLoading(false);
+        return;
       }
 
       const elapsed = Date.now() - started;
