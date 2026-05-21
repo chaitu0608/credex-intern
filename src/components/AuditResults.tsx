@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ToolLogo } from "@/components/ui/tool-logo";
 import type { RecommendationType, ToolRecommendation } from "@/types";
 
 const TYPE_LABELS: Record<RecommendationType, string> = {
@@ -41,13 +42,16 @@ export default function AuditResults({
               }`}
             >
               <CardHeader className="flex flex-row items-start justify-between gap-2 pb-2">
-                <div>
-                  <CardTitle className="text-base font-semibold">
-                    {rec.toolName}
-                  </CardTitle>
-                  <CardDescription className="font-mono text-xs capitalize">
-                    {rec.currentPlan} · ${rec.currentSpend}/mo
-                  </CardDescription>
+                <div className="flex items-start gap-3">
+                  <ToolLogo tool={rec.tool} className="h-9 w-9" />
+                  <div>
+                    <CardTitle className="text-base font-semibold">
+                      {rec.toolName}
+                    </CardTitle>
+                    <CardDescription className="font-mono text-xs capitalize">
+                      {rec.currentPlan} · ${rec.currentSpend}/mo
+                    </CardDescription>
+                  </div>
                 </div>
                 <Badge variant="outline" className="font-mono text-xs">
                   {TYPE_LABELS[rec.recommendationType]}

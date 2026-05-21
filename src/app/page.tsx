@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import SpendForm from "@/components/SpendForm";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
+import { ToolLogo } from "@/components/ui/tool-logo";
 import {
   Card,
   CardContent,
@@ -15,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { AuditInput } from "@/types";
+import type { AITool, AuditInput } from "@/types";
 
 const LOADING_MESSAGES = [
   "Analyzing your tools...",
@@ -123,15 +124,30 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="space-y-0 divide-y divide-border p-0">
               {[
-                { tool: "Cursor Business → Pro", save: "$20/mo" },
-                { tool: "Claude Team → Pro", save: "$70/mo" },
-                { tool: "Duplicate ChatGPT seat", save: "$30/mo" },
+                {
+                  tool: "cursor" as AITool,
+                  label: "Cursor Business → Pro",
+                  save: "$20/mo",
+                },
+                {
+                  tool: "claude" as AITool,
+                  label: "Claude Team → Pro",
+                  save: "$70/mo",
+                },
+                {
+                  tool: "chatgpt" as AITool,
+                  label: "Duplicate ChatGPT seat",
+                  save: "$30/mo",
+                },
               ].map((row) => (
                 <div
-                  key={row.tool}
-                  className="flex items-center justify-between px-6 py-3 text-sm"
+                  key={row.label}
+                  className="flex items-center justify-between gap-3 px-6 py-3 text-sm"
                 >
-                  <span className="text-muted-foreground">{row.tool}</span>
+                  <span className="flex items-center gap-3 text-muted-foreground">
+                    <ToolLogo tool={row.tool} className="h-7 w-7" />
+                    {row.label}
+                  </span>
                   <span className="font-mono font-medium text-savings">
                     {row.save}
                   </span>

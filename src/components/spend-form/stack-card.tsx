@@ -17,6 +17,7 @@ import {
   PLAN_OPTIONS,
 } from "@/lib/pricing";
 import { getToolMeta } from "@/lib/tool-meta";
+import { ToolLogo } from "@/components/ui/tool-logo";
 import type { ToolEntry } from "@/types";
 
 interface StackCardProps {
@@ -50,9 +51,7 @@ export function StackCard({
     <div className="rounded-lg border border-border bg-card p-4">
       <div className="mb-4 flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted font-mono text-xs font-semibold">
-            {meta.initials}
-          </span>
+          <ToolLogo tool={entry.tool} className="h-9 w-9" />
           <div>
             <p className="text-sm font-semibold text-foreground">{meta.name}</p>
             <p className="text-xs text-muted-foreground">{meta.description}</p>

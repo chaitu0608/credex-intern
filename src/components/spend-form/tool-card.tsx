@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { getToolMeta } from "@/lib/tool-meta";
+import { ToolLogo } from "@/components/ui/tool-logo";
 import type { AITool } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -49,9 +50,7 @@ export function ToolCard({
           <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
         </span>
       )}
-      <span className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted font-mono text-xs font-semibold text-foreground">
-        {meta.initials}
-      </span>
+      <ToolLogo tool={tool} className="h-9 w-9" />
       <div>
         <p className="text-sm font-semibold text-foreground">{meta.name}</p>
         <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
