@@ -112,6 +112,7 @@ export default async function AuditPage({ params }: PageProps) {
           <AuditResults
             recommendations={audit.recommendations}
             aiSummary={audit.aiSummary}
+            summarySource={audit.summarySource}
           />
 
           {audit.isHighSavings && (

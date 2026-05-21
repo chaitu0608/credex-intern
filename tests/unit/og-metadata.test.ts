@@ -27,7 +27,8 @@ describe("og-metadata", () => {
       imagePath: "/audit/abc123/opengraph-image",
     });
     expect(og.url).toBe("https://credex-intern.vercel.app/audit/abc123");
-    expect(og.images?.[0]).toMatchObject({
+    const image = Array.isArray(og.images) ? og.images[0] : og.images;
+    expect(image).toMatchObject({
       url: "https://credex-intern.vercel.app/audit/abc123/opengraph-image",
       width: 1200,
       height: 630,

@@ -8,6 +8,7 @@ create table if not exists audits (
   total_monthly_savings numeric not null,
   total_annual_savings numeric not null,
   ai_summary text,
+  summary_source text check (summary_source in ('ai', 'template')),
   is_high_savings boolean default false,
   created_at timestamptz default now()
 );
@@ -45,3 +46,7 @@ create policy "audits public read"
 -- API routes use SUPABASE_SERVICE_ROLE_KEY which bypasses RLS.
 
 -- rate_limits: no public policies (service role only)
+
+-- Existing projects: run once if audits table predates summary_source
+alter table audits add column if not exists summary_source text
+  check (summary_source in ('ai', 'template'));

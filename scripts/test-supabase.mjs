@@ -46,6 +46,7 @@ const row = {
   total_monthly_savings: 0,
   total_annual_savings: 0,
   ai_summary: "connectivity test",
+  summary_source: "template",
   is_high_savings: false,
 };
 

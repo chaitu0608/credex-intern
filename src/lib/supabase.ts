@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { AuditResult, LeadCapture } from "@/types";
+import type { AuditResult, LeadCapture, SummarySource } from "@/types";
 
 function getPublicUrl(): string {
   return process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? "";
@@ -41,9 +41,14 @@ type AuditRow = {
   total_monthly_savings: number;
   total_annual_savings: number;
   ai_summary: string | null;
+  summary_source: string | null;
   is_high_savings: boolean;
   created_at: string;
 };
+
+function parseSummarySource(value: string | null | undefined): SummarySource {
+  return value === "ai" ? "ai" : "template";
+}
 
 function rowToAudit(row: AuditRow): AuditResult {
   return {
@@ -53,6 +58,7 @@ function rowToAudit(row: AuditRow): AuditResult {
     totalMonthlySavings: Number(row.total_monthly_savings),
     totalAnnualSavings: Number(row.total_annual_savings),
     aiSummary: row.ai_summary ?? "",
+    summarySource: parseSummarySource(row.summary_source),
     isHighSavings: row.is_high_savings,
     createdAt: row.created_at,
   };
@@ -83,6 +89,7 @@ export async function saveAudit(audit: AuditResult): Promise<boolean> {
     total_monthly_savings: audit.totalMonthlySavings,
     total_annual_savings: audit.totalAnnualSavings,
     ai_summary: audit.aiSummary,
+    summary_source: audit.summarySource,
     is_high_savings: audit.isHighSavings,
   });
 

@@ -40,12 +40,13 @@ export async function POST(request: NextRequest) {
     }
 
     const auditData = runAudit(body);
-    const aiSummary = await generateAISummary(auditData, body);
+    const { summary, source } = await generateAISummary(auditData, body);
 
     const audit: AuditResult = {
       ...auditData,
       id: nanoid(10),
-      aiSummary,
+      aiSummary: summary,
+      summarySource: source,
       createdAt: new Date().toISOString(),
     };
 

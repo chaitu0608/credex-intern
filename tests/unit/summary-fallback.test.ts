@@ -20,9 +20,10 @@ describe("AI summary fallback (UNIT-006)", () => {
     if (originalKey !== undefined) process.env.ANTHROPIC_API_KEY = originalKey;
   });
 
-  it("returns a non-empty templated summary when no API key is set", async () => {
+  it("returns templated summary with source template when no API key", async () => {
     const result = runAudit(sampleInput);
-    const summary = await generateAISummary(result, sampleInput);
+    const { summary, source } = await generateAISummary(result, sampleInput);
+    expect(source).toBe("template");
     expect(typeof summary).toBe("string");
     expect(summary.length).toBeGreaterThan(40);
     expect(summary).toMatch(/\$\d+/);
@@ -38,7 +39,7 @@ describe("AI summary fallback (UNIT-006)", () => {
       ],
     };
     const result = runAudit(highInput);
-    const summary = await generateAISummary(result, highInput);
+    const { summary } = await generateAISummary(result, highInput);
     if (result.isHighSavings) {
       expect(summary.toLowerCase()).toContain("credex");
     }
@@ -51,7 +52,8 @@ describe("AI summary fallback (UNIT-006)", () => {
       tools: [{ tool: "cursor", plan: "pro", monthlySpend: 20, seats: 1 }],
     };
     const result = runAudit(input);
-    const summary = await generateAISummary(result, input);
+    const { summary, source } = await generateAISummary(result, input);
     expect(summary).toBeTruthy();
+    expect(source).toBe("template");
   });
 });

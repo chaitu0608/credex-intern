@@ -279,7 +279,7 @@ function analyzeWritingDuplicates(input: AuditInput): ToolRecommendation[] {
 
 export function runAudit(
   input: AuditInput
-): Omit<AuditResult, "id" | "aiSummary" | "createdAt"> {
+): Omit<AuditResult, "id" | "aiSummary" | "summarySource" | "createdAt"> {
   const perTool = input.tools.map((entry) => analyzeToolEntry(entry, input));
   const duplicateRecs = analyzeWritingDuplicates(input);
   const overlapRec = analyzeCursorCopilotOverlap(input);
@@ -311,7 +311,7 @@ export function runAudit(
 }
 
 export function generateAuditSummaryPrompt(
-  result: Omit<AuditResult, "aiSummary" | "id" | "createdAt">,
+  result: Omit<AuditResult, "aiSummary" | "summarySource" | "id" | "createdAt">,
   input: AuditInput
 ): string {
   const top = [...result.recommendations]

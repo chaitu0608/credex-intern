@@ -1,8 +1,16 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { generateAuditSummaryPrompt } from "@/lib/auditEngine";
-import type { AuditInput, AuditResult } from "@/types";
+import type { AuditInput, AuditResult, SummarySource } from "@/types";
 
-type AuditWithoutSummary = Omit<AuditResult, "id" | "aiSummary" | "createdAt">;
+type AuditWithoutSummary = Omit<
+  AuditResult,
+  "id" | "aiSummary" | "summarySource" | "createdAt"
+>;
+
+export type GeneratedSummary = {
+  summary: string;
+  source: SummarySource;
+};
 
 function buildFallbackSummary(
   result: AuditWithoutSummary,
@@ -21,10 +29,9 @@ function buildFallbackSummary(
     ? `The largest opportunity is ${top.toolName}: ${top.recommendedAction.toLowerCase()}, saving about $${top.savings}/month.`
     : "Several line items are worth revisiting.";
 
-  const credex =
-    result.isHighSavings
-      ? " Credex can help capture additional savings through discounted infrastructure credits — worth a short consultation."
-      : "";
+  const credex = result.isHighSavings
+    ? " Credex can help capture additional savings through discounted infrastructure credits — worth a short consultation."
+    : "";
 
   return `Across ${input.tools.length} tools (~$${totalSpend}/month), we identified $${result.totalMonthlySavings}/month ($${result.totalAnnualSavings}/year) in potential savings for your ${input.teamSize}-person ${input.useCase} team. ${topLine}${credex}`;
 }
@@ -32,10 +39,13 @@ function buildFallbackSummary(
 export async function generateAISummary(
   result: AuditWithoutSummary,
   input: AuditInput
-): Promise<string> {
+): Promise<GeneratedSummary> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return buildFallbackSummary(result, input);
+    return {
+      summary: buildFallbackSummary(result, input),
+      source: "template",
+    };
   }
 
   try {
@@ -43,8 +53,6 @@ export async function generateAISummary(
     const prompt = generateAuditSummaryPrompt(result, input);
 
     const message = await client.messages.create({
-      // Verified against Anthropic's published models page.
-      // Override via ANTHROPIC_MODEL if you have access to a newer Sonnet.
       model: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-20241022",
       max_tokens: 200,
       system:
@@ -54,11 +62,17 @@ export async function generateAISummary(
 
     const block = message.content[0];
     if (block.type === "text" && block.text.trim()) {
-      return block.text.trim();
+      return { summary: block.text.trim(), source: "ai" };
     }
-    return buildFallbackSummary(result, input);
+    return {
+      summary: buildFallbackSummary(result, input),
+      source: "template",
+    };
   } catch (error) {
     console.error("generateAISummary error:", error);
-    return buildFallbackSummary(result, input);
+    return {
+      summary: buildFallbackSummary(result, input),
+      source: "template",
+    };
   }
 }
