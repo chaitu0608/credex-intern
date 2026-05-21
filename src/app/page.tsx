@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import SpendForm from "@/components/SpendForm";
-import { SampleAuditPreview } from "@/components/SampleAuditPreview";
+import { AuditCoveragePanel } from "@/components/AuditCoveragePanel";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
 import {
@@ -119,12 +119,12 @@ export default function HomePage() {
         </div>
 
         <div className="relative hidden lg:block">
-          <SampleAuditPreview />
+          <AuditCoveragePanel />
         </div>
       </section>
 
-      <div className="mb-8 lg:hidden" data-testid="sample-preview-mobile">
-        <SampleAuditPreview compact />
+      <div className="mb-8 lg:hidden" data-testid="hero-aside-mobile">
+        <AuditCoveragePanel compact />
       </div>
 
       <section id="audit-form" className="scroll-mt-24 border-t border-border pt-12 lg:pt-12">

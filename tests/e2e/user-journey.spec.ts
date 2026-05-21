@@ -17,9 +17,17 @@ test("E2E-001 cold visitor completes audit flow", async ({ page }) => {
 
   await page.getByLabel("Team size").fill("1");
 
-  await page.getByRole("button", { name: /Run my audit/i }).click();
+  await page.locator("#audit-form").scrollIntoViewIfNeeded();
 
-  await page.waitForURL(/\/audit\//, { timeout: 30_000 });
+  const auditPost = page.waitForResponse(
+    (res) =>
+      res.url().includes("/api/audit") && res.request().method() === "POST"
+  );
+  await page.getByRole("button", { name: /Run my audit/i }).click();
+  const auditRes = await auditPost;
+  expect(auditRes.ok(), `audit API failed: ${auditRes.status()}`).toBeTruthy();
+
+  await page.waitForURL(/\/audit\//, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/audit\//);
 
   // Savings hero present

@@ -6,17 +6,20 @@ interface CredexMarkProps {
   size?: "sm" | "md";
 }
 
-/** Credex brand mark — gradient monogram from public/credex-mark.svg */
+/** Official Credex wordmark — icon + "credex" from credex.rocks brand assets */
+const LOGO_ASPECT = 502 / 124;
+
 export function CredexMark({ className, size = "sm" }: CredexMarkProps) {
-  const dim = size === "md" ? 24 : 20;
+  const height = size === "md" ? 24 : 20;
+  const width = Math.round(height * LOGO_ASPECT);
 
   return (
     <Image
-      src="/credex-mark.svg"
+      src="/credex-logo.png"
       alt="Credex"
-      width={dim}
-      height={dim}
-      className={cn("shrink-0 rounded-md", className)}
+      width={width}
+      height={height}
+      className={cn("shrink-0", className)}
       priority={false}
     />
   );
