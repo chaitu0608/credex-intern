@@ -6,6 +6,8 @@ export type AuditPdfPayload = {
   toolCount: number;
   teamSize: number;
   useCase: UseCase;
+  totalMonthlySpend: number;
+  savingsPercent: number | null;
   totalMonthlySavings: number;
   totalAnnualSavings: number;
   isHighSavings: boolean;
@@ -56,6 +58,15 @@ export async function downloadAuditPdf(payload: AuditPdfPayload): Promise<void> 
   y = wrapText(doc, meta, MARGIN, y, CONTENT_WIDTH, 12) + 8;
   doc.setTextColor(0);
 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(
+    `Current spend: $${payload.totalMonthlySpend.toLocaleString()}/month`,
+    MARGIN,
+    y
+  );
+  y += 16;
+
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.text("Potential savings", MARGIN, y);
@@ -71,6 +82,10 @@ export async function downloadAuditPdf(payload: AuditPdfPayload): Promise<void> 
   y += 22;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
+  if (payload.savingsPercent !== null) {
+    doc.text(`Savings rate: ${payload.savingsPercent}% of current spend`, MARGIN, y);
+    y += 14;
+  }
   doc.text(
     `$${payload.totalAnnualSavings.toLocaleString()}/year annualized`,
     MARGIN,

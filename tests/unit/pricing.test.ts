@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRICING, PLAN_OPTIONS } from "@/lib/pricing";
+import { PRICING, PLAN_OPTIONS, PRICING_SOURCES } from "@/lib/pricing";
 import type { AITool } from "@/types";
 
 const TOOLS: AITool[] = [
@@ -35,5 +35,12 @@ describe("pricing", () => {
 
   it("chatgpt team has min 2 seats", () => {
     expect(PRICING.chatgpt.team.minSeats).toBe(2);
+  });
+
+  it("PRICING_SOURCES has official URL for every tool", () => {
+    for (const tool of TOOLS) {
+      expect(PRICING_SOURCES[tool].url).toMatch(/^https:\/\//);
+      expect(PRICING_SOURCES[tool].label.length).toBeGreaterThan(0);
+    }
   });
 });

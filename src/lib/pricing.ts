@@ -55,6 +55,44 @@ export const PRICING: Record<AITool, Record<string, PricingEntry>> = {
   },
 };
 
+/** Last full pricing verification — mirrors docs/deliverables/PRICING_DATA.md */
+export const PRICING_VERIFIED_AT = "2026-05-20";
+
+export const PRICING_SOURCES: Record<
+  AITool,
+  { label: string; url: string }
+> = {
+  cursor: { label: "Cursor pricing", url: "https://cursor.com/pricing" },
+  "github-copilot": {
+    label: "GitHub Copilot plans",
+    url: "https://github.com/features/copilot/plans",
+  },
+  claude: {
+    label: "Anthropic pricing",
+    url: "https://www.anthropic.com/pricing",
+  },
+  chatgpt: {
+    label: "ChatGPT pricing",
+    url: "https://openai.com/chatgpt/pricing",
+  },
+  "anthropic-api": {
+    label: "Anthropic API pricing",
+    url: "https://www.anthropic.com/pricing",
+  },
+  "openai-api": {
+    label: "OpenAI API pricing",
+    url: "https://openai.com/api/pricing",
+  },
+  gemini: {
+    label: "Google Gemini pricing",
+    url: "https://ai.google.dev/pricing",
+  },
+  windsurf: {
+    label: "Windsurf pricing",
+    url: "https://windsurf.com/pricing",
+  },
+};
+
 export const TOOL_NAMES: Record<AITool, string> = {
   cursor: "Cursor",
   "github-copilot": "GitHub Copilot",

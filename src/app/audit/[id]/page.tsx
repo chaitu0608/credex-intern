@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import AuditChatWidget from "@/components/audit/audit-chat-widget";
 import AuditPdfDownload from "@/components/audit/audit-pdf-download";
+import AuditPricingSources from "@/components/audit/audit-pricing-sources";
 import {
   AuditRecommendations,
   AuditSummary,
@@ -16,6 +17,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { AuditPdfPayload } from "@/lib/audit-pdf-export";
+import {
+  getSavingsPercent,
+  getTotalMonthlySpend,
+} from "@/lib/audit-metrics";
 import { HONEST_PATH_MAX_MONTHLY } from "@/lib/auditEngine";
 import {
   baseMetadata,
@@ -129,6 +134,11 @@ export default async function AuditPage({ params }: PageProps) {
 
   const topRecommendation = getTopRecommendation(audit.recommendations);
   const toolCount = audit.input.tools.length;
+  const totalMonthlySpend = getTotalMonthlySpend(audit.input.tools);
+  const savingsPercent = getSavingsPercent(
+    totalMonthlySpend,
+    audit.totalMonthlySavings
+  );
 
   const pdfPayload: AuditPdfPayload = {
     id: audit.id,
@@ -136,6 +146,8 @@ export default async function AuditPage({ params }: PageProps) {
     toolCount,
     teamSize: audit.input.teamSize,
     useCase: audit.input.useCase,
+    totalMonthlySpend,
+    savingsPercent,
     totalMonthlySavings: audit.totalMonthlySavings,
     totalAnnualSavings: audit.totalAnnualSavings,
     isHighSavings: audit.isHighSavings,
@@ -218,6 +230,8 @@ export default async function AuditPage({ params }: PageProps) {
               recommendations={audit.recommendations}
             />
 
+            <AuditPricingSources tools={audit.input.tools} />
+
             {audit.isHighSavings && (
               <ReportSection className="border-accent/30 bg-accent/5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -279,8 +293,10 @@ export default async function AuditPage({ params }: PageProps) {
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <SavingsHero
+              totalMonthlySpend={totalMonthlySpend}
               totalMonthlySavings={audit.totalMonthlySavings}
               totalAnnualSavings={audit.totalAnnualSavings}
+              savingsPercent={savingsPercent}
               isHighSavings={audit.isHighSavings}
               toolCount={audit.recommendations.length}
               topRecommendation={topRecommendation}
