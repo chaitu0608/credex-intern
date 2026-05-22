@@ -44,12 +44,13 @@ Logo strip _(mocked)_: `Cursor · Claude · ChatGPT · Copilot · Gemini · Wind
 
 ## Sample preview card
 
-`Sample audit preview`
-`$847/mo`
-`$10,164/year potential savings`
+**Section title:** `See what your audit could uncover`
+`$120/mo` potential savings · `$1,440/year` · from `$580/mo` spend (~21%)
 - Cursor Business → Pro — `$20/mo`
 - Claude Team → Pro — `$70/mo`
 - Duplicate ChatGPT seat — `$30/mo`
+**Disclaimer:** Illustrative example only — recommendations depend on your actual usage and team structure.
+**CTA:** `Run Your Free Audit →`
 
 ## Form card
 

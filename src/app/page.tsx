@@ -10,9 +10,10 @@ import {
   LandingFaq,
   LandingFinalCta,
   LandingProblem,
-  LandingSamplePreview,
   LandingSocialProof,
 } from "@/components/landing/landing-sections";
+import { SampleAuditPreviewCard } from "@/components/landing/sample-audit-preview-card";
+import { SampleAuditPreviewSection } from "@/components/landing/sample-audit-preview-section";
 import SpendForm from "@/components/spend-form/spend-form";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
@@ -153,13 +154,14 @@ export default function HomePage() {
         </div>
 
         <div className="relative hidden space-y-6 lg:block">
-          <LandingSamplePreview />
+          <SampleAuditPreviewCard variant="compact" />
           <AuditCoveragePanel />
         </div>
       </section>
 
-      <div className="mb-8 space-y-6 lg:hidden" data-testid="hero-aside-mobile">
-        <LandingSamplePreview />
+      <SampleAuditPreviewSection />
+
+      <div className="mb-8 lg:hidden" data-testid="hero-aside-mobile">
         <AuditCoveragePanel compact />
       </div>
 

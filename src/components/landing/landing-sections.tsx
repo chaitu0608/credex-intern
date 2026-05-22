@@ -55,31 +55,6 @@ const FAQ_ITEMS = [
   },
 ] as const;
 
-export function LandingSamplePreview() {
-  return (
-    <div className="rounded-xl border border-dashed border-border bg-muted/20 p-5">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        Sample audit preview
-      </p>
-      <p className="font-display mt-3 text-3xl font-bold tabular-nums text-foreground">
-        $847
-        <span className="text-lg font-normal text-muted-foreground">/mo</span>
-      </p>
-      <p className="font-mono text-sm text-savings">
-        $10,164/year potential savings
-      </p>
-      <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-        <li>Cursor Business → Pro — $20/mo</li>
-        <li>Claude Team → Pro — $70/mo</li>
-        <li>Duplicate ChatGPT seat — $30/mo</li>
-      </ul>
-      <p className="mt-3 text-[10px] text-muted-foreground">
-        Illustrative example — your audit uses your real inputs.
-      </p>
-    </div>
-  );
-}
-
 export function LandingProblem() {
   return (
     <section className="border-t border-border py-16 sm:py-20">
