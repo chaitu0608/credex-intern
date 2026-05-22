@@ -1,50 +1,54 @@
 # Repository structure
 
-Assignment deliverables live in [`deliverables/`](deliverables/) with **symlinks at the repo root** for grading (e.g. `ARCHITECTURE.md` → `docs/deliverables/ARCHITECTURE.md`). [`README.md`](../README.md) is the only full narrative doc kept as a real file at root.
-
 ```
 credex-intern/
-├── README.md                  # main entry (real file)
-├── ARCHITECTURE.md, …         # symlinks → docs/deliverables/
-├── package.json, tsconfig.json, vitest.config.ts, playwright.config.ts
-├── .github/workflows/ci.yml
+├── README.md
+├── ARCHITECTURE.md
+├── DEVLOG.md
+├── REFLECTION.md
+├── TESTS.md
+├── PRICING_DATA.md
+├── PROMPTS.md
+├── GTM.md
+├── ECONOMICS.md
+├── USER_INTERVIEWS.md
+├── LANDING_COPY.md
+├── METRICS.md
 │
 ├── docs/
-│   ├── README.md              # docs index
+│   ├── README.md              # this index
 │   ├── STRUCTURE.md           # this file
-│   ├── deliverables/          # rubric .md files (canonical)
-│   ├── setup/                 # deploy + env checklists
-│   ├── screenshots/           # README capture assets
-│   └── internal/              # dev tracking
-│       ├── crosscheck.md
-│       ├── submission-review.md
-│       ├── verify-prod.md
-│       ├── task3.md
-│       └── checklists/        # P2–P4 phase cross-checks
-│
-├── public/
-│   └── assets/
-│       ├── credex-logo.png
-│       └── logos/             # tool brand SVGs
-│
-├── scripts/                   # verify-env, smoke, sync-tool-logos, test-supabase
-├── supabase/schema.sql
+│   ├── API.md
+│   ├── AUDIT_ENGINE.md
+│   ├── DATABASE_SCHEMA.md
+│   ├── SECURITY.md
+│   ├── DEPLOYMENT.md
+│   ├── PERFORMANCE.md
+│   ├── ACCESSIBILITY.md
+│   ├── SEO.md
+│   ├── PRODUCT_DECISIONS.md
+│   ├── FAILURE_CASES.md
+│   ├── ROADMAP.md
+│   ├── COMPETITOR_ANALYSIS.md
+│   ├── DESIGN_SYSTEM.md
+│   ├── BENCHMARKING.md
+│   ├── setup/                 # env + supabase quickstart
+│   ├── internal/              # dev-loop tracking
+│   └── screenshots/
 │
 ├── src/
-│   ├── app/                   # Next.js App Router (routes, API, OG images)
+│   ├── app/                   # Next.js App Router
 │   ├── components/
-│   │   ├── audit/             # results UI (hero, recommendations, lead, share)
-│   │   ├── spend-form/        # landing audit form + stack cards
-│   │   ├── layout/            # header, footer, page shell
-│   │   ├── providers/
-│   │   └── ui/                # shadcn primitives + brand
-│   ├── lib/                   # engine, pricing, API helpers, AI summary
-│   └── types/
+│   └── lib/                   # engine, pricing, supabase, AI
 │
-└── tests/
-    ├── unit/                  # engine, pricing, validation, …
-    ├── integration/           # API route handlers
-    └── e2e/                   # Playwright
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+├── scripts/
+├── supabase/schema.sql
+└── public/
 ```
 
 ## Where to find things
@@ -54,7 +58,6 @@ credex-intern/
 | Landing page | `src/app/page.tsx` |
 | Audit results | `src/app/audit/[id]/page.tsx` |
 | Rule engine | `src/lib/auditEngine.ts` |
-| List prices | `src/lib/pricing.ts` + `docs/deliverables/PRICING_DATA.md` |
+| List prices | `src/lib/pricing.ts` + `PRICING_DATA.md` |
 | Supabase helpers | `src/lib/supabase.ts` |
 | Spend form | `src/components/spend-form/spend-form.tsx` |
-| Coverage panel (hero aside) | `src/components/audit/audit-coverage-panel.tsx` |

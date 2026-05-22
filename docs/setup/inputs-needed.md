@@ -139,7 +139,7 @@ I can't do these from here; they need a real browser pointed at the live URL.
    - `audit-optimized.png` (use a small stack with $0 savings, e.g. Cursor Pro @ 2 seats only)
    - `lead.png` (the email form below the audit)
    - `og-preview.png` (paste a share URL into https://www.opengraph.xyz to capture)
-3. **Lighthouse mobile audit** — Chrome DevTools → Lighthouse → Mobile → Categories: Performance, Accessibility, Best Practices, SEO. Save scores and paste into [`docs/deliverables/DEVLOG.md`](../deliverables/DEVLOG.md) Day 3 entry. Target: Accessibility ≥ 90.
+3. **Lighthouse mobile audit** — Chrome DevTools → Lighthouse → Mobile → Categories: Performance, Accessibility, Best Practices, SEO. Save scores and paste into [`DEVLOG.md`](../../DEVLOG.md) Day 3 entry. Target: Accessibility ≥ 90.
 
 Once 1-3 are done, I'll update README.md to embed the screenshots and the Lighthouse numbers.
 

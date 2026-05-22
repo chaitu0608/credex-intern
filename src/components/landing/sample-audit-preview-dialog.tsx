@@ -59,14 +59,14 @@ export function SampleAuditPreviewDialog({
           if (e.target === dialogRef.current) close();
         }}
       >
-        <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
+        <div className="flex min-h-full items-end justify-center p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:items-center sm:p-6">
           <div
             role="document"
-            className="relative flex max-h-[min(90vh,880px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl"
+            className="relative flex max-h-[min(92dvh,880px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl sm:max-h-[min(90vh,880px)]"
             onClick={(e) => e.stopPropagation()}
           >
-            <header className="flex shrink-0 items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
-              <div>
+            <header className="flex shrink-0 items-start justify-between gap-3 border-b border-border px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
+              <div className="min-w-0 pr-2">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                   {SAMPLE_PREVIEW_SECTION.eyebrow}
                 </p>
@@ -93,7 +93,7 @@ export function SampleAuditPreviewDialog({
               <SampleAuditPreviewCard />
             </div>
 
-            <footer className="shrink-0 border-t border-border bg-muted/20 px-5 py-4 sm:px-6">
+            <footer className="shrink-0 border-t border-border bg-muted/20 px-4 py-3 sm:px-6 sm:py-4">
               <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
                 {disclaimer}
               </p>

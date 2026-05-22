@@ -129,7 +129,7 @@ async function main() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      tools: [{ tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 }],
+      tools: [{ tool: "gemini", plan: "ultra", monthlySpend: 199.99, seats: 1 }],
       teamSize: 1,
       useCase: "writing",
     }),

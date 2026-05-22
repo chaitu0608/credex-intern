@@ -1,47 +1,51 @@
-# Docs
+# Documentation index
 
-All project documentation lives under this folder. Application code is in [`src/`](../src/).
+All documentation for SpendSense / Credex intern submission.
 
-## [`deliverables/`](deliverables) — assignment rubric (canonical)
-
-| File | Purpose |
-|------|---------|
-| [`ARCHITECTURE.md`](deliverables/ARCHITECTURE.md) | Stack, diagrams, abuse rationale, 10k audits/day scale-out |
-| [`DEVLOG.md`](deliverables/DEVLOG.md) | Daily log (`Day N — YYYY-MM-DD` format) |
-| [`REFLECTION.md`](deliverables/REFLECTION.md) | Five required reflection questions |
-| [`TESTS.md`](deliverables/TESTS.md) | What's tested, how to run |
-| [`PRICING_DATA.md`](deliverables/PRICING_DATA.md) | List prices with vendor URLs and dates |
-| [`PROMPTS.md`](deliverables/PROMPTS.md) | OpenAI prompt + fallback + what didn't work |
-| [`GTM.md`](deliverables/GTM.md) | Channels, first-100-users plan |
-| [`ECONOMICS.md`](deliverables/ECONOMICS.md) | Lead value, CAC, $1M ARR scenario |
-| [`USER_INTERVIEWS.md`](deliverables/USER_INTERVIEWS.md) | Interview log + outreach scripts |
-| [`LANDING_COPY.md`](deliverables/LANDING_COPY.md) | Hero, FAQ, social proof, X thread |
-| [`METRICS.md`](deliverables/METRICS.md) | North Star, input metrics, pivot triggers |
-
-**Root symlinks:** Each file above also appears at the repo root (e.g. `ARCHITECTURE.md` → `docs/deliverables/ARCHITECTURE.md`) so graders and GitHub links keep working. [`README.md`](../README.md) stays at the root as the main entry point.
-
-## [`setup/`](setup) — ship the live build
+## Assignment deliverables (repo root)
 
 | File | Purpose |
 |------|---------|
-| [`inputs-needed.md`](setup/inputs-needed.md) | Canonical env checklist (~75 min) |
-| [`supabase.md`](setup/supabase.md) | Supabase project + schema |
-| [`deploy.md`](setup/deploy.md) | Vercel deploy walkthrough |
+| [`README.md`](../README.md) | Main entry — quick start, live URL, test commands |
+| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | System diagram, data flow, stack rationale, 10k/day scale-out |
+| [`DEVLOG.md`](../DEVLOG.md) | Daily log (`Day N — YYYY-MM-DD`) |
+| [`REFLECTION.md`](../REFLECTION.md) | Five required reflection questions |
+| [`TESTS.md`](../TESTS.md) | What's tested, how to run |
+| [`PRICING_DATA.md`](../PRICING_DATA.md) | List prices with vendor URLs and dates |
+| [`PROMPTS.md`](../PROMPTS.md) | AI prompts, boundaries, fallbacks |
+| [`GTM.md`](../GTM.md) | Channels, first-100-users plan |
+| [`ECONOMICS.md`](../ECONOMICS.md) | Lead value, CAC, $1M ARR scenario |
+| [`USER_INTERVIEWS.md`](../USER_INTERVIEWS.md) | Interview log + outreach scripts |
+| [`LANDING_COPY.md`](../LANDING_COPY.md) | Hero, FAQ, social proof, X thread |
+| [`METRICS.md`](../METRICS.md) | North Star, input metrics, pivot triggers |
 
-## [`STRUCTURE.md`](STRUCTURE.md)
-
-Full repo map (app, tests, scripts, assets).
-
-## [`internal/`](internal) — dev-loop tracking
+## Technical reference (`docs/`)
 
 | File | Purpose |
 |------|---------|
-| [`crosscheck.md`](internal/crosscheck.md) | Self-audit against the assignment rubric |
-| [`submission-review.md`](internal/submission-review.md) | Pre-submission checklist |
-| [`verify-prod.md`](internal/verify-prod.md) | Production smoke results log |
-| [`task3.md`](internal/task3.md) | Day 3 task tracker |
-| [`checklists/`](internal/checklists/) | P2 engine, P3 API, P4 frontend cross-checks |
+| [`API.md`](API.md) | HTTP routes, request/response shapes, status codes |
+| [`AUDIT_ENGINE.md`](AUDIT_ENGINE.md) | Rules pipeline, savings math, thresholds |
+| [`DATABASE_SCHEMA.md`](DATABASE_SCHEMA.md) | Tables, RLS, indexes |
+| [`SECURITY.md`](SECURITY.md) | Abuse controls, RLS posture, secrets |
+| [`DEPLOYMENT.md`](DEPLOYMENT.md) | Vercel deploy, env vars, post-deploy verify |
+| [`PERFORMANCE.md`](PERFORMANCE.md) | Caching, scaling, cost at volume |
+| [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | a11y testing and targets |
+| [`SEO.md`](SEO.md) | Metadata, OG images, share URLs |
+| [`PRODUCT_DECISIONS.md`](PRODUCT_DECISIONS.md) | Zero-savings path, email gate, Credex CTA |
+| [`FAILURE_CASES.md`](FAILURE_CASES.md) | Fail-open vs fail-closed behavior |
+| [`ROADMAP.md`](ROADMAP.md) | Post-MVP priorities |
+| [`COMPETITOR_ANALYSIS.md`](COMPETITOR_ANALYSIS.md) | Alternatives and positioning |
+| [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md) | Tokens, typography, components |
+| [`BENCHMARKING.md`](BENCHMARKING.md) | Test matrix, smoke scripts, CI |
 
-## [`screenshots/`](screenshots)
+## Supporting folders
 
-Mobile screenshots for the README plus capture instructions.
+| Path | Purpose |
+|------|---------|
+| [`setup/`](setup/) | Detailed env checklist (`inputs-needed.md`), Supabase quickstart |
+| [`internal/`](internal/) | Rubric crosscheck, submission review, phase checklists |
+| [`screenshots/`](screenshots/) | README capture assets |
+
+## Repo map
+
+See [`STRUCTURE.md`](STRUCTURE.md) for `src/`, `tests/`, and scripts layout.

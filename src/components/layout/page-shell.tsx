@@ -23,12 +23,12 @@ export function PageShell({
   maxWidth = "lg",
 }: PageShellProps) {
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden">
       <AuroraBackground />
       <GridBackground />
       <SiteHeader backHref={headerBackHref} backLabel={headerBackLabel} />
       <main
-        className={`relative mx-auto ${widthClass[maxWidth]} px-4 pb-16 pt-4 sm:px-6 sm:pt-8`}
+        className={`relative mx-auto min-w-0 ${widthClass[maxWidth]} px-4 pb-16 pt-4 sm:px-6 sm:pt-8`}
       >
         {children}
       </main>

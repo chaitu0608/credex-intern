@@ -112,7 +112,7 @@ describe("runAudit", () => {
           {
             tool: "github-copilot",
             plan: "business",
-            monthlySpend: 190,
+            monthlySpend: 220,
             seats: 10,
           },
         ],
@@ -174,7 +174,7 @@ describe("runAudit", () => {
         teamSize: 3,
         useCase: "writing",
         tools: [
-          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+          { tool: "gemini", plan: "ultra", monthlySpend: 199.99, seats: 1 },
         ],
       })
     );
@@ -184,8 +184,8 @@ describe("runAudit", () => {
     expect(gemini?.recommendationType).toBe("downgrade");
     expect(gemini?.recommendedAction).toMatch(/Gemini Pro/i);
     expect(gemini?.savings).toBe(ultraList - proList);
-    expect(gemini?.savings).toBeCloseTo(229.99, 2);
-    expect(gemini?.reason).toMatch(/\$249\.99|\$250/);
+    expect(gemini?.savings).toBeCloseTo(179.99, 2);
+    expect(gemini?.reason).toMatch(/\$199\.99|\$200/);
   });
 
   it("downgrades solo Gemini Ultra regardless of use case", () => {
@@ -194,12 +194,12 @@ describe("runAudit", () => {
         teamSize: 1,
         useCase: "coding",
         tools: [
-          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+          { tool: "gemini", plan: "ultra", monthlySpend: 199.99, seats: 1 },
         ],
       })
     );
     const gemini = result.recommendations.find((r) => r.tool === "gemini");
-    expect(gemini?.savings).toBeCloseTo(229.99, 2);
+    expect(gemini?.savings).toBeCloseTo(179.99, 2);
   });
 
   it("surfaces API benchmark guidance for anthropic-api with zero fabricated savings", () => {
@@ -266,7 +266,7 @@ describe("runAudit", () => {
         teamSize: 5,
         useCase: "coding",
         tools: [
-          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+          { tool: "gemini", plan: "ultra", monthlySpend: 199.99, seats: 1 },
         ],
       })
     );
@@ -350,6 +350,57 @@ describe("runAudit", () => {
     const toolsWithSavings = result.recommendations.filter((r) => r.savings > 0);
     const toolIds = toolsWithSavings.map((r) => r.tool);
     expect(new Set(toolIds).size).toBe(toolIds.length);
+  });
+
+  it("downgrades Claude Max to Pro for writing use cases", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 3,
+        useCase: "writing",
+        tools: [
+          { tool: "claude", plan: "max", monthlySpend: 300, seats: 3 },
+        ],
+      })
+    );
+    const maxCost = calculateCurrentCost("claude", "max", 3)!;
+    const proCost = calculateCurrentCost("claude", "pro", 3)!;
+    const claude = result.recommendations.find((r) => r.tool === "claude");
+    expect(claude?.recommendationType).toBe("downgrade");
+    expect(claude?.recommendedAction).toMatch(/Claude Pro/i);
+    expect(claude?.savings).toBe(maxCost - proCost);
+  });
+
+  it("recommends ChatGPT Team to Plus for solo users", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 1,
+        useCase: "writing",
+        tools: [
+          { tool: "chatgpt", plan: "team", monthlySpend: 50, seats: 2 },
+        ],
+      })
+    );
+    const teamCost = calculateCurrentCost("chatgpt", "team", 2)!;
+    const plusCost = calculateCurrentCost("chatgpt", "plus", 1)!;
+    const chatgpt = result.recommendations.find((r) => r.tool === "chatgpt");
+    expect(chatgpt?.recommendationType).toBe("optimize-seats");
+    expect(chatgpt?.recommendedAction).toMatch(/Plus/i);
+    expect(chatgpt?.savings).toBe(teamCost - plusCost);
+  });
+
+  it("sets totalAnnualSavings to twelve times totalMonthlySavings", () => {
+    const result = runAudit(
+      baseInput({
+        teamSize: 1,
+        useCase: "coding",
+        tools: [
+          { tool: "cursor", plan: "business", monthlySpend: 40, seats: 1 },
+        ],
+      })
+    );
+    expect(result.totalAnnualSavings).toBe(result.totalMonthlySavings * 12);
+    const cursor = result.recommendations.find((r) => r.tool === "cursor");
+    expect(cursor?.annualSavings).toBe((cursor?.savings ?? 0) * 12);
   });
 
   it("flags Cursor + Copilot overlap on a coding team and drops the cheaper seat", () => {

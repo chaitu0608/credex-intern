@@ -129,10 +129,10 @@ export function LandingFaq() {
               key={item.q}
               className="group rounded-lg border border-border bg-card px-4 py-3"
             >
-              <summary className="cursor-pointer list-none font-medium text-foreground [&::-webkit-details-marker]:hidden">
-                <span className="flex items-center justify-between gap-2">
-                  {item.q}
-                  <span className="font-mono text-xs text-muted-foreground group-open:rotate-45">
+              <summary className="cursor-pointer list-none text-sm font-medium text-foreground sm:text-base [&::-webkit-details-marker]:hidden">
+                <span className="flex items-start justify-between gap-3">
+                  <span className="min-w-0 pr-2">{item.q}</span>
+                  <span className="shrink-0 font-mono text-xs text-muted-foreground group-open:rotate-45">
                     +
                   </span>
                 </span>

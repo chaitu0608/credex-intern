@@ -98,7 +98,7 @@ function analyzeToolEntry(
   }
 
   if (entry.tool === "chatgpt" && entry.plan === "team" && teamSize === 1) {
-    const teamCost = calculateCurrentCost("chatgpt", "team", seats) ?? 30;
+    const teamCost = calculateCurrentCost("chatgpt", "team", seats) ?? 50;
     const plusCost = calculateCurrentCost("chatgpt", "plus", 1) ?? 20;
     if (teamCost > plusCost) {
       return buildRecommendation(
@@ -163,7 +163,7 @@ function analyzeToolEntry(
   }
 
   if (entry.tool === "gemini" && entry.plan === "ultra" && teamSize === 1) {
-    const ultraCost = calculateCurrentCost("gemini", "ultra", 1) ?? 249.99;
+    const ultraCost = calculateCurrentCost("gemini", "ultra", 1) ?? 199.99;
     const proCost = calculateCurrentCost("gemini", "pro", 1) ?? 20;
     if (ultraCost > proCost) {
       return buildRecommendation(
@@ -181,7 +181,7 @@ function analyzeToolEntry(
     entry.plan === "ultra" &&
     ["writing", "research", "mixed"].includes(useCase)
   ) {
-    const ultraCost = calculateCurrentCost("gemini", "ultra", seats) ?? 249.99;
+    const ultraCost = calculateCurrentCost("gemini", "ultra", seats) ?? 199.99;
     const proCost = calculateCurrentCost("gemini", "pro", seats) ?? 20;
     if (ultraCost > proCost) {
       return buildRecommendation(
@@ -203,14 +203,14 @@ function analyzeToolEntry(
     ) {
       const current = currentSpend;
       const windsurfCost =
-        calculateCurrentCost("windsurf", "pro", seats) ?? 15 * seats;
+        calculateCurrentCost("windsurf", "pro", seats) ?? 20 * seats;
       if (current > windsurfCost) {
         return buildRecommendation(
           entry,
           "Evaluate Windsurf Pro for coding",
           "switch-tool",
           current - windsurfCost,
-          `Copilot Business ($${current}/mo) vs Windsurf Pro ($15/seat = $${windsurfCost}/mo) for pure coding — potential $${current - windsurfCost}/mo savings.`,
+          `Copilot Business ($${current}/mo) vs Windsurf Pro ($20/seat = $${windsurfCost}/mo) for pure coding — potential $${current - windsurfCost}/mo savings.`,
           "Windsurf"
         );
       }
@@ -218,7 +218,7 @@ function analyzeToolEntry(
   }
 
   if (useCase === "research" && entry.tool === "chatgpt" && entry.plan === "team") {
-    const teamCost = calculateCurrentCost("chatgpt", "team", seats) ?? 30;
+    const teamCost = calculateCurrentCost("chatgpt", "team", seats) ?? 50;
     const claudePro = calculateCurrentCost("claude", "pro", seats) ?? 20;
     if (teamCost > claudePro) {
       return buildRecommendation(

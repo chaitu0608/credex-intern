@@ -1,7 +1,7 @@
 # Production verification log
 
 **URL:** https://credex-intern.vercel.app  
-**Last verified:** 2026-05-21 (P4 + P5)
+**Last verified:** 2026-05-22 (prod smoke after Vercel keys)
 
 | Check | Result | Notes |
 |-------|--------|-------|
@@ -15,7 +15,8 @@
 | P3 honeypot not in DB | ✅ | `audits.input` has no `website` |
 | P4 mobile coverage panel | ✅ | Visible on mobile viewport |
 | P4 a11y e2e | ✅ | Landing + audit results (local Playwright) |
-| Smoke script (9 checks) | ✅ | `SMOKE_BASE_URL=https://credex-intern.vercel.app npm run smoke` |
+| Smoke script (2026-05-22) | ✅ | Audit `833Ook1vQO`, $130/mo savings, share page + OG |
+| `npm run verify:env` (local) | ✅ | All 6 vars set |
 
 ## Redeploy after code changes
 

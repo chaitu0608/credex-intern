@@ -1,6 +1,6 @@
 import type { AITool } from "@/types";
 
-// Source: verified May 2026 — see docs/deliverables/PRICING_DATA.md
+// Source: verified May 2026 — see PRICING_DATA.md
 
 export type PricingEntry = {
   price: number | null;
@@ -24,14 +24,14 @@ export const PRICING: Record<AITool, Record<string, PricingEntry>> = {
     free: { price: 0, pricePerSeat: false },
     pro: { price: 20, pricePerSeat: true },
     max: { price: 100, pricePerSeat: true },
-    team: { price: 30, pricePerSeat: true, minSeats: 5 },
+    team: { price: 25, pricePerSeat: true, minSeats: 5 },
     enterprise: { price: null, pricePerSeat: true },
     api: { price: null, pricePerSeat: false },
   },
   chatgpt: {
     free: { price: 0, pricePerSeat: false },
     plus: { price: 20, pricePerSeat: true },
-    team: { price: 30, pricePerSeat: true, minSeats: 2 },
+    team: { price: 25, pricePerSeat: true, minSeats: 2 },
     enterprise: { price: null, pricePerSeat: true },
     api: { price: null, pricePerSeat: false },
   },
@@ -44,19 +44,20 @@ export const PRICING: Record<AITool, Record<string, PricingEntry>> = {
   gemini: {
     free: { price: 0, pricePerSeat: false },
     pro: { price: 20, pricePerSeat: false },
-    ultra: { price: 249.99, pricePerSeat: false },
+    ultra: { price: 199.99, pricePerSeat: false },
     api: { price: null, pricePerSeat: false },
   },
   windsurf: {
     free: { price: 0, pricePerSeat: false },
-    pro: { price: 15, pricePerSeat: true },
-    team: { price: 35, pricePerSeat: true },
+    pro: { price: 20, pricePerSeat: true },
+    max: { price: 200, pricePerSeat: false },
+    team: { price: 40, pricePerSeat: true },
     enterprise: { price: null, pricePerSeat: true },
   },
 };
 
-/** Last full pricing verification — mirrors docs/deliverables/PRICING_DATA.md */
-export const PRICING_VERIFIED_AT = "2026-05-20";
+/** Last full pricing verification — mirrors PRICING_DATA.md */
+export const PRICING_VERIFIED_AT = "2026-05-22";
 
 export const PRICING_SOURCES: Record<
   AITool,
@@ -123,7 +124,7 @@ export const PLAN_OPTIONS: Record<AITool, string[]> = {
   "anthropic-api": ["api"],
   "openai-api": ["api"],
   gemini: ["free", "pro", "ultra", "api"],
-  windsurf: ["free", "pro", "team", "enterprise"],
+  windsurf: ["free", "pro", "max", "team", "enterprise"],
 };
 
 export function getPlanPrice(tool: AITool, plan: string): number | null {

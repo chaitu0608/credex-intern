@@ -178,9 +178,9 @@ export default async function AuditPage({ params }: PageProps) {
   return (
     <PageShell headerBackHref="/" headerBackLabel="← New audit" maxWidth="xl">
       <article id="audit-report" className="pb-8">
-        <header className="mb-8 border-b border-border pb-8 sm:mb-10 sm:pb-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="min-w-0 flex-1 space-y-4">
+        <header className="mb-6 border-b border-border pb-6 sm:mb-10 sm:pb-10">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1 space-y-3 sm:space-y-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
                 SpendSense audit report
               </p>
@@ -207,17 +207,17 @@ export default async function AuditPage({ params }: PageProps) {
                   {audit.input.useCase}
                 </Badge>
               </div>
-              <p className="font-mono text-xs text-muted-foreground">
+              <p className="break-all font-mono text-xs text-muted-foreground">
                 Report {audit.id} · Generated {reportDate}
               </p>
             </div>
-            <div className="flex shrink-0 items-start gap-2 lg:pt-1">
+            <div className="flex w-full shrink-0 items-start gap-2 sm:w-auto lg:pt-1">
               <AuditPdfDownload payload={pdfPayload} />
             </div>
           </div>
         </header>
 
-        <div className="mb-10 sm:mb-12">
+        <div className="mb-8 space-y-6 sm:mb-12 sm:space-y-0">
           <AuditReportHero
             totalMonthlySpend={totalMonthlySpend}
             totalMonthlySavings={audit.totalMonthlySavings}
@@ -227,9 +227,20 @@ export default async function AuditPage({ params }: PageProps) {
             healthNarrative={healthNarrative}
             isHighSavings={audit.isHighSavings}
           />
+          <div className="lg:hidden">
+            <SavingsHero
+              totalMonthlySpend={totalMonthlySpend}
+              totalMonthlySavings={audit.totalMonthlySavings}
+              totalAnnualSavings={audit.totalAnnualSavings}
+              savingsPercent={savingsPercent}
+              optimizationScore={optimizationScore}
+              toolCount={toolCount}
+              className="static"
+            />
+          </div>
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_min(100%,280px)] lg:gap-12 lg:items-start">
+        <div className="grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1fr)_min(100%,280px)] lg:gap-12 lg:items-start">
           <div className="min-w-0 space-y-14 sm:space-y-16">
             <AuditStackHealth
               toolCount={toolCount}
@@ -255,7 +266,7 @@ export default async function AuditPage({ params }: PageProps) {
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                   Credex opportunity
                 </p>
-                <CardTitle className="font-display mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+                <CardTitle className="font-display mt-3 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
                   Unlock even larger savings
                 </CardTitle>
                 <CardDescription className="mt-3 max-w-lg text-sm leading-relaxed">

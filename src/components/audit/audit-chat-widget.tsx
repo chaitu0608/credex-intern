@@ -109,8 +109,8 @@ export default function AuditChatWidget({ auditId }: AuditChatWidgetProps) {
           data-audit-chat
           className={cn(
             "fixed z-40 flex flex-col rounded-lg border border-border bg-card shadow-lg",
-            "bottom-20 right-4 w-[min(320px,calc(100vw-2rem))] max-h-[420px]",
-            "sm:bottom-24 sm:right-6"
+            "bottom-[4.5rem] left-3 right-3 w-auto max-h-[min(420px,55dvh)]",
+            "sm:bottom-24 sm:left-auto sm:right-6 sm:w-[min(320px,calc(100vw-3rem))]"
           )}
           role="dialog"
           aria-label="Audit assistant chat"
@@ -206,9 +206,9 @@ export default function AuditChatWidget({ auditId }: AuditChatWidgetProps) {
         data-audit-chat
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "fixed bottom-6 right-6 z-40 h-12 gap-2 rounded-full px-4 shadow-md",
+          "fixed bottom-4 right-4 z-40 h-12 gap-2 rounded-full px-4 shadow-md",
           "bg-foreground text-background hover:bg-foreground/90",
-          "sm:bottom-6 sm:right-6"
+          "max-sm:bottom-[max(1rem,env(safe-area-inset-bottom))] sm:bottom-6 sm:right-6"
         )}
         aria-expanded={open}
         aria-label={open ? "Close audit chat" : "Ask about this audit"}

@@ -86,7 +86,7 @@ describe("validateAuditInput", () => {
     expect(
       validateAuditInput({
         tools: [
-          { tool: "gemini", plan: "ultra", monthlySpend: 249.99, seats: 1 },
+          { tool: "gemini", plan: "ultra", monthlySpend: 199.99, seats: 1 },
           { tool: "anthropic-api", plan: "api", monthlySpend: 100, seats: 1 },
         ],
         teamSize: 2,

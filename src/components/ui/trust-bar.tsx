@@ -18,7 +18,7 @@ export function TrustBar({ className }: TrustBarProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden border-y border-border bg-card/40 py-3",
+        "max-w-full overflow-hidden border-y border-border bg-card/40 py-3",
         className
       )}
     >

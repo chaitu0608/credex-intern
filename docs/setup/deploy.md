@@ -1,5 +1,7 @@
 # Deploy SpendSense to Vercel
 
+> **Canonical doc:** [`../DEPLOYMENT.md`](../DEPLOYMENT.md)
+
 ## Prerequisites
 
 1. Run `npm run verify:env` — all 6 vars must be set in `.env.local`

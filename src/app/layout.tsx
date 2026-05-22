@@ -50,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${dmSans.variable} ${outfit.variable} min-h-screen font-sans antialiased`}
+        className={`${dmSans.variable} ${outfit.variable} min-h-screen overflow-x-hidden font-sans antialiased`}
       >
         <ThemeProvider>
           {children}

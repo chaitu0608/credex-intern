@@ -1,13 +1,22 @@
 # Screenshots
 
-Capture from the **live** Vercel URL on mobile (Chrome DevTools → iPhone 14 preset → Capture full size screenshot).
+Files in this folder are embedded in [`README.md`](../../README.md).
 
-| File | What to capture |
-|------|-----------------|
-| `landing.png` | Hero + sample preview + how-it-works |
-| `audit-high-savings.png` | Results with ≥ $500/mo savings + Credex CTA |
-| `audit-optimized.png` | Results showing "Stack optimized" ($0 savings) |
+| File | What it shows |
+|------|----------------|
+| `landing.png` | Hero + benchmark sidebar |
+| `audit-form.png` | Tool grid + empty stack |
+| `audit-form-stack.png` | Stack with plan/seats configured |
+| `audit-optimized.png` | Honest path — stack optimized, $0 savings |
+| `audit-recommendations.png` | Per-tool recommendation cards |
 | `lead.png` | Email-after-value lead form |
-| `og-preview.png` | (optional) opengraph.xyz preview of a share URL |
+| `audit-chat.png` | Ask about this audit widget |
 
-After adding files, update the Screenshots section in [`README.md`](../../README.md).
+## Still optional
+
+- `audit-high-savings.png` — run an audit with ≥ $500/mo savings to show Credex CTA (e.g. Cursor Business + Copilot Business + Claude Team, multi-seat)
+- `og-preview.png` — paste opengraph.xyz preview of a share URL
+
+## Re-capture
+
+Chrome DevTools → iPhone 14 preset → Capture full size screenshot. Prefer production URL after Supabase keys are wired.

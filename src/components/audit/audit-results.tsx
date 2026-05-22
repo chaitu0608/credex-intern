@@ -178,14 +178,14 @@ export function AuditRecommendations({
                   : "border-border"
               )}
             >
-              <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-border/60 pb-4">
-                <div className="flex items-start gap-4">
+              <CardHeader className="flex flex-col gap-4 border-b border-border/60 pb-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 items-start gap-3 sm:gap-4">
                   <span className="font-mono text-xs text-muted-foreground">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <ToolLogo tool={rec.tool} className="h-10 w-10" />
-                  <div>
-                    <CardTitle className="text-lg font-semibold">
+                  <ToolLogo tool={rec.tool} className="h-10 w-10 shrink-0" />
+                  <div className="min-w-0">
+                    <CardTitle className="text-base font-semibold sm:text-lg">
                       {rec.toolName}
                     </CardTitle>
                     <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
@@ -193,7 +193,7 @@ export function AuditRecommendations({
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-1.5">
+                <div className="flex flex-wrap items-center gap-1.5 sm:flex-col sm:items-end">
                   <Badge variant="outline" className="font-mono text-[10px]">
                     {getConfidenceLabel(rec.recommendationType)}
                   </Badge>

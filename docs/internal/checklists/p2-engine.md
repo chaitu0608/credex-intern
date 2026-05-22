@@ -6,11 +6,11 @@ Rule: every dollar in `savings` must trace to `calculateCurrentCost()` / `PRICIN
 
 | Input | List ultra | List pro | Expected savings | Test |
 |-------|------------|----------|------------------|------|
-| team 3, writing, ultra | $249.99 | $20 | **$229.99** | `downgrades Gemini Ultra to Pro using list prices` |
-| team 1, coding, ultra | $249.99 | $20 | **$229.99** (solo rule) | `downgrades solo Gemini Ultra` |
+| team 3, writing, ultra | $199.99 | $20 | **$179.99** | `downgrades Gemini Ultra to Pro using list prices` |
+| team 1, coding, ultra | $199.99 | $20 | **$179.99** (solo rule) | `downgrades solo Gemini Ultra` |
 | team 5, coding, ultra | — | — | **$0** (no downgrade) | `does not downgrade Gemini Ultra for coding teams` |
 
-Source: `PRICING_DATA.md` Gemini Ultra $249.99, Pro $20.
+Source: `PRICING_DATA.md` Gemini Ultra $199.99, Pro $20.
 
 ## P2.2 — Solo Gemini Ultra
 

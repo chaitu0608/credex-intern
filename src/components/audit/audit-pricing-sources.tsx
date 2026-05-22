@@ -9,7 +9,7 @@ import {
 import type { ToolEntry } from "@/types";
 
 const PRICING_DATA_REPO_PATH =
-  "https://github.com/chaitu0608/credex-intern/blob/main/docs/deliverables/PRICING_DATA.md";
+  "https://github.com/chaitu0608/credex-intern/blob/main/PRICING_DATA.md";
 
 interface AuditPricingSourcesProps {
   tools: ToolEntry[];

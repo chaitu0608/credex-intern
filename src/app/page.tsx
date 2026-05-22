@@ -97,35 +97,37 @@ export default function HomePage() {
 
   return (
     <PageShell maxWidth="xl">
-      <section className="grid gap-12 pb-8 pt-6 lg:grid-cols-2 lg:items-start lg:gap-16 lg:pt-12">
-        <div>
+      <section className="grid min-w-0 gap-8 pb-8 pt-4 sm:gap-12 sm:pt-6 lg:grid-cols-2 lg:items-start lg:gap-16 lg:pt-12">
+        <div className="min-w-0">
           <div className="inline-flex items-center gap-2 rounded-md border border-border bg-card/50 px-3 py-1.5 font-mono text-xs text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             3-minute audit · No login
           </div>
 
-          <h1 className="font-display mt-8 text-5xl font-bold leading-[1.02] tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="font-display mt-6 text-[clamp(1.75rem,7vw,3.5rem)] font-bold leading-[1.05] tracking-tight text-foreground sm:mt-8 sm:text-6xl md:text-7xl lg:text-8xl">
             Know exactly where your AI budget leaks.
           </h1>
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:text-base md:text-lg">
             {WHAT_SPENDSENSE_DOES}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#audit-form"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "rounded-md bg-foreground px-8 text-background hover:bg-foreground/90"
-              )}
-            >
-              Start audit
-            </Link>
-            <SampleAuditPreviewDialog />
+          <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex w-full flex-col gap-3 min-[400px]:flex-row min-[400px]:flex-wrap sm:contents">
+              <Link
+                href="/#audit-form"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "w-full rounded-md bg-foreground px-8 text-center text-background hover:bg-foreground/90 sm:w-auto"
+                )}
+              >
+                Start audit
+              </Link>
+              <SampleAuditPreviewDialog triggerClassName="w-full sm:w-auto" />
+            </div>
             <Link
               href="/#how-it-works"
-              className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              className="text-center text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:text-left"
             >
               How it works
             </Link>
@@ -133,7 +135,7 @@ export default function HomePage() {
 
           <TrustBar className="mt-8 justify-start" />
 
-          <div id="how-it-works" className="mt-8 grid gap-2 sm:grid-cols-3">
+          <div id="how-it-works" className="mt-6 grid gap-2 sm:mt-8 sm:grid-cols-3">
             {STEPS.map((step) => (
               <div
                 key={step.title}
@@ -169,7 +171,7 @@ export default function HomePage() {
           className="overflow-hidden rounded-lg border-border bg-card"
         >
           <CardHeader className="border-b border-border">
-            <CardTitle className="font-display text-2xl font-bold tracking-tight">
+            <CardTitle className="font-display text-xl font-bold tracking-tight sm:text-2xl">
               Run your SpendSense audit
             </CardTitle>
             <CardDescription>

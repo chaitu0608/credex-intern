@@ -26,7 +26,7 @@ describe("pricing", () => {
       expect.arrayContaining(["pro", "ultra", "api"])
     );
     expect(PRICING.gemini.pro.price).toBe(20);
-    expect(PRICING.gemini.ultra.price).toBe(249.99);
+    expect(PRICING.gemini.ultra.price).toBe(199.99);
   });
 
   it("claude team has min 5 seats", () => {

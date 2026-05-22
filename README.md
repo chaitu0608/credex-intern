@@ -6,7 +6,7 @@
 **Stack:** Next.js 14 App Router · TypeScript strict · Tailwind · shadcn/ui · Supabase · OpenAI · Resend · Vercel
 **Tests:** 68 passing (Vitest unit + integration, Playwright e2e + axe-core a11y on landing and audit results)
 
-> **To finish the production build:** keys aren't pasted yet, so the live URL serves audits but does not persist them. The full input checklist is in [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) — ~75 minutes of your time, no code changes needed.
+> **Production:** https://credex-intern.vercel.app — Supabase + OpenAI + Resend configured on Vercel. Audits persist and share URLs work (verified 2026-05-22 via `SMOKE_BASE_URL=https://credex-intern.vercel.app npm run smoke`).
 
 ---
 
@@ -174,17 +174,51 @@ Schema lives at [`supabase/schema.sql`](supabase/schema.sql). RLS posture is tes
 
 ## Screenshots
 
-> Capture from the live URL on mobile (Chrome DevTools → iPhone 14 preset → "Capture full size screenshot"). Save to `docs/screenshots/`.
+Captured from local dev (`localhost:3000`) — May 22, 2026. Seven flows below; rubric needs 3+.
+
+### Landing and audit form
+
+**Hero + benchmark sidebar**
+
+![SpendSense landing — hero and tool benchmark grid](docs/screenshots/landing.png)
+
+**Tool palette + empty stack**
+
+![SpendSense — add tools to your stack](docs/screenshots/audit-form.png)
+
+**Stack configured (plan, seats, spend)**
+
+![SpendSense — stack with plan dropdown and team context](docs/screenshots/audit-form-stack.png)
+
+### Audit results (honest zero-savings path)
+
+**Stack optimized — $0 savings, 100/100 score**
+
+![Audit results — stack optimized honest path](docs/screenshots/audit-optimized.png)
+
+**Per-tool recommendations (rule-based, no LLM math)**
+
+![Audit results — per-tool cards and methodology](docs/screenshots/audit-recommendations.png)
+
+**Lead capture after value** — email gate below full report
+
+![Lead capture — notify when new optimizations apply](docs/screenshots/lead.png)
+
+**Audit chat** — Q&A grounded in saved report only
+
+![Audit chat widget](docs/screenshots/audit-chat.png)
 
 | What | File | Status |
 |------|------|--------|
-| Landing — hero + sample preview + how-it-works | `docs/screenshots/landing.png` | pending |
-| Audit result — savings hero + per-tool breakdown | `docs/screenshots/audit-high-savings.png` | pending |
-| Optimized stack — honest path | `docs/screenshots/audit-optimized.png` | pending |
-| Lead capture — email after value | `docs/screenshots/lead.png` | pending |
-| OG preview at opengraph.xyz | `docs/screenshots/og-preview.png` | pending |
-
-Capture instructions: [`docs/screenshots/README.md`](docs/screenshots/README.md).
+| Landing — hero + benchmark | `docs/screenshots/landing.png` | done |
+| Audit form — tool grid | `docs/screenshots/audit-form.png` | done |
+| Audit form — configured stack | `docs/screenshots/audit-form-stack.png` | done |
+| Optimized stack — honest path | `docs/screenshots/audit-optimized.png` | done |
+| Per-tool recommendations | `docs/screenshots/audit-recommendations.png` | done |
+| Lead capture — email after value | `docs/screenshots/lead.png` | done |
+| Audit chat widget | `docs/screenshots/audit-chat.png` | done |
+| High savings (≥ $500/mo) + Credex CTA | `docs/screenshots/audit-high-savings.png` | optional — add stack with Cursor Business + Copilot + Claude Team |
+| OG preview at opengraph.xyz | `docs/screenshots/og-preview.png` | optional |
 
 ---
 
@@ -250,7 +284,7 @@ Full walkthrough: [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md). 
 ## Tests
 
 ```bash
-npm test                 # 68 Vitest tests across 11 files
+npm test                 # 86 Vitest tests across 12 files
 npm run test:e2e         # Playwright (requires `npx playwright install chromium`)
 npm run smoke            # HTTP smoke against a running server
 ```
@@ -334,48 +368,50 @@ docs/
 |-------|---------|
 | [`docs/README.md`](docs/README.md) | Full docs index |
 | [`docs/STRUCTURE.md`](docs/STRUCTURE.md) | Repo map (code, tests, assets) |
-| [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) | Env keys checklist to finish prod |
+| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | Vercel deploy + env vars |
+| [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) | Detailed env keys checklist |
 
-Assignment deliverables live in [`docs/deliverables/`](docs/deliverables/) (root symlinks keep grader paths like `ARCHITECTURE.md` working).
-
-### Engineering ([`docs/deliverables/`](docs/deliverables))
-
-| File | Purpose |
-|------|---------|
-| [`ARCHITECTURE.md`](docs/deliverables/ARCHITECTURE.md) | Stack, diagrams, abuse rationale, 10k audits/day scale-out |
-| [`DEVLOG.md`](docs/deliverables/DEVLOG.md) | Daily log in the required `Day N — YYYY-MM-DD` format |
-| [`REFLECTION.md`](docs/deliverables/REFLECTION.md) | 5 required questions answered |
-| [`TESTS.md`](docs/deliverables/TESTS.md) | What's tested, how to run |
-| [`PRICING_DATA.md`](docs/deliverables/PRICING_DATA.md) | Every list price with a vendor URL and verified date |
-| [`PROMPTS.md`](docs/deliverables/PROMPTS.md) | OpenAI prompt + fallback + what we tried that didn't work |
-
-### Entrepreneurial ([`docs/deliverables/`](docs/deliverables))
+### Assignment deliverables (repo root)
 
 | File | Purpose |
 |------|---------|
-| [`GTM.md`](docs/deliverables/GTM.md) | Target user, specific channels, first-100-users plan, unfair channel |
-| [`ECONOMICS.md`](docs/deliverables/ECONOMICS.md) | Lead value, CAC per channel, $1M ARR scenario |
-| [`USER_INTERVIEWS.md`](docs/deliverables/USER_INTERVIEWS.md) | Real conversation log + outreach scripts |
-| [`LANDING_COPY.md`](docs/deliverables/LANDING_COPY.md) | Hero, sub, CTAs, FAQ, social proof, X thread |
-| [`METRICS.md`](docs/deliverables/METRICS.md) | North Star, 3 input metrics, what triggers a pivot |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Stack, diagrams, abuse rationale, 10k audits/day scale-out |
+| [`DEVLOG.md`](DEVLOG.md) | Daily log in the required `Day N — YYYY-MM-DD` format |
+| [`REFLECTION.md`](REFLECTION.md) | 5 required questions answered |
+| [`TESTS.md`](TESTS.md) | What's tested, how to run |
+| [`PRICING_DATA.md`](PRICING_DATA.md) | Every list price with a vendor URL and verified date |
+| [`PROMPTS.md`](PROMPTS.md) | AI thinking doc: production prompts, boundaries, fallbacks |
+| [`GTM.md`](GTM.md) | Target user, channels, first-100-users plan |
+| [`ECONOMICS.md`](ECONOMICS.md) | Lead value, CAC, $1M ARR scenario |
+| [`USER_INTERVIEWS.md`](USER_INTERVIEWS.md) | Real conversation log + outreach scripts |
+| [`LANDING_COPY.md`](LANDING_COPY.md) | Hero, FAQ, social proof, X thread |
+| [`METRICS.md`](METRICS.md) | North Star, input metrics, pivot triggers |
 
-### Setup ([`docs/setup/`](docs/setup))
+### Technical reference ([`docs/`](docs/))
 
 | File | Purpose |
 |------|---------|
-| [`inputs-needed.md`](docs/setup/inputs-needed.md) | Canonical "what I need from you" checklist to finish the prod build |
-| [`supabase.md`](docs/setup/supabase.md) | Provision a Supabase project and apply the schema |
-| [`deploy.md`](docs/setup/deploy.md) | Vercel deploy walkthrough |
+| [`API.md`](docs/API.md) | Routes, status codes, honeypots |
+| [`AUDIT_ENGINE.md`](docs/AUDIT_ENGINE.md) | Rules pipeline and thresholds |
+| [`DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md) | Tables, RLS, indexes |
+| [`SECURITY.md`](docs/SECURITY.md) | Abuse controls and secrets |
+| [`PERFORMANCE.md`](docs/PERFORMANCE.md) | Caching and 10k/day scale-out |
+| [`ACCESSIBILITY.md`](docs/ACCESSIBILITY.md) | a11y tests and targets |
+| [`SEO.md`](docs/SEO.md) | OG images and metadata |
+| [`PRODUCT_DECISIONS.md`](docs/PRODUCT_DECISIONS.md) | Zero-savings path, email gate, CTA |
+| [`FAILURE_CASES.md`](docs/FAILURE_CASES.md) | Fail-open vs fail-closed |
+| [`ROADMAP.md`](docs/ROADMAP.md) | Post-MVP priorities |
+| [`COMPETITOR_ANALYSIS.md`](docs/COMPETITOR_ANALYSIS.md) | Positioning vs alternatives |
+| [`DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Tokens, typography, components |
+| [`BENCHMARKING.md`](docs/BENCHMARKING.md) | Test matrix and smoke scripts |
 
 ### Internal ([`docs/internal/`](docs/internal))
 
 | File | Purpose |
 |------|---------|
-| [`STRUCTURE.md`](docs/STRUCTURE.md) | Full repo map |
 | [`crosscheck.md`](docs/internal/crosscheck.md) | Self-audit against the assignment rubric |
 | [`submission-review.md`](docs/internal/submission-review.md) | Assignment-checklist walkthrough |
 | [`verify-prod.md`](docs/internal/verify-prod.md) | Production smoke results log |
-| [`task3.md`](docs/internal/task3.md) | Day 3 task tracker |
 | [`checklists/`](docs/internal/checklists/) | P2–P4 phase cross-checks |
 
 ---

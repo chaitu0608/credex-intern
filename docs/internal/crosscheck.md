@@ -1,47 +1,55 @@
 # Cross-check log
 
-Self-audit against the assignment requirements. Last updated: **2026-05-21 (Day 3)**.
+Self-audit against the assignment requirements. Last updated: **2026-05-22**.
 
 ## Required root files
 
-Canonical copies: [`../deliverables/`](../deliverables/). Root paths are symlinks for graders.
+All assignment deliverables are **real files at repo root** (not symlinks). Optional technical docs in [`../`](../README.md).
 
 | File | Present | Notes |
 |------|---------|-------|
-| `README.md` | ✅ | Summary, Decisions, screenshot slots at repo root |
-| `ARCHITECTURE.md` | ✅ | Symlink; **10k audits/day** scale-out in deliverables |
-| `DEVLOG.md` | ✅ | Symlink; Day 3 entry filled (deploy/interviews pending user) |
-| `REFLECTION.md` | ✅ | Symlink; 5 required questions |
-| `TESTS.md` | ✅ | Symlink; 69 tests documented |
+| `README.md` | ✅ | Summary, 5 Decisions, quick start, live URL, **7 screenshots** in `docs/screenshots/` |
+| `ARCHITECTURE.md` | ✅ | Sections A–D, **10k audits/day**, audit engine + AI boundaries |
+| `DEVLOG.md` | ✅ | **7 entries** May 16–22 (`Day N — YYYY-MM-DD`); Days 1–3 rest honest |
+| `REFLECTION.md` | ✅ | 5 required questions |
+| `TESTS.md` | ✅ | 86 Vitest + 23 audit-engine tests, per-test catalog |
 | `.github/workflows/ci.yml` | ✅ | lint + typecheck + test + build + e2e |
-| `PRICING_DATA.md` | ✅ | Symlink; inline list format + tables |
-| `PROMPTS.md` | ✅ | Symlink; OpenAI prompt + "what didn't work" |
-| `GTM.md` | ✅ | Symlink; specific channels, first-100-users plan |
-| `ECONOMICS.md` | ✅ | Symlink; lead value, CAC, $1M ARR scenario |
-| `USER_INTERVIEWS.md` | ⚠️ | Symlink; outreach scaffold — **needs real interviews** |
-| `LANDING_COPY.md` | ✅ | Symlink; FAQ (5), social proof (mocked) |
-| `METRICS.md` | ✅ | Symlink; North Star, 3 inputs, pivot triggers |
+| `PRICING_DATA.md` | ✅ | Vendor URLs + verification dates |
+| `PROMPTS.md` | ✅ | Production prompts + "what didn't work" |
+| `GTM.md` | ✅ | ~649 words, specific channels, first-100-users plan |
+| `ECONOMICS.md` | ✅ | Lead value, CAC, $1M ARR scenario |
+| `USER_INTERVIEWS.md` | ✅ | 3 real users (company AI subs); async review quotes — no fabricated invoices |
+| `LANDING_COPY.md` | ✅ | FAQ (5), hero, X thread |
+| `METRICS.md` | ✅ | North Star, 3 inputs, pivot triggers |
+
+## Optional elite docs (`docs/`)
+
+| File | Present |
+|------|---------|
+| `API.md`, `AUDIT_ENGINE.md`, `DATABASE_SCHEMA.md`, `SECURITY.md` | ✅ |
+| `DEPLOYMENT.md`, `PERFORMANCE.md`, `ACCESSIBILITY.md`, `SEO.md` | ✅ |
+| `PRODUCT_DECISIONS.md`, `FAILURE_CASES.md`, `ROADMAP.md` | ✅ |
+| `COMPETITOR_ANALYSIS.md`, `DESIGN_SYSTEM.md`, `BENCHMARKING.md` | ✅ |
 
 ## MVP features
 
 | Feature | Status | Code |
 |---------|--------|------|
-| Spend input form | ✅ | `spend-form/spend-form.tsx` — palette, localStorage, touch copy |
-| Audit engine | ✅ | `auditEngine.ts` — P2: Gemini ultra/pro, API $0, list-price caps — see [`checklists/p2-engine.md`](checklists/p2-engine.md) |
-| API/storage (P3) | ✅ | Honeypot stripped from `audits.input`, honest `emailSent`, fail-closed rate limit in prod, lazy Supabase — see [`checklists/p3-api-storage.md`](checklists/p3-api-storage.md) |
-| Frontend (P4) | ✅ | Mobile coverage panel, audit a11y e2e, 429 toast, lead error copy — see [`checklists/p4-frontend.md`](checklists/p4-frontend.md) |
-| Tests/CI (P5) | ✅ | 68 Vitest + 7 e2e (desktop + mobile), CI green, prod smoke |
-| Audit results page | ✅ | `audit/[id]/page.tsx` — revalidate 3600 |
-| AI summary + fallback | ✅ | `ai-summary.ts` — OpenAI `gpt-4o-mini` + template fallback |
-| Lead capture + storage | ⚠️ | Code ✅ — **needs live Supabase** |
-| Shareable URL + OG | ✅ | Dynamic `opengraph-image` routes |
+| Spend input form | ✅ | `spend-form/spend-form.tsx` |
+| Audit engine | ✅ | `auditEngine.ts` |
+| API/storage (P3) | ✅ | Honeypot, fail-closed rate limit in prod |
+| Frontend (P4) | ✅ | Mobile, a11y e2e, 429 toast |
+| Tests/CI (P5) | ✅ | 86 Vitest + Playwright e2e |
+| Audit results page | ✅ | `audit/[id]/page.tsx` |
+| AI summary + fallback | ✅ | `ai-summary.ts` |
+| Lead capture + storage | ✅ | Supabase on Vercel — prod smoke 2026-05-22 |
+| Shareable URL + OG | ✅ | Dynamic `opengraph-image` |
 
 ## Git history
 
 ```bash
 git log --pretty=format:"%ad" --date=short | sort -u | wc -l
-# Current: 2 (2026-05-19, 2026-05-20) — need ≥ 5 before submission
-# Today (5/21): commit Day 3 work
+# Current: 4 commit days (2026-05-19 … 2026-05-22) — rubric asks ≥ 5
 ```
 
 ## CI / tests
@@ -50,15 +58,12 @@ git log --pretty=format:"%ad" --date=short | sort -u | wc -l
 |------|--------|
 | lint | ✅ |
 | typecheck | ✅ |
-| test (69 vitest) | ✅ |
-| e2e (5 specs) | ✅ |
+| test (86 vitest) | ✅ |
+| e2e (Playwright) | ✅ in CI |
 | build | ✅ |
-| e2e (Playwright) | run after `npx playwright install chromium` |
 
 ## Submission blockers (user action)
 
-1. Deploy + paste keys — see [`../setup/inputs-needed.md`](../setup/inputs-needed.md)
-2. README live URL + screenshots
-3. 3 real user interviews
-4. 3 more distinct commit days (5/22, 5/23, 5/24)
-5. Lighthouse prod A11y ≥ 90
+1. **≥ 5 distinct commit days** — have 4 in git log
+2. **Lighthouse on prod** — log scores in DEVLOG
+3. **Optional:** `audit-high-savings.png` screenshot for Credex CTA path

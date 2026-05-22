@@ -47,10 +47,10 @@ export default function AuditReportHero({
               <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
                 Potential monthly savings
               </p>
-              <p className="font-display mt-2 text-5xl font-bold tabular-nums tracking-tight text-savings sm:text-6xl lg:text-7xl">
+              <p className="font-display mt-2 text-4xl font-bold tabular-nums tracking-tight text-savings sm:text-5xl md:text-6xl lg:text-7xl">
                 ${totalMonthlySavings.toLocaleString()}
               </p>
-              <p className="mt-2 text-lg text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground sm:text-lg">
                 <span className="tabular-nums text-foreground">
                   ${totalAnnualSavings.toLocaleString()}
                 </span>{" "}
@@ -65,7 +65,7 @@ export default function AuditReportHero({
               <p className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
                 Stack optimized
               </p>
-              <p className="mt-2 text-lg text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground sm:text-lg">
                 ${totalMonthlySpend.toLocaleString()}/month current spend
               </p>
             </div>
@@ -81,7 +81,7 @@ export default function AuditReportHero({
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-muted/20 px-8 py-6 lg:min-w-[180px]">
+        <div className="flex w-full flex-col items-center gap-3 rounded-xl border border-border bg-muted/20 px-6 py-5 sm:w-auto sm:px-8 sm:py-6 lg:min-w-[180px]">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             Optimization score
           </p>

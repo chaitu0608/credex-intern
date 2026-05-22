@@ -103,7 +103,7 @@ export function AuditCoveragePanel({
         <div
           className={cn(
             "grid gap-2",
-            compact ? "grid-cols-4" : "grid-cols-4 sm:grid-cols-4"
+            compact ? "grid-cols-4" : "grid-cols-4"
           )}
         >
           {ALL_TOOLS.map((tool) => {
