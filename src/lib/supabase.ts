@@ -1,6 +1,10 @@
 import "server-only";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { allowsMemoryOnlyPersistence, isProductionRuntime } from "@/lib/runtime";
+import {
+  allowsMemoryOnlyPersistence,
+  isProductionRuntime,
+  isRateLimitEnabled,
+} from "@/lib/runtime";
 import type { AuditResult, LeadCapture, SummarySource } from "@/types";
 
 function getPublicUrl(): string {
@@ -212,6 +216,10 @@ async function applyRateLimitForRow(
 }
 
 export async function checkRateLimit(ip: string): Promise<boolean> {
+  if (!isRateLimitEnabled()) {
+    return true;
+  }
+
   const supabaseAdmin = getSupabaseAdmin();
   const failClosed = isProductionRuntime();
 

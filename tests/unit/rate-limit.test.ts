@@ -29,4 +29,18 @@ describe("checkRateLimit (P3 fail-closed)", () => {
     const { checkRateLimit } = await import("@/lib/supabase");
     expect(await checkRateLimit("1.2.3.4")).toBe(false);
   });
+
+  it("allows requests when CI disables rate limiting", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("CI", "true");
+    const { checkRateLimit } = await import("@/lib/supabase");
+    expect(await checkRateLimit("1.2.3.4")).toBe(true);
+  });
+
+  it("allows requests when E2E_SKIP_RATE_LIMIT is set", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("E2E_SKIP_RATE_LIMIT", "1");
+    const { checkRateLimit } = await import("@/lib/supabase");
+    expect(await checkRateLimit("1.2.3.4")).toBe(true);
+  });
 });

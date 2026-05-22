@@ -30,10 +30,8 @@ test("E2E-001 cold visitor completes audit flow", async ({ page }) => {
   await page.waitForURL(/\/audit\//, { timeout: 15_000 });
   await expect(page).toHaveURL(/\/audit\//);
 
-  // Savings hero present
+  // Report hero (distinct from stack-health table label "Potential savings")
   await expect(
-    page.getByText(
-      /Potential savings|Stack optimized|Small wins available/i
-    )
+    page.getByText(/Potential monthly savings|Stack optimized/i).first()
   ).toBeVisible();
 });
