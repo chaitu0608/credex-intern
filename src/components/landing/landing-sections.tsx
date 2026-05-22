@@ -1,7 +1,3 @@
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
 const PROBLEMS = [
   {
     title: "AI overspending",
@@ -147,31 +143,6 @@ export function LandingFaq() {
             </details>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-export function LandingFinalCta() {
-  return (
-    <section className="border-t border-border py-16 sm:py-24">
-      <div className="rounded-2xl border border-accent/30 bg-accent/5 px-8 py-12 text-center sm:px-12">
-        <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
-          Know exactly where your AI budget leaks
-        </h2>
-        <p className="mx-auto mt-4 max-w-lg text-muted-foreground">
-          Free 3-minute audit. No login. Defensible math your team can share with
-          finance.
-        </p>
-        <Link
-          href="/#audit-form"
-          className={cn(
-            buttonVariants({ size: "lg" }),
-            "mt-8 inline-flex rounded-md bg-foreground px-8 text-background hover:bg-foreground/90"
-          )}
-        >
-          Start audit
-        </Link>
       </div>
     </section>
   );

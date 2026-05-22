@@ -63,7 +63,11 @@ export const SAMPLE_AUDIT_PREVIEW = {
   ] satisfies SampleRecommendation[],
 } as const;
 
+export const WHAT_SPENDSENSE_DOES =
+  "SpendSense reviews your AI subscriptions—tools, plans, seats, and monthly spend—and compares them to public vendor pricing for your team size. You get an instant, shareable report with specific downgrades, seat fixes, and savings math finance can trust.";
+
 export const SAMPLE_PREVIEW_SECTION = {
+  dialogTitle: "Example AI spend audit",
   eyebrow: "Example report",
   title: "See what your audit could uncover",
   description:
@@ -72,8 +76,7 @@ export const SAMPLE_PREVIEW_SECTION = {
     "Illustrative example only — recommendations depend on your actual usage and team structure.",
   ctaLabel: "Run Your Free Audit →",
   ctaHref: "/#audit-form",
-  compactLinkLabel: "View example report",
-  compactLinkHref: "#sample-preview",
+  viewExampleLabel: "View example report",
   trustPoints: [
     "Vendor pricing verified",
     "Per-seat math shown",

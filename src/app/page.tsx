@@ -8,12 +8,11 @@ import { toast } from "sonner";
 import { AuditCoveragePanel } from "@/components/audit/audit-coverage-panel";
 import {
   LandingFaq,
-  LandingFinalCta,
   LandingProblem,
   LandingSocialProof,
 } from "@/components/landing/landing-sections";
-import { SampleAuditPreviewCard } from "@/components/landing/sample-audit-preview-card";
-import { SampleAuditPreviewSection } from "@/components/landing/sample-audit-preview-section";
+import { SampleAuditPreviewDialog } from "@/components/landing/sample-audit-preview-dialog";
+import { WHAT_SPENDSENSE_DOES } from "@/components/landing/sample-audit-preview-data";
 import SpendForm from "@/components/spend-form/spend-form";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
@@ -110,12 +109,10 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            SpendSense audits Cursor, Claude, ChatGPT, Copilot, and more —
-            with defensible downgrade and seat-fit math your finance team can
-            trust.
+            {WHAT_SPENDSENSE_DOES}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/#audit-form"
               className={cn(
@@ -125,6 +122,7 @@ export default function HomePage() {
             >
               Start audit
             </Link>
+            <SampleAuditPreviewDialog />
             <Link
               href="/#how-it-works"
               className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
@@ -135,7 +133,7 @@ export default function HomePage() {
 
           <TrustBar className="mt-8 justify-start" />
 
-          <div id="how-it-works" className="mt-12 grid gap-3 sm:grid-cols-3">
+          <div id="how-it-works" className="mt-8 grid gap-2 sm:grid-cols-3">
             {STEPS.map((step) => (
               <div
                 key={step.title}
@@ -153,13 +151,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative hidden space-y-6 lg:block">
-          <SampleAuditPreviewCard variant="compact" />
+        <div className="relative hidden lg:block">
           <AuditCoveragePanel />
         </div>
       </section>
-
-      <SampleAuditPreviewSection />
 
       <div className="mb-8 lg:hidden" data-testid="hero-aside-mobile">
         <AuditCoveragePanel compact />
@@ -204,7 +199,6 @@ export default function HomePage() {
       <LandingProblem />
       <LandingSocialProof />
       <LandingFaq />
-      <LandingFinalCta />
     </PageShell>
   );
 }

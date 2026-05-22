@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ToolLogo } from "@/components/ui/tool-logo";
 import {
@@ -174,64 +173,13 @@ function TrustStrip() {
   );
 }
 
-export function SampleAuditPreviewCard({
-  variant,
-  className,
-}: {
-  variant: "full" | "compact";
-  className?: string;
-}) {
-  const { monthlySavings, annualSavings, recommendations } = SAMPLE_AUDIT_PREVIEW;
-  const topRec = [...recommendations].sort((a, b) => b.savings - a.savings)[0];
-
-  if (variant === "compact") {
-    return (
-      <div
-        className={cn(
-          "rounded-xl border border-accent/25 bg-card p-5 shadow-sm transition-shadow hover:shadow-md",
-          className
-        )}
-      >
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-          Sample preview
-        </p>
-        <p className="font-display mt-3 text-3xl font-bold tabular-nums text-savings">
-          ${monthlySavings}
-          <span className="text-lg font-normal text-muted-foreground">/mo</span>
-        </p>
-        <p className="mt-1 font-mono text-sm text-muted-foreground">
-          ${annualSavings.toLocaleString()}/year · {recommendations.length}{" "}
-          recommendations
-        </p>
-        {topRec && (
-          <div className="mt-4 flex items-start gap-3 rounded-lg border border-border bg-muted/20 p-3">
-            <ToolLogo tool={topRec.tool} className="h-8 w-8 shrink-0" />
-            <div className="min-w-0 text-sm">
-              <p className="font-medium text-foreground">{topRec.toolName}</p>
-              <p className="mt-0.5 text-muted-foreground line-clamp-2">
-                {topRec.reasoning}
-              </p>
-              <p className="mt-1 font-mono text-xs text-savings">
-                ${topRec.savings}/mo
-              </p>
-            </div>
-          </div>
-        )}
-        <Link
-          href={SAMPLE_PREVIEW_SECTION.compactLinkHref}
-          className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-foreground underline-offset-4 hover:underline"
-        >
-          {SAMPLE_PREVIEW_SECTION.compactLinkLabel}
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-        </Link>
-      </div>
-    );
-  }
+export function SampleAuditPreviewCard({ className }: { className?: string }) {
+  const { recommendations } = SAMPLE_AUDIT_PREVIEW;
 
   return (
     <div
       className={cn(
-        "rounded-2xl border border-accent/30 bg-accent/[0.03] p-6 shadow-sm transition-shadow hover:shadow-md sm:p-8",
+        "rounded-2xl border border-accent/30 bg-accent/[0.03] p-5 shadow-sm sm:p-6",
         className
       )}
     >
@@ -249,10 +197,6 @@ export function SampleAuditPreviewCard({
       </div>
 
       <TrustStrip />
-
-      <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
-        {SAMPLE_PREVIEW_SECTION.disclaimer}
-      </p>
     </div>
   );
 }
