@@ -129,7 +129,7 @@ flowchart TB
   result --> aggregate[Sum savings<br/>flag is high savings if > 500]
 ```
 
-Every rule traces to a list price in [`PRICING_DATA.md`](PRICING_DATA.md) and is unit-tested in [`src/lib/auditEngine.test.ts`](src/lib/auditEngine.test.ts).
+Every rule traces to a list price in [`PRICING_DATA.md`](PRICING_DATA.md) and is unit-tested in [`tests/unit/audit-engine.test.ts`](tests/unit/audit-engine.test.ts).
 
 ---
 
@@ -257,8 +257,8 @@ npm run smoke            # HTTP smoke against a running server
 
 | Layer | Files | Tests |
 |-------|-------|-------|
-| Audit engine | `src/lib/auditEngine.test.ts` | 7 |
-| Pricing | `src/lib/pricing.test.ts` | 4 |
+| Audit engine | `tests/unit/audit-engine.test.ts` | 20 |
+| Pricing | `tests/unit/pricing.test.ts` | 4 |
 | Validation | `tests/unit/validation.test.ts` | 11 |
 | AI summary fallback | `tests/unit/summary-fallback.test.ts` | 3 |
 | RLS schema | `tests/unit/rls-policy.test.ts` | 3 |
@@ -286,12 +286,8 @@ src/
     page.tsx                    landing
     globals.css                 tailwind tokens + aurora keyframes
   components/
-    SpendForm.tsx               tool palette + drag-drop + localStorage
-    AuditResults.tsx            per-tool timeline
-    SavingsHero.tsx             sticky monthly/annual hero
-    LeadCapture.tsx             email-after-value form
-    ShareSection.tsx            copy link + tweet draft
-    spend-form/                 tool-card, stack-card, empty-stack
+    audit/                      results UI (hero, recommendations, lead, share, coverage panel)
+    spend-form/                 spend-form + tool-card, stack-card, empty-stack
     layout/                     page-shell, site-header, site-footer
     ui/                         shadcn primitives + brand
   lib/
@@ -305,9 +301,11 @@ src/
 supabase/schema.sql             tables + RLS
 tests/                          unit + integration + e2e
 scripts/                        verify-env, test-supabase, smoke-e2e
+public/assets/                  credex-logo + tool brand SVGs
 docs/
+  STRUCTURE.md                  full repo map
   setup/                        inputs-needed, supabase, deploy
-  internal/                     crosscheck, submission-review, verify-prod, task3
+  internal/                     crosscheck, verify-prod, checklists/
   screenshots/                  README + mobile screenshots
 ```
 
@@ -365,10 +363,12 @@ docs/
 
 | File | Purpose |
 |------|---------|
+| [`STRUCTURE.md`](docs/STRUCTURE.md) | Full repo map |
 | [`crosscheck.md`](docs/internal/crosscheck.md) | Self-audit against the assignment rubric |
 | [`submission-review.md`](docs/internal/submission-review.md) | Assignment-checklist walkthrough |
 | [`verify-prod.md`](docs/internal/verify-prod.md) | Production smoke results log |
 | [`task3.md`](docs/internal/task3.md) | Day 3 task tracker |
+| [`checklists/`](docs/internal/checklists/) | P2–P4 phase cross-checks |
 
 ---
 

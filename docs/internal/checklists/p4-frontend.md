@@ -1,11 +1,11 @@
 # P4 frontend cross-check (2026-05-21)
 
-## P4.1 — Mobile sample preview
+## P4.1 — Mobile hero aside (audit coverage panel)
 
-- [`SampleAuditPreview.tsx`](../../src/components/SampleAuditPreview.tsx) shared component
+- [`audit-coverage-panel.tsx`](../../../src/components/audit/audit-coverage-panel.tsx)
 - Desktop: right column (`lg:block`)
 - Mobile: compact card above audit form (`lg:hidden`)
-- E2E: `tests/e2e/mobile-landing.spec.ts` on iPhone 14 project
+- E2E: `tests/e2e/mobile-landing.spec.ts` (Pixel 5 project)
 
 ## P4.2 — Accessibility
 

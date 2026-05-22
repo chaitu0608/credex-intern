@@ -13,7 +13,7 @@
 | P2 Gemini Ultra → Pro | ✅ | `totalMonthlySavings` = 229.99 |
 | P2 anthropic-api | ✅ | `totalMonthlySavings` = 0 |
 | P3 honeypot not in DB | ✅ | `audits.input` has no `website` |
-| P4 mobile sample preview | ✅ | Visible on mobile viewport |
+| P4 mobile coverage panel | ✅ | Visible on mobile viewport |
 | P4 a11y e2e | ✅ | Landing + audit results (local Playwright) |
 | Smoke script (9 checks) | ✅ | `SMOKE_BASE_URL=https://credex-intern.vercel.app npm run smoke` |
 

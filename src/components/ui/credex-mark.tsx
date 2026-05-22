@@ -15,7 +15,7 @@ export function CredexMark({ className, size = "sm" }: CredexMarkProps) {
 
   return (
     <Image
-      src="/credex-logo.png"
+      src="/assets/credex-logo.png"
       alt="Credex"
       width={width}
       height={height}

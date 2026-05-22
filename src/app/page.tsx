@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import SpendForm from "@/components/SpendForm";
-import { AuditCoveragePanel } from "@/components/AuditCoveragePanel";
+import { AuditCoveragePanel } from "@/components/audit/audit-coverage-panel";
+import SpendForm from "@/components/spend-form/spend-form";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
 import {

@@ -10,6 +10,10 @@ Repo-level docs are at the project root (rubric-required deliverables — `ARCHI
 | [`supabase.md`](setup/supabase.md) | Provision a Supabase project + apply schema |
 | [`deploy.md`](setup/deploy.md) | Vercel deploy walkthrough |
 
+## [`STRUCTURE.md`](STRUCTURE.md)
+
+Full repo map (app code vs docs vs tests).
+
 ## [`internal/`](internal) — dev-loop tracking
 
 | File | Purpose |
@@ -18,6 +22,7 @@ Repo-level docs are at the project root (rubric-required deliverables — `ARCHI
 | [`submission-review.md`](internal/submission-review.md) | Pre-submission checklist |
 | [`verify-prod.md`](internal/verify-prod.md) | Production smoke results log |
 | [`task3.md`](internal/task3.md) | Day 3 task tracker |
+| [`checklists/`](internal/checklists/) | P2 engine, P3 API, P4 frontend cross-checks |
 
 ## [`screenshots/`](screenshots) — README assets
 

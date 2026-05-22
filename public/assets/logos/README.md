@@ -1,6 +1,6 @@
 # Tool brand logos
 
-Official SVG marks served from `/logos/*` (not custom glyphs).
+Official SVG marks served from `/assets/logos/*` (not custom glyphs).
 
 | File | Brand | Source |
 |------|-------|--------|

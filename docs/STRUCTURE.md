@@ -1,0 +1,58 @@
+# Repository structure
+
+Assignment deliverables stay at the **repo root** (12 required `.md` files). Everything else is grouped below.
+
+```
+credex-intern/
+├── README.md, ARCHITECTURE.md, DEVLOG.md, …   # rubric deliverables (root only)
+├── package.json, tsconfig.json, vitest.config.ts, playwright.config.ts
+├── .github/workflows/ci.yml
+│
+├── docs/
+│   ├── README.md              # docs index
+│   ├── STRUCTURE.md           # this file
+│   ├── setup/                 # deploy + env checklists
+│   ├── screenshots/           # README capture assets
+│   └── internal/              # dev tracking
+│       ├── crosscheck.md
+│       ├── submission-review.md
+│       ├── verify-prod.md
+│       ├── task3.md
+│       └── checklists/        # P2–P4 phase cross-checks
+│
+├── public/
+│   └── assets/
+│       ├── credex-logo.png
+│       └── logos/             # tool brand SVGs
+│
+├── scripts/                   # verify-env, smoke, sync-tool-logos
+├── supabase/schema.sql
+│
+├── src/
+│   ├── app/                   # Next.js App Router (routes, API, OG images)
+│   ├── components/
+│   │   ├── audit/             # results UI (hero, recommendations, lead, share)
+│   │   ├── spend-form/        # landing audit form + stack cards
+│   │   ├── layout/            # header, footer, page shell
+│   │   ├── providers/
+│   │   └── ui/                # shadcn primitives + brand
+│   ├── lib/                   # engine, pricing, API helpers, AI summary
+│   └── types/
+│
+└── tests/
+    ├── unit/                  # engine, pricing, validation, …
+    ├── integration/           # API route handlers
+    └── e2e/                   # Playwright
+```
+
+## Where to find things
+
+| Looking for | Path |
+|-------------|------|
+| Landing page | `src/app/page.tsx` |
+| Audit results | `src/app/audit/[id]/page.tsx` |
+| Rule engine | `src/lib/auditEngine.ts` |
+| List prices | `src/lib/pricing.ts` + `PRICING_DATA.md` |
+| Supabase helpers | `src/lib/supabase.ts` |
+| Spend form | `src/components/spend-form/spend-form.tsx` |
+| Coverage panel (hero aside) | `src/components/audit/audit-coverage-panel.tsx` |

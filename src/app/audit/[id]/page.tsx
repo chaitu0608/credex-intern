@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import AuditResults from "@/components/AuditResults";
-import LeadCapture from "@/components/LeadCapture";
-import SavingsHero from "@/components/SavingsHero";
-import ShareSection from "@/components/ShareSection";
+import AuditResults from "@/components/audit/audit-results";
+import LeadCapture from "@/components/audit/lead-capture";
+import SavingsHero from "@/components/audit/savings-hero";
+import ShareSection from "@/components/audit/share-section";
 import { PageShell } from "@/components/layout/page-shell";
 import { buttonVariants } from "@/components/ui/button";
 import {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Regenerate public/logos/*.svg and src/lib/tool-brand-icons.ts from simple-icons.
+ * Regenerate public/assets/logos/*.svg paths in src/lib/tool-brand-icons.ts from simple-icons.
  * Run: node scripts/sync-tool-logos.cjs
  */
 const fs = require("fs");
@@ -14,7 +14,7 @@ const {
 } = require("simple-icons");
 
 const root = path.join(__dirname, "..");
-const logosDir = path.join(root, "public/logos");
+const logosDir = path.join(root, "public/assets/logos");
 
 const openaiPath = fs
   .readFileSync(path.join(logosDir, "openai.svg"), "utf8")
@@ -43,14 +43,14 @@ for (const [name, icon] of Object.entries(files)) {
 }
 
 const toolMap = {
-  cursor: { icon: siCursor, src: "/logos/cursor.svg" },
-  "github-copilot": { icon: siGithubcopilot, src: "/logos/githubcopilot.svg" },
-  claude: { icon: siAnthropic, src: "/logos/anthropic.svg" },
-  chatgpt: { icon: openaiIcon, src: "/logos/openai.svg" },
-  "anthropic-api": { icon: siAnthropic, src: "/logos/anthropic.svg" },
-  "openai-api": { icon: openaiIcon, src: "/logos/openai.svg" },
-  gemini: { icon: siGooglegemini, src: "/logos/googlegemini.svg" },
-  windsurf: { icon: siWindsurf, src: "/logos/windsurf.svg" },
+  cursor: { icon: siCursor, src: "/assets/logos/cursor.svg" },
+  "github-copilot": { icon: siGithubcopilot, src: "/assets/logos/githubcopilot.svg" },
+  claude: { icon: siAnthropic, src: "/assets/logos/anthropic.svg" },
+  chatgpt: { icon: openaiIcon, src: "/assets/logos/openai.svg" },
+  "anthropic-api": { icon: siAnthropic, src: "/assets/logos/anthropic.svg" },
+  "openai-api": { icon: openaiIcon, src: "/assets/logos/openai.svg" },
+  gemini: { icon: siGooglegemini, src: "/assets/logos/googlegemini.svg" },
+  windsurf: { icon: siWindsurf, src: "/assets/logos/windsurf.svg" },
 };
 
 let ts = `import type { AITool } from "@/types";
