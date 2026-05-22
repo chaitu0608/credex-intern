@@ -6,8 +6,13 @@ export function isProductionRuntime(): boolean {
   );
 }
 
-/** Memory-only Supabase fallback is allowed only outside production. */
+/**
+ * Memory-only Supabase fallback is allowed outside production and in e2e servers.
+ * E2e servers run `npm run start` (NODE_ENV=production) without real Supabase keys,
+ * so `E2E_SKIP_RATE_LIMIT=1` also signals that in-memory persistence is acceptable.
+ */
 export function allowsMemoryOnlyPersistence(): boolean {
+  if (process.env.E2E_SKIP_RATE_LIMIT === "1") return true;
   return !isProductionRuntime();
 }
 

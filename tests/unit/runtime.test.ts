@@ -54,3 +54,35 @@ describe("isRateLimitEnabled", () => {
     expect(isRateLimitEnabled()).toBe(false);
   });
 });
+
+describe("allowsMemoryOnlyPersistence", () => {
+  const env = { ...process.env };
+
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+    delete process.env.E2E_SKIP_RATE_LIMIT;
+  });
+
+  afterEach(() => {
+    process.env = { ...env };
+    vi.unstubAllEnvs();
+  });
+
+  it("allows memory fallback in development", () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("VERCEL_ENV", "development");
+    expect(allowsMemoryOnlyPersistence()).toBe(true);
+  });
+
+  it("disallows memory fallback in production without e2e flag", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "production");
+    expect(allowsMemoryOnlyPersistence()).toBe(false);
+  });
+
+  it("allows memory fallback in e2e mode even with production NODE_ENV", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("E2E_SKIP_RATE_LIMIT", "1");
+    expect(allowsMemoryOnlyPersistence()).toBe(true);
+  });
+});
