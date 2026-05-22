@@ -21,7 +21,7 @@ Add environment variables:
 vercel env add NEXT_PUBLIC_SUPABASE_URL
 vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
 vercel env add SUPABASE_SERVICE_ROLE_KEY
-vercel env add ANTHROPIC_API_KEY
+vercel env add OPENAI_API_KEY
 vercel env add RESEND_API_KEY
 vercel env add NEXT_PUBLIC_APP_URL
 ```

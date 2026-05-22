@@ -1,18 +1,36 @@
 # Docs
 
-Repo-level docs are at the project root (rubric-required deliverables — `ARCHITECTURE.md`, `DEVLOG.md`, `REFLECTION.md`, `TESTS.md`, `PRICING_DATA.md`, `PROMPTS.md`, `GTM.md`, `ECONOMICS.md`, `USER_INTERVIEWS.md`, `LANDING_COPY.md`, `METRICS.md`). This folder holds everything else.
+All project documentation lives under this folder. Application code is in [`src/`](../src/).
 
-## [`setup/`](setup) — user-facing, read these first
+## [`deliverables/`](deliverables) — assignment rubric (canonical)
 
 | File | Purpose |
 |------|---------|
-| [`inputs-needed.md`](setup/inputs-needed.md) | Canonical "what I need from you" checklist to finish the prod build (~75 min) |
-| [`supabase.md`](setup/supabase.md) | Provision a Supabase project + apply schema |
+| [`ARCHITECTURE.md`](deliverables/ARCHITECTURE.md) | Stack, diagrams, abuse rationale, 10k audits/day scale-out |
+| [`DEVLOG.md`](deliverables/DEVLOG.md) | Daily log (`Day N — YYYY-MM-DD` format) |
+| [`REFLECTION.md`](deliverables/REFLECTION.md) | Five required reflection questions |
+| [`TESTS.md`](deliverables/TESTS.md) | What's tested, how to run |
+| [`PRICING_DATA.md`](deliverables/PRICING_DATA.md) | List prices with vendor URLs and dates |
+| [`PROMPTS.md`](deliverables/PROMPTS.md) | OpenAI prompt + fallback + what didn't work |
+| [`GTM.md`](deliverables/GTM.md) | Channels, first-100-users plan |
+| [`ECONOMICS.md`](deliverables/ECONOMICS.md) | Lead value, CAC, $1M ARR scenario |
+| [`USER_INTERVIEWS.md`](deliverables/USER_INTERVIEWS.md) | Interview log + outreach scripts |
+| [`LANDING_COPY.md`](deliverables/LANDING_COPY.md) | Hero, FAQ, social proof, X thread |
+| [`METRICS.md`](deliverables/METRICS.md) | North Star, input metrics, pivot triggers |
+
+**Root symlinks:** Each file above also appears at the repo root (e.g. `ARCHITECTURE.md` → `docs/deliverables/ARCHITECTURE.md`) so graders and GitHub links keep working. [`README.md`](../README.md) stays at the root as the main entry point.
+
+## [`setup/`](setup) — ship the live build
+
+| File | Purpose |
+|------|---------|
+| [`inputs-needed.md`](setup/inputs-needed.md) | Canonical env checklist (~75 min) |
+| [`supabase.md`](setup/supabase.md) | Supabase project + schema |
 | [`deploy.md`](setup/deploy.md) | Vercel deploy walkthrough |
 
 ## [`STRUCTURE.md`](STRUCTURE.md)
 
-Full repo map (app code vs docs vs tests).
+Full repo map (app, tests, scripts, assets).
 
 ## [`internal/`](internal) — dev-loop tracking
 
@@ -24,6 +42,6 @@ Full repo map (app code vs docs vs tests).
 | [`task3.md`](internal/task3.md) | Day 3 task tracker |
 | [`checklists/`](internal/checklists/) | P2 engine, P3 API, P4 frontend cross-checks |
 
-## [`screenshots/`](screenshots) — README assets
+## [`screenshots/`](screenshots)
 
-Mobile screenshots from the live URL plus capture instructions.
+Mobile screenshots for the README plus capture instructions.

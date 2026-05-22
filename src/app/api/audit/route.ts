@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
-import { generateAISummary } from "@/lib/anthropic";
+import { generateAISummary } from "@/lib/ai-summary";
 import { runAudit } from "@/lib/auditEngine";
 import { checkRateLimit, saveAudit } from "@/lib/supabase";
 import {

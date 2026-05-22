@@ -4,21 +4,23 @@ Self-audit against the assignment requirements. Last updated: **2026-05-21 (Day 
 
 ## Required root files
 
+Canonical copies: [`../deliverables/`](../deliverables/). Root paths are symlinks for graders.
+
 | File | Present | Notes |
 |------|---------|-------|
-| `README.md` | ✅ | Summary, Decisions, screenshot slots — **live URL still placeholder** |
-| `ARCHITECTURE.md` | ✅ | Includes **10k audits/day** scale-out section |
-| `DEVLOG.md` | ✅ | Day 3 entry filled (deploy/interviews pending user) |
-| `REFLECTION.md` | ✅ | 5 required questions |
-| `TESTS.md` | ✅ | 36 tests documented |
+| `README.md` | ✅ | Summary, Decisions, screenshot slots at repo root |
+| `ARCHITECTURE.md` | ✅ | Symlink; **10k audits/day** scale-out in deliverables |
+| `DEVLOG.md` | ✅ | Symlink; Day 3 entry filled (deploy/interviews pending user) |
+| `REFLECTION.md` | ✅ | Symlink; 5 required questions |
+| `TESTS.md` | ✅ | Symlink; 69 tests documented |
 | `.github/workflows/ci.yml` | ✅ | lint + typecheck + test + build + e2e |
-| `PRICING_DATA.md` | ✅ | Inline list format + tables |
-| `PROMPTS.md` | ✅ | Includes "what didn't work" |
-| `GTM.md` | ✅ | Specific channels, first-100-users plan |
-| `ECONOMICS.md` | ✅ | Lead value, CAC, $1M ARR scenario |
-| `USER_INTERVIEWS.md` | ⚠️ | Outreach scaffold — **needs real interviews** |
-| `LANDING_COPY.md` | ✅ | FAQ (5), social proof (mocked) |
-| `METRICS.md` | ✅ | North Star, 3 inputs, pivot triggers |
+| `PRICING_DATA.md` | ✅ | Symlink; inline list format + tables |
+| `PROMPTS.md` | ✅ | Symlink; OpenAI prompt + "what didn't work" |
+| `GTM.md` | ✅ | Symlink; specific channels, first-100-users plan |
+| `ECONOMICS.md` | ✅ | Symlink; lead value, CAC, $1M ARR scenario |
+| `USER_INTERVIEWS.md` | ⚠️ | Symlink; outreach scaffold — **needs real interviews** |
+| `LANDING_COPY.md` | ✅ | Symlink; FAQ (5), social proof (mocked) |
+| `METRICS.md` | ✅ | Symlink; North Star, 3 inputs, pivot triggers |
 
 ## MVP features
 
@@ -30,7 +32,7 @@ Self-audit against the assignment requirements. Last updated: **2026-05-21 (Day 
 | Frontend (P4) | ✅ | Mobile coverage panel, audit a11y e2e, 429 toast, lead error copy — see [`checklists/p4-frontend.md`](checklists/p4-frontend.md) |
 | Tests/CI (P5) | ✅ | 68 Vitest + 7 e2e (desktop + mobile), CI green, prod smoke |
 | Audit results page | ✅ | `audit/[id]/page.tsx` — revalidate 3600 |
-| AI summary + fallback | ✅ | `anthropic.ts` — verified model id |
+| AI summary + fallback | ✅ | `ai-summary.ts` — OpenAI `gpt-4o-mini` + template fallback |
 | Lead capture + storage | ⚠️ | Code ✅ — **needs live Supabase** |
 | Shareable URL + OG | ✅ | Dynamic `opengraph-image` routes |
 

@@ -3,7 +3,7 @@
 > A free 3-minute audit of a startup's AI tool stack. Finds overspend on Cursor, Claude, ChatGPT, Copilot, Gemini, and more — with defensible list-price math your finance team will believe. Built as a lead-generation product for [Credex](https://credex.rocks), which sells discounted AI infrastructure credits.
 
 **Live:** https://credex-intern.vercel.app
-**Stack:** Next.js 14 App Router · TypeScript strict · Tailwind · shadcn/ui · Supabase · Anthropic Claude · Resend · Vercel
+**Stack:** Next.js 14 App Router · TypeScript strict · Tailwind · shadcn/ui · Supabase · OpenAI · Resend · Vercel
 **Tests:** 68 passing (Vitest unit + integration, Playwright e2e + axe-core a11y on landing and audit results)
 
 > **To finish the production build:** keys aren't pasted yet, so the live URL serves audits but does not persist them. The full input checklist is in [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) — ~75 minutes of your time, no code changes needed.
@@ -30,7 +30,7 @@ flowchart LR
   rateLimit -->|blocked| err429[429]
   honeypot -->|filled| fakeId[fake id<br/>no DB write]
   honeypot -->|empty| engine[auditEngine<br/>rules + list prices]
-  engine --> ai[generateAISummary<br/>Anthropic or template]
+  engine --> ai[generateAISummary<br/>OpenAI or template]
   ai --> save[(Supabase<br/>audits)]
   save --> redirect[/audit/id]
   redirect --> hero[SavingsHero<br/>monthly + annual]
@@ -55,7 +55,7 @@ sequenceDiagram
   participant Audit as POST /api/audit
   participant RL as checkRateLimit
   participant Engine as runAudit
-  participant Anthropic as generateAISummary
+  participant OpenAI as generateAISummary
   participant DB as Supabase
 
   Client->>Audit: { tools, teamSize, useCase }
@@ -64,9 +64,9 @@ sequenceDiagram
   Audit->>Audit: validate + honeypot
   Audit->>Engine: rules over tools
   Engine-->>Audit: recommendations + totals
-  Audit->>Anthropic: prompt with totals
-  Anthropic-->>Audit: ~100 word paragraph
-  Note over Anthropic: falls back to<br/>buildFallbackSummary<br/>on missing key / error
+  Audit->>OpenAI: prompt with totals
+  OpenAI-->>Audit: ~100 word paragraph
+  Note over OpenAI: falls back to<br/>buildFallbackSummary<br/>on missing key / error
   Audit->>DB: insert audit (server role)
   DB-->>Audit: ok / error
   Audit-->>Client: { id, monthly, annual, isHighSavings }
@@ -203,7 +203,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | Service | Where to get the key | Env var(s) |
 |---------|----------------------|------------|
 | Supabase | supabase.com → New project → Settings → API | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
-| Anthropic | console.anthropic.com → API Keys | `ANTHROPIC_API_KEY` (optional override: `ANTHROPIC_MODEL`) |
+| OpenAI | platform.openai.com → API Keys | `OPENAI_API_KEY` (optional override: `OPENAI_MODEL`, default `gpt-4o-mini`) |
 | Resend | resend.com → API Keys (free tier) | `RESEND_API_KEY` |
 
 Apply the schema in Supabase SQL Editor: paste [`supabase/schema.sql`](supabase/schema.sql) → Run.
@@ -235,7 +235,7 @@ Full walkthrough: [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md). 
 
 ## Decisions (5 trade-offs and why)
 
-1. **Hardcoded rules for audit math, LLM only for the summary paragraph.** Finance teams need numbers that trace to a vendor URL. LLMs hallucinate prices and seat minimums. Rules in [`src/lib/auditEngine.ts`](src/lib/auditEngine.ts) + sourced numbers in [`PRICING_DATA.md`](PRICING_DATA.md) are the defensible split; the ~100-word Claude summary in [`src/lib/anthropic.ts`](src/lib/anthropic.ts) is reserved for narrative tone, not math.
+1. **Hardcoded rules for audit math, LLM only for the summary paragraph.** Finance teams need numbers that trace to a vendor URL. LLMs hallucinate prices and seat minimums. Rules in [`src/lib/auditEngine.ts`](src/lib/auditEngine.ts) + sourced numbers in [`PRICING_DATA.md`](PRICING_DATA.md) are the defensible split; the ~100-word GPT summary in [`src/lib/ai-summary.ts`](src/lib/ai-summary.ts) is reserved for narrative tone, not math.
 
 2. **In-memory fallback in [`src/lib/supabase.ts`](src/lib/supabase.ts) for local dev only.** Lets the dev loop run without a Supabase project, but the route now returns 503 if `saveAudit` fails on a configured deploy, and a loud warning fires when `SUPABASE_SERVICE_ROLE_KEY` is missing in production. Serverless functions don't share memory across requests, so "memory fallback in prod" is a silent landmine — not a feature.
 
@@ -293,7 +293,7 @@ src/
   lib/
     auditEngine.ts              rule engine (server-pure)
     pricing.ts                  list prices (mirror of PRICING_DATA.md)
-    anthropic.ts                ~100 word summary + template fallback
+    ai-summary.ts               ~100 word summary + template fallback (OpenAI)
     supabase.ts                 audits / leads / rate_limits helpers (server-only)
     validation.ts               shared input validation
   types/
@@ -328,28 +328,36 @@ docs/
 
 ---
 
-## Docs
+## Documentation
 
-### Engineering
+| Index | Purpose |
+|-------|---------|
+| [`docs/README.md`](docs/README.md) | Full docs index |
+| [`docs/STRUCTURE.md`](docs/STRUCTURE.md) | Repo map (code, tests, assets) |
+| [`docs/setup/inputs-needed.md`](docs/setup/inputs-needed.md) | Env keys checklist to finish prod |
 
-| File | Purpose |
-|------|---------|
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Stack, diagrams, abuse rationale, 10k audits/day scale-out |
-| [`DEVLOG.md`](DEVLOG.md) | Daily log in the required `Day N — YYYY-MM-DD` format |
-| [`REFLECTION.md`](REFLECTION.md) | 5 required questions answered |
-| [`TESTS.md`](TESTS.md) | What's tested, how to run |
-| [`PRICING_DATA.md`](PRICING_DATA.md) | Every list price with a vendor URL and verified date |
-| [`PROMPTS.md`](PROMPTS.md) | Anthropic prompt + fallback + what we tried that didn't work |
+Assignment deliverables live in [`docs/deliverables/`](docs/deliverables/) (root symlinks keep grader paths like `ARCHITECTURE.md` working).
 
-### Entrepreneurial
+### Engineering ([`docs/deliverables/`](docs/deliverables))
 
 | File | Purpose |
 |------|---------|
-| [`GTM.md`](GTM.md) | Target user, specific channels, first-100-users plan, unfair channel |
-| [`ECONOMICS.md`](ECONOMICS.md) | Lead value, CAC per channel, $1M ARR scenario |
-| [`USER_INTERVIEWS.md`](USER_INTERVIEWS.md) | Real conversation log + outreach scripts |
-| [`LANDING_COPY.md`](LANDING_COPY.md) | Hero, sub, CTAs, FAQ, social proof, X thread |
-| [`METRICS.md`](METRICS.md) | North Star, 3 input metrics, what triggers a pivot |
+| [`ARCHITECTURE.md`](docs/deliverables/ARCHITECTURE.md) | Stack, diagrams, abuse rationale, 10k audits/day scale-out |
+| [`DEVLOG.md`](docs/deliverables/DEVLOG.md) | Daily log in the required `Day N — YYYY-MM-DD` format |
+| [`REFLECTION.md`](docs/deliverables/REFLECTION.md) | 5 required questions answered |
+| [`TESTS.md`](docs/deliverables/TESTS.md) | What's tested, how to run |
+| [`PRICING_DATA.md`](docs/deliverables/PRICING_DATA.md) | Every list price with a vendor URL and verified date |
+| [`PROMPTS.md`](docs/deliverables/PROMPTS.md) | OpenAI prompt + fallback + what we tried that didn't work |
+
+### Entrepreneurial ([`docs/deliverables/`](docs/deliverables))
+
+| File | Purpose |
+|------|---------|
+| [`GTM.md`](docs/deliverables/GTM.md) | Target user, specific channels, first-100-users plan, unfair channel |
+| [`ECONOMICS.md`](docs/deliverables/ECONOMICS.md) | Lead value, CAC per channel, $1M ARR scenario |
+| [`USER_INTERVIEWS.md`](docs/deliverables/USER_INTERVIEWS.md) | Real conversation log + outreach scripts |
+| [`LANDING_COPY.md`](docs/deliverables/LANDING_COPY.md) | Hero, sub, CTAs, FAQ, social proof, X thread |
+| [`METRICS.md`](docs/deliverables/METRICS.md) | North Star, 3 input metrics, what triggers a pivot |
 
 ### Setup ([`docs/setup/`](docs/setup))
 

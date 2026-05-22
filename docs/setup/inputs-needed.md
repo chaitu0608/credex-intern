@@ -15,7 +15,7 @@ I need these 6 strings pasted into **both** `.env.local` (locally) **and** Verce
 | 1 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API → Project URL | Saving + loading audits |
 | 2 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API → `anon public` | Public read of share URLs |
 | 3 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API → `service_role` | Server-side writes (audits, leads, rate-limit) |
-| 4 | `ANTHROPIC_API_KEY` | console.anthropic.com → API Keys | AI summary paragraph (falls back to template if blank — optional but graded) |
+| 4 | `OPENAI_API_KEY` | platform.openai.com → API Keys | AI summary paragraph (falls back to template if blank — optional but graded) |
 | 5 | `RESEND_API_KEY` | resend.com → API Keys | Confirmation email after lead capture (optional but graded) |
 | 6 | `NEXT_PUBLIC_APP_URL` | Your Vercel URL with no trailing slash | OG previews + share links pointing to prod |
 
@@ -52,15 +52,15 @@ You should see `✓ Insert OK`, `✓ Read OK`, `✓ Cleanup OK`. If yes, Supabas
 
 ---
 
-## Step 2 — Anthropic (10 min, recommended)
+## Step 2 — OpenAI (10 min, recommended)
 
 Without this, the AI summary falls back to a deterministic ~100-word template. The grading rubric explicitly checks "Real LLM API call (Claude/GPT/Gemini), not a fake string", so you want this on.
 
-1. https://console.anthropic.com → sign up or log in.
-2. **Billing → Add payment method** → **$5 minimum credit**. You will spend < $0.10 testing this; the floor is just to activate the key.
-3. **API Keys → Create Key** → name it `spendsense-dev`. Copy the `sk-ant-api03-...` value (shown once).
-4. Paste into `.env.local` as `ANTHROPIC_API_KEY=sk-ant-api03-...`.
-5. (Optional) Verify model access — the default in code is `claude-3-5-sonnet-20241022`. If your account doesn't have it for any reason, set `ANTHROPIC_MODEL=claude-3-5-haiku-20241022` in `.env.local`.
+1. https://platform.openai.com → sign up or log in.
+2. **Billing** — add credits or a payment method (testing uses pennies on `gpt-4o-mini`).
+3. **API Keys → Create new secret key** → name it `spendsense-dev`. Copy the `sk-...` value (shown once).
+4. Paste into `.env.local` as `OPENAI_API_KEY=sk-...`.
+5. (Optional) Override model — default is `gpt-4o-mini`. Set `OPENAI_MODEL=gpt-4o` in `.env.local` if you prefer.
 
 Quick smoke once pasted:
 
@@ -69,10 +69,10 @@ npm run dev
 # then in another terminal:
 curl -X POST http://localhost:3000/api/audit \
   -H 'Content-Type: application/json' \
-  -d '{"tools":[{"tool":"Cursor","plan":"Business","monthlySpend":160}],"teamSize":3,"useCase":"Coding","website":""}'
+  -d '{"tools":[{"tool":"cursor","plan":"business","monthlySpend":160,"seats":3}],"teamSize":3,"useCase":"coding","website":""}'
 ```
 
-You should see a real summary string in the JSON response (not the templated "Your current AI tool spend is..." fallback).
+Then open `/audit/<id>` from the response — the summary paragraph should read like fresh GPT prose (not the fixed template opening "Across N tools..."). In Supabase or the saved audit, `summarySource` should be `"ai"`.
 
 ---
 
@@ -100,8 +100,8 @@ The current live URL (https://credex-intern.vercel.app) lacks every key, which i
 NEXT_PUBLIC_SUPABASE_URL          → <from step 1>
 NEXT_PUBLIC_SUPABASE_ANON_KEY     → <from step 1>
 SUPABASE_SERVICE_ROLE_KEY         → <from step 1>
-ANTHROPIC_API_KEY                 → <from step 2>
-ANTHROPIC_MODEL                   → (leave blank unless overriding)
+OPENAI_API_KEY                    → <from step 2>
+OPENAI_MODEL                      → (leave blank unless overriding; default gpt-4o-mini)
 RESEND_API_KEY                    → <from step 3>
 NEXT_PUBLIC_APP_URL               → https://credex-intern.vercel.app
 ```
@@ -139,7 +139,7 @@ I can't do these from here; they need a real browser pointed at the live URL.
    - `audit-optimized.png` (use a small stack with $0 savings, e.g. Cursor Pro @ 2 seats only)
    - `lead.png` (the email form below the audit)
    - `og-preview.png` (paste a share URL into https://www.opengraph.xyz to capture)
-3. **Lighthouse mobile audit** — Chrome DevTools → Lighthouse → Mobile → Categories: Performance, Accessibility, Best Practices, SEO. Save scores and paste into `DEVLOG.md` Day 3 entry. Target: Accessibility ≥ 90.
+3. **Lighthouse mobile audit** — Chrome DevTools → Lighthouse → Mobile → Categories: Performance, Accessibility, Best Practices, SEO. Save scores and paste into [`docs/deliverables/DEVLOG.md`](../deliverables/DEVLOG.md) Day 3 entry. Target: Accessibility ≥ 90.
 
 Once 1-3 are done, I'll update README.md to embed the screenshots and the Lighthouse numbers.
 
@@ -163,7 +163,7 @@ If you only have **30 minutes total**:
 
 1. Step 1 (Supabase) — REQUIRED, no skip.
 2. Step 4 (push to Vercel + redeploy + smoke test).
-3. Skip Anthropic + Resend — the app degrades gracefully (template summary, no email). You lose two rubric points but the live URL fully works for audits and lead capture.
+3. Skip OpenAI + Resend — the app degrades gracefully (template summary, no email). You lose two rubric points but the live URL fully works for audits and lead capture.
 
 If you have **75 minutes**, do all of the above. If you have **90 minutes**, add a screenshot pass and one real interview.
 
@@ -172,7 +172,7 @@ If you have **75 minutes**, do all of the above. If you have **90 minutes**, add
 ## Once everything's pasted, ping me with:
 
 - ✅ Supabase keys pasted (or "skip")
-- ✅ Anthropic key pasted (or "skip")
+- ✅ OpenAI key pasted (or "skip")
 - ✅ Resend key pasted (or "skip")
 - ✅ Vercel envs set + redeployed
 - 📸 Screenshots in `docs/screenshots/`

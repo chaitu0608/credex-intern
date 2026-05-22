@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { generateAISummary } from "@/lib/anthropic";
+import { generateAISummary } from "@/lib/ai-summary";
 import { runAudit } from "@/lib/auditEngine";
 import type { AuditInput } from "@/types";
 
@@ -10,14 +10,14 @@ const sampleInput: AuditInput = {
 };
 
 describe("AI summary fallback (UNIT-006)", () => {
-  const originalKey = process.env.ANTHROPIC_API_KEY;
+  const originalKey = process.env.OPENAI_API_KEY;
 
   beforeEach(() => {
-    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.OPENAI_API_KEY;
   });
 
   afterEach(() => {
-    if (originalKey !== undefined) process.env.ANTHROPIC_API_KEY = originalKey;
+    if (originalKey !== undefined) process.env.OPENAI_API_KEY = originalKey;
   });
 
   it("returns templated summary with source template when no API key", async () => {

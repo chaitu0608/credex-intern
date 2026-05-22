@@ -23,10 +23,10 @@ End-to-end checklist for submission readiness. Check items as you complete them.
 - [ ] Run [`supabase/schema.sql`](../../supabase/schema.sql) in SQL Editor
 - [ ] Copy URL, anon key, service role key
 
-### 1.2 Anthropic (you)
+### 1.2 OpenAI (you)
 
-- [ ] Create API key at console.anthropic.com
-- [ ] Confirm model access (`claude-3-5-sonnet-20241022` or set `ANTHROPIC_MODEL`)
+- [ ] Create API key at platform.openai.com
+- [ ] Paste `OPENAI_API_KEY` (optional: `OPENAI_MODEL`, default `gpt-4o-mini`)
 
 ### 1.3 Resend (you)
 

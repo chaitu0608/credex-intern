@@ -1,4 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { generateAuditSummaryPrompt } from "@/lib/auditEngine";
 import type { AuditInput, AuditResult, SummarySource } from "@/types";
 
@@ -11,6 +10,11 @@ export type GeneratedSummary = {
   summary: string;
   source: SummarySource;
 };
+
+const SYSTEM_PROMPT =
+  "You are a concise financial analyst. Direct, specific. No fluff. No sales pitch. Under 120 words. Plain paragraph, no bullets.";
+
+const DEFAULT_MODEL = "gpt-4o-mini";
 
 function buildFallbackSummary(
   result: AuditWithoutSummary,
@@ -36,11 +40,50 @@ function buildFallbackSummary(
   return `Across ${input.tools.length} tools (~$${totalSpend}/month), we identified $${result.totalMonthlySavings}/month ($${result.totalAnnualSavings}/year) in potential savings for your ${input.teamSize}-person ${input.useCase} team. ${topLine}${credex}`;
 }
 
+async function callOpenAI(
+  apiKey: string,
+  userPrompt: string
+): Promise<string | null> {
+  const model = process.env.OPENAI_MODEL?.trim() || DEFAULT_MODEL;
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 200,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userPrompt },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    console.error(
+      "OpenAI chat/completions error:",
+      response.status,
+      errText.slice(0, 500)
+    );
+    return null;
+  }
+
+  const data = (await response.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  const text = data.choices?.[0]?.message?.content?.trim();
+  return text || null;
+}
+
 export async function generateAISummary(
   result: AuditWithoutSummary,
   input: AuditInput
 ): Promise<GeneratedSummary> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
     return {
       summary: buildFallbackSummary(result, input),
@@ -49,21 +92,13 @@ export async function generateAISummary(
   }
 
   try {
-    const client = new Anthropic({ apiKey });
     const prompt = generateAuditSummaryPrompt(result, input);
+    const text = await callOpenAI(apiKey, prompt);
 
-    const message = await client.messages.create({
-      model: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-20241022",
-      max_tokens: 200,
-      system:
-        "You are a concise financial analyst. Direct, specific. No fluff. No sales pitch. Under 120 words. Plain paragraph, no bullets.",
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    const block = message.content[0];
-    if (block.type === "text" && block.text.trim()) {
-      return { summary: block.text.trim(), source: "ai" };
+    if (text) {
+      return { summary: text, source: "ai" };
     }
+
     return {
       summary: buildFallbackSummary(result, input),
       source: "template",

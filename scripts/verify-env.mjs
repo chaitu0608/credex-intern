@@ -17,7 +17,7 @@ const required = [
   "NEXT_PUBLIC_APP_URL",
 ];
 
-const optional = ["ANTHROPIC_API_KEY", "RESEND_API_KEY"];
+const optional = ["OPENAI_API_KEY", "RESEND_API_KEY"];
 
 if (!existsSync(envPath)) {
   console.error("Missing .env.local — copy from .env.example");

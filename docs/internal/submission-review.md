@@ -8,7 +8,7 @@ Assignment checklist against current repo state.
 |-------------|--------|--------|
 | Public GitHub repo | ✅ | Push today's commits |
 | Live deployed URL | ❌ | [`../setup/inputs-needed.md`](../setup/inputs-needed.md) |
-| All required root `.md` files | ✅ | 13 files present |
+| All required root `.md` files | ✅ | README at root + 10 deliverables (symlinks → `docs/deliverables/`) |
 | README: summary | ✅ | |
 | README: 3+ screenshots or Loom | ❌ | After deploy |
 | README: quick start | ✅ | |
@@ -22,7 +22,7 @@ Assignment checklist against current repo state.
 | 1 | Spend form | ✅ | pending |
 | 2 | Audit engine | ✅ | pending |
 | 3 | Results page | ✅ | pending |
-| 4 | AI summary | ✅ | needs Anthropic key |
+| 4 | AI summary | ✅ | needs OpenAI key |
 | 5 | Lead capture | ✅ | needs Supabase + Resend |
 | 6 | Share URL + OG | ✅ | needs Supabase + deploy |
 

@@ -1,6 +1,6 @@
 import type { AITool } from "@/types";
 
-// Source: verified May 2026 — see PRICING_DATA.md
+// Source: verified May 2026 — see docs/deliverables/PRICING_DATA.md
 
 export type PricingEntry = {
   price: number | null;

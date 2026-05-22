@@ -1,16 +1,18 @@
 # Repository structure
 
-Assignment deliverables stay at the **repo root** (12 required `.md` files). Everything else is grouped below.
+Assignment deliverables live in [`deliverables/`](deliverables/) with **symlinks at the repo root** for grading (e.g. `ARCHITECTURE.md` → `docs/deliverables/ARCHITECTURE.md`). [`README.md`](../README.md) is the only full narrative doc kept as a real file at root.
 
 ```
 credex-intern/
-├── README.md, ARCHITECTURE.md, DEVLOG.md, …   # rubric deliverables (root only)
+├── README.md                  # main entry (real file)
+├── ARCHITECTURE.md, …         # symlinks → docs/deliverables/
 ├── package.json, tsconfig.json, vitest.config.ts, playwright.config.ts
 ├── .github/workflows/ci.yml
 │
 ├── docs/
 │   ├── README.md              # docs index
 │   ├── STRUCTURE.md           # this file
+│   ├── deliverables/          # rubric .md files (canonical)
 │   ├── setup/                 # deploy + env checklists
 │   ├── screenshots/           # README capture assets
 │   └── internal/              # dev tracking
@@ -25,7 +27,7 @@ credex-intern/
 │       ├── credex-logo.png
 │       └── logos/             # tool brand SVGs
 │
-├── scripts/                   # verify-env, smoke, sync-tool-logos
+├── scripts/                   # verify-env, smoke, sync-tool-logos, test-supabase
 ├── supabase/schema.sql
 │
 ├── src/
@@ -52,7 +54,7 @@ credex-intern/
 | Landing page | `src/app/page.tsx` |
 | Audit results | `src/app/audit/[id]/page.tsx` |
 | Rule engine | `src/lib/auditEngine.ts` |
-| List prices | `src/lib/pricing.ts` + `PRICING_DATA.md` |
+| List prices | `src/lib/pricing.ts` + `docs/deliverables/PRICING_DATA.md` |
 | Supabase helpers | `src/lib/supabase.ts` |
 | Spend form | `src/components/spend-form/spend-form.tsx` |
 | Coverage panel (hero aside) | `src/components/audit/audit-coverage-panel.tsx` |
