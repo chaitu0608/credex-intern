@@ -60,11 +60,12 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
   const [website, setWebsite] = useState("");
   const [draftVisible, setDraftVisible] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
+      if (raw) {
       const parsed = JSON.parse(raw) as StoredDraft;
       if (parsed.stack?.length) {
         setStack(parsed.stack);
@@ -81,12 +82,16 @@ export default function SpendForm({ onSubmit, isLoading }: SpendFormProps) {
       }
       if (parsed.teamSize) setTeamSize(parsed.teamSize);
       if (parsed.useCase) setUseCase(parsed.useCase);
+      }
     } catch {
       /* ignore */
+    } finally {
+      setHydrated(true);
     }
   }, []);
 
   useEffect(() => {
+    if (!hydrated) return;
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({ stack, teamSize, useCase })

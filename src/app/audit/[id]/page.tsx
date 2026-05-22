@@ -4,10 +4,12 @@ import { ArrowUpRight } from "lucide-react";
 import AuditChatWidget from "@/components/audit/audit-chat-widget";
 import AuditPdfDownload from "@/components/audit/audit-pdf-download";
 import AuditPricingSources from "@/components/audit/audit-pricing-sources";
+import AuditReportHero from "@/components/audit/audit-report-hero";
 import {
   AuditRecommendations,
   AuditSummary,
 } from "@/components/audit/audit-results";
+import AuditStackHealth from "@/components/audit/audit-stack-health";
 import LeadCapture from "@/components/audit/lead-capture";
 import SavingsHero from "@/components/audit/savings-hero";
 import ShareSection from "@/components/audit/share-section";
@@ -18,7 +20,9 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { AuditPdfPayload } from "@/lib/audit-pdf-export";
 import {
+  getOptimizationScore,
   getSavingsPercent,
+  getStackHealthNarrative,
   getTotalMonthlySpend,
 } from "@/lib/audit-metrics";
 import { HONEST_PATH_MAX_MONTHLY } from "@/lib/auditEngine";
@@ -28,7 +32,6 @@ import {
   buildTwitterCard,
 } from "@/lib/og-metadata";
 import { getAudit } from "@/lib/supabase";
-import type { ToolRecommendation } from "@/types";
 
 interface PageProps {
   params: { id: string };
@@ -66,20 +69,6 @@ export async function generateMetadata({
       siteName: "SpendSense",
     }),
     twitter: buildTwitterCard(title, description, imagePath),
-  };
-}
-
-function getTopRecommendation(
-  recommendations: ToolRecommendation[]
-): { toolName: string; savings: number; action: string } | undefined {
-  const top = [...recommendations]
-    .filter((r) => r.savings > 0)
-    .sort((a, b) => b.savings - a.savings)[0];
-  if (!top) return undefined;
-  return {
-    toolName: top.toolName,
-    savings: top.savings,
-    action: top.recommendedAction,
   };
 }
 
@@ -132,13 +121,20 @@ export default async function AuditPage({ params }: PageProps) {
   const isHonestPath =
     !audit.isHighSavings && audit.totalMonthlySavings < HONEST_PATH_MAX_MONTHLY;
 
-  const topRecommendation = getTopRecommendation(audit.recommendations);
   const toolCount = audit.input.tools.length;
   const totalMonthlySpend = getTotalMonthlySpend(audit.input.tools);
   const savingsPercent = getSavingsPercent(
     totalMonthlySpend,
     audit.totalMonthlySavings
   );
+  const optimizationScore = getOptimizationScore(savingsPercent);
+  const healthNarrative = getStackHealthNarrative({
+    savingsPercent,
+    totalMonthlySavings: audit.totalMonthlySavings,
+    totalMonthlySpend,
+    teamSize: audit.input.teamSize,
+    useCase: audit.input.useCase,
+  });
 
   const pdfPayload: AuditPdfPayload = {
     id: audit.id,
@@ -148,6 +144,8 @@ export default async function AuditPage({ params }: PageProps) {
     useCase: audit.input.useCase,
     totalMonthlySpend,
     savingsPercent,
+    optimizationScore,
+    healthNarrative,
     totalMonthlySavings: audit.totalMonthlySavings,
     totalAnnualSavings: audit.totalAnnualSavings,
     isHighSavings: audit.isHighSavings,
@@ -168,7 +166,7 @@ export default async function AuditPage({ params }: PageProps) {
         Share report
       </h2>
       <p className="mb-5 text-sm text-muted-foreground">
-        Copy or post your results — no email required on the public link.
+        Copy or post your results — no email or company data on the public link.
       </p>
       <ShareSection
         auditId={audit.id}
@@ -180,7 +178,7 @@ export default async function AuditPage({ params }: PageProps) {
   return (
     <PageShell headerBackHref="/" headerBackLabel="← New audit" maxWidth="xl">
       <article id="audit-report" className="pb-8">
-        <header className="mb-10 border-b border-border pb-8 sm:mb-12 sm:pb-10">
+        <header className="mb-8 border-b border-border pb-8 sm:mb-10 sm:pb-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0 flex-1 space-y-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
@@ -219,8 +217,27 @@ export default async function AuditPage({ params }: PageProps) {
           </div>
         </header>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_min(100%,340px)] lg:gap-12 lg:items-start">
+        <div className="mb-10 sm:mb-12">
+          <AuditReportHero
+            totalMonthlySpend={totalMonthlySpend}
+            totalMonthlySavings={audit.totalMonthlySavings}
+            totalAnnualSavings={audit.totalAnnualSavings}
+            savingsPercent={savingsPercent}
+            optimizationScore={optimizationScore}
+            healthNarrative={healthNarrative}
+            isHighSavings={audit.isHighSavings}
+          />
+        </div>
+
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_min(100%,280px)] lg:gap-12 lg:items-start">
           <div className="min-w-0 space-y-14 sm:space-y-16">
+            <AuditStackHealth
+              toolCount={toolCount}
+              totalMonthlySpend={totalMonthlySpend}
+              totalMonthlySavings={audit.totalMonthlySavings}
+              optimizationScore={optimizationScore}
+            />
+
             <AuditSummary
               aiSummary={audit.aiSummary}
               summarySource={audit.summarySource}
@@ -228,6 +245,7 @@ export default async function AuditPage({ params }: PageProps) {
 
             <AuditRecommendations
               recommendations={audit.recommendations}
+              tools={audit.input.tools}
             />
 
             <AuditPricingSources tools={audit.input.tools} />
@@ -235,18 +253,19 @@ export default async function AuditPage({ params }: PageProps) {
             {audit.isHighSavings && (
               <ReportSection className="border-accent/30 bg-accent/5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  03 · Credex opportunity
+                  Credex opportunity
                 </p>
                 <CardTitle className="font-display mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-                  ${audit.totalAnnualSavings.toLocaleString()}
-                  <span className="mt-1 block text-base font-normal text-muted-foreground">
-                    per year in potential savings
-                  </span>
+                  Unlock even larger savings
                 </CardTitle>
-                <CardDescription className="mt-4 max-w-lg text-sm leading-relaxed">
-                  Discounted AI infrastructure credits for Cursor, Claude,
-                  ChatGPT Enterprise, and more.
+                <CardDescription className="mt-3 max-w-lg text-sm leading-relaxed">
+                  You&apos;re saving over $500/month on paper — Credex discounted
+                  AI infrastructure credits can help capture more on Cursor,
+                  Claude, ChatGPT Enterprise, and more.
                 </CardDescription>
+                <p className="mt-2 font-mono text-2xl font-semibold tabular-nums text-savings">
+                  ${audit.totalAnnualSavings.toLocaleString()}/year potential
+                </p>
                 <a
                   href={`https://credex.rocks?utm_source=spendsense&utm_medium=audit&utm_campaign=high_savings&audit_id=${audit.id}`}
                   target="_blank"
@@ -269,10 +288,10 @@ export default async function AuditPage({ params }: PageProps) {
                     You&apos;re spending well.
                   </span>{" "}
                   {audit.totalMonthlySavings === 0
-                    ? "Your stack looks right-sized for your team size and use case."
+                    ? "Your AI stack is already relatively optimized — we won't manufacture savings."
                     : `We found about $${audit.totalMonthlySavings}/mo in small optimizations — nothing urgent.`}{" "}
                   Save your report below and we&apos;ll notify you when new
-                  optimizations apply to your stack.
+                  optimization opportunities apply to your stack.
                 </p>
               </ReportSection>
             )}
@@ -291,15 +310,14 @@ export default async function AuditPage({ params }: PageProps) {
             {!audit.isHighSavings && shareSection}
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
             <SavingsHero
               totalMonthlySpend={totalMonthlySpend}
               totalMonthlySavings={audit.totalMonthlySavings}
               totalAnnualSavings={audit.totalAnnualSavings}
               savingsPercent={savingsPercent}
-              isHighSavings={audit.isHighSavings}
-              toolCount={audit.recommendations.length}
-              topRecommendation={topRecommendation}
+              optimizationScore={optimizationScore}
+              toolCount={toolCount}
             />
           </aside>
         </div>

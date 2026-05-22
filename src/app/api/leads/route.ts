@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getAppUrl } from "@/lib/app-url";
-import { getAudit, saveLead } from "@/lib/supabase";
+import { getClientIp } from "@/lib/client-ip";
+import { checkRateLimit, getAudit, saveLead } from "@/lib/supabase";
 import { isHoneypotTriggered, validateLeadInput } from "@/lib/validation";
 import type { LeadCapture } from "@/types";
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const allowed = await checkRateLimit(ip);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const body = (await request.json()) as LeadCapture & {
       companyName?: string;
     };

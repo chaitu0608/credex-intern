@@ -2,12 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { AuditCoveragePanel } from "@/components/audit/audit-coverage-panel";
+import {
+  LandingFaq,
+  LandingFinalCta,
+  LandingProblem,
+  LandingSamplePreview,
+  LandingSocialProof,
+} from "@/components/landing/landing-sections";
 import SpendForm from "@/components/spend-form/spend-form";
 import { PageShell } from "@/components/layout/page-shell";
 import { TrustBar } from "@/components/ui/trust-bar";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,6 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import type { AuditInput } from "@/types";
 import { isHoneypotResponseId } from "@/lib/validation";
 
@@ -104,6 +114,24 @@ export default function HomePage() {
             trust.
           </p>
 
+          <div className="mt-8 flex flex-wrap items-center gap-4">
+            <Link
+              href="/#audit-form"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "rounded-md bg-foreground px-8 text-background hover:bg-foreground/90"
+              )}
+            >
+              Start audit
+            </Link>
+            <Link
+              href="/#how-it-works"
+              className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              How it works
+            </Link>
+          </div>
+
           <TrustBar className="mt-8 justify-start" />
 
           <div id="how-it-works" className="mt-12 grid gap-3 sm:grid-cols-3">
@@ -124,16 +152,21 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative hidden lg:block">
+        <div className="relative hidden space-y-6 lg:block">
+          <LandingSamplePreview />
           <AuditCoveragePanel />
         </div>
       </section>
 
-      <div className="mb-8 lg:hidden" data-testid="hero-aside-mobile">
+      <div className="mb-8 space-y-6 lg:hidden" data-testid="hero-aside-mobile">
+        <LandingSamplePreview />
         <AuditCoveragePanel compact />
       </div>
 
-      <section id="audit-form" className="scroll-mt-24 border-t border-border pt-12 lg:pt-12">
+      <section
+        id="audit-form"
+        className="scroll-mt-24 border-t border-border pt-12 lg:pt-12"
+      >
         <Card
           id="tools"
           className="overflow-hidden rounded-lg border-border bg-card"
@@ -165,6 +198,11 @@ export default function HomePage() {
           </CardContent>
         </Card>
       </section>
+
+      <LandingProblem />
+      <LandingSocialProof />
+      <LandingFaq />
+      <LandingFinalCta />
     </PageShell>
   );
 }

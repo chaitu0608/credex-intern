@@ -8,6 +8,8 @@ export type AuditPdfPayload = {
   useCase: UseCase;
   totalMonthlySpend: number;
   savingsPercent: number | null;
+  optimizationScore: number;
+  healthNarrative: string;
   totalMonthlySavings: number;
   totalAnnualSavings: number;
   isHighSavings: boolean;
@@ -87,11 +89,22 @@ export async function downloadAuditPdf(payload: AuditPdfPayload): Promise<void> 
     y += 14;
   }
   doc.text(
+    `Optimization score: ${payload.optimizationScore}/100`,
+    MARGIN,
+    y
+  );
+  y += 14;
+  doc.text(
     `$${payload.totalAnnualSavings.toLocaleString()}/year annualized`,
     MARGIN,
     y
   );
-  y += 24;
+  y += 18;
+  doc.setFontSize(9);
+  doc.setTextColor(80);
+  y = wrapText(doc, payload.healthNarrative, MARGIN, y, CONTENT_WIDTH, 12) + 16;
+  doc.setTextColor(0);
+  doc.setFontSize(10);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12);

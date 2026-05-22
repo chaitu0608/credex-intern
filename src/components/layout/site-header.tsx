@@ -30,7 +30,7 @@ export function SiteHeader({ backHref, backLabel }: SiteHeaderProps) {
           <BrandLockup />
         )}
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-4 sm:flex sm:gap-6">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.label}
@@ -54,7 +54,7 @@ export function SiteHeader({ backHref, backLabel }: SiteHeaderProps) {
             href="/#audit-form"
             className={cn(
               buttonVariants({ size: "sm" }),
-              "hidden rounded-md bg-foreground px-4 text-background hover:bg-foreground/90 sm:inline-flex"
+              "inline-flex rounded-md bg-foreground px-3 text-background hover:bg-foreground/90 sm:px-4"
             )}
           >
             Start audit
