@@ -12,11 +12,10 @@ export function allowsMemoryOnlyPersistence(): boolean {
 }
 
 /**
- * Rate limits apply in real deployments only — not CI Playwright or local e2e
+ * Rate limits apply in real deployments only — not Playwright e2e servers
  * (`next start` is production NODE_ENV but must not share one IP bucket with prod).
  */
 export function isRateLimitEnabled(): boolean {
-  if (process.env.CI === "true") return false;
   if (process.env.E2E_SKIP_RATE_LIMIT === "1") return false;
   return true;
 }

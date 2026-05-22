@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   allowsMemoryOnlyPersistence,
   isProductionRuntime,
+  isRateLimitEnabled,
 } from "@/lib/runtime";
 
 describe("runtime persistence policy (P1-4)", () => {
@@ -28,5 +29,28 @@ describe("runtime persistence policy (P1-4)", () => {
     vi.stubEnv("VERCEL_ENV", "development");
     expect(isProductionRuntime()).toBe(false);
     expect(allowsMemoryOnlyPersistence()).toBe(true);
+  });
+});
+
+describe("isRateLimitEnabled", () => {
+  const env = { ...process.env };
+
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+    delete process.env.E2E_SKIP_RATE_LIMIT;
+  });
+
+  afterEach(() => {
+    process.env = { ...env };
+    vi.unstubAllEnvs();
+  });
+
+  it("is enabled by default", () => {
+    expect(isRateLimitEnabled()).toBe(true);
+  });
+
+  it("is disabled when E2E_SKIP_RATE_LIMIT is set", () => {
+    vi.stubEnv("E2E_SKIP_RATE_LIMIT", "1");
+    expect(isRateLimitEnabled()).toBe(false);
   });
 });

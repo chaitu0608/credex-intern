@@ -9,6 +9,8 @@ describe("checkRateLimit (P3 fail-closed)", () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    delete process.env.CI;
+    delete process.env.E2E_SKIP_RATE_LIMIT;
   });
 
   afterEach(() => {
@@ -28,13 +30,6 @@ describe("checkRateLimit (P3 fail-closed)", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     const { checkRateLimit } = await import("@/lib/supabase");
     expect(await checkRateLimit("1.2.3.4")).toBe(false);
-  });
-
-  it("allows requests when CI disables rate limiting", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("CI", "true");
-    const { checkRateLimit } = await import("@/lib/supabase");
-    expect(await checkRateLimit("1.2.3.4")).toBe(true);
   });
 
   it("allows requests when E2E_SKIP_RATE_LIMIT is set", async () => {
