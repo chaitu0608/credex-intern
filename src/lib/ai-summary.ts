@@ -1,4 +1,5 @@
 import { generateAuditSummaryPrompt } from "@/lib/auditEngine";
+import { callOpenAI } from "@/lib/openai-client";
 import type { AuditInput, AuditResult, SummarySource } from "@/types";
 
 type AuditWithoutSummary = Omit<
@@ -13,8 +14,6 @@ export type GeneratedSummary = {
 
 const SYSTEM_PROMPT =
   "You are a concise financial analyst. Direct, specific. No fluff. No sales pitch. Under 120 words. Plain paragraph, no bullets.";
-
-const DEFAULT_MODEL = "gpt-4o-mini";
 
 function buildFallbackSummary(
   result: AuditWithoutSummary,
@@ -40,45 +39,6 @@ function buildFallbackSummary(
   return `Across ${input.tools.length} tools (~$${totalSpend}/month), we identified $${result.totalMonthlySavings}/month ($${result.totalAnnualSavings}/year) in potential savings for your ${input.teamSize}-person ${input.useCase} team. ${topLine}${credex}`;
 }
 
-async function callOpenAI(
-  apiKey: string,
-  userPrompt: string
-): Promise<string | null> {
-  const model = process.env.OPENAI_MODEL?.trim() || DEFAULT_MODEL;
-
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: 200,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: userPrompt },
-      ],
-    }),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text().catch(() => "");
-    console.error(
-      "OpenAI chat/completions error:",
-      response.status,
-      errText.slice(0, 500)
-    );
-    return null;
-  }
-
-  const data = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-  const text = data.choices?.[0]?.message?.content?.trim();
-  return text || null;
-}
-
 export async function generateAISummary(
   result: AuditWithoutSummary,
   input: AuditInput
@@ -93,7 +53,14 @@ export async function generateAISummary(
 
   try {
     const prompt = generateAuditSummaryPrompt(result, input);
-    const text = await callOpenAI(apiKey, prompt);
+    const text = await callOpenAI(
+      apiKey,
+      [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: prompt },
+      ],
+      { maxTokens: 200 }
+    );
 
     if (text) {
       return { summary: text, source: "ai" };

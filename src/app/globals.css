@@ -59,6 +59,23 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  @media print {
+    header[class*="SiteHeader"],
+    footer,
+    [data-audit-chat],
+    button {
+      display: none !important;
+    }
+
+    #audit-report {
+      max-width: 100%;
+    }
+
+    #audit-report .lg\\:sticky {
+      position: static;
+    }
+  }
 }
 
 @layer utilities {

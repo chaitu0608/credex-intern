@@ -1,8 +1,12 @@
 # AI Summary Prompts (SpendSense)
 
-SpendSense uses **hardcoded rules** for audit math (`src/lib/auditEngine.ts`). The **only** LLM feature is the ~100-word personalized summary on the results page.
+SpendSense uses **hardcoded rules** for audit math (`src/lib/auditEngine.ts`). LLM features are limited to **copy only** — never audit math.
 
-Implementation: `src/lib/ai-summary.ts` (OpenAI Chat Completions API)
+| Feature | Implementation |
+|---------|----------------|
+| One-shot personalized summary | `src/lib/ai-summary.ts` |
+| Audit results chat widget | `src/app/api/audit/[id]/chat/route.ts` + `src/lib/audit-chat-context.ts` |
+| Shared OpenAI client | `src/lib/openai-client.ts` |
 
 ---
 
@@ -84,6 +88,45 @@ Tried 400. The summary started padding with restatements ("In summary, ...") ins
 
 **Streaming the response.**
 Tried streaming so the summary would appear word-by-word on the results page. It worked but the visual effect made the report feel slower, not faster (users waited for the *whole* paragraph before sharing). Reverted to single-shot — the page renders the static summary on the server side and the audit is screenshot-ready immediately.
+
+---
+
+## Audit chat widget (results page only)
+
+Floating assistant on `/audit/[id]`. Answers follow-up questions about **the saved audit** loaded from Supabase — does not re-run `runAudit()` or invent new dollar amounts.
+
+### Model
+
+- Same provider/model as summary: OpenAI `gpt-4o-mini` (`OPENAI_MODEL` optional)
+- **max_tokens:** 300 per reply
+- **Rate limit:** `checkRateLimit(ip)` — same 10 requests/hour/IP as `POST /api/audit`
+- **Session cap:** 6 user messages per page visit (client-side in `audit-chat-widget.tsx`)
+
+### System prompt (built by `buildAuditChatSystemPrompt()`)
+
+Guardrails prepended to serialized audit context:
+
+```
+You are SpendSense's audit assistant. Answer only about THIS saved audit report.
+Rules:
+- Use only dollar amounts, plans, and recommendations listed in the audit context below.
+- Never invent new savings figures, list prices, or vendor plans.
+- If asked to recalculate or change numbers, say the report above is the source of truth.
+- Keep replies under 120 words. Plain sentences, no markdown bullets unless the user asks for a list.
+- Be direct and helpful; no sales hype except briefly mentioning Credex when isHighSavings is true and the user asks about it.
+```
+
+Context block includes: team size, use case, tools submitted, top 3 recommendations, all recommendations with reasons, totals, `isHighSavings`, and the stored `aiSummary`.
+
+### API
+
+- `POST /api/audit/[id]/chat` body: `{ messages: { role: "user" | "assistant", content: string }[] }`
+- Returns `{ reply: string }`
+- Missing key or API failure: `"I can't reach the assistant right now. Your audit numbers above are still valid."`
+
+### Why not LLM for chat math
+
+Same principle as the summary: the widget **explains** precomputed `reason` strings and totals. Users asking “change my savings to $X” get redirected to the report as source of truth.
 
 ---
 

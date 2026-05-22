@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { ToolLogo } from "@/components/ui/tool-logo";
+import { cn } from "@/lib/utils";
 import type {
   RecommendationType,
   SummarySource,
@@ -28,85 +28,178 @@ const SUMMARY_BADGE: Record<SummarySource, string> = {
   template: "Rule-based summary",
 };
 
+function SectionLabel({
+  number,
+  title,
+  description,
+}: {
+  number: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="mb-6 space-y-1">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        {number}
+      </p>
+      <h2 className="font-display text-xl font-bold tracking-tight sm:text-2xl">
+        {title}
+      </h2>
+      {description && (
+        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
+
+interface AuditSummaryProps {
+  aiSummary: string;
+  summarySource: SummarySource;
+}
+
+export function AuditSummary({ aiSummary, summarySource }: AuditSummaryProps) {
+  const isAi = summarySource === "ai";
+
+  return (
+    <section aria-labelledby="audit-summary-heading">
+      <SectionLabel
+        number="01"
+        title="Executive summary"
+        description="Personalized overview of your audit — generated from your stack and savings totals."
+      />
+      <Card
+        id="audit-summary-heading"
+        className={cn(
+          "rounded-xl bg-card shadow-sm",
+          isAi ? "border border-accent/35" : "border border-border"
+        )}
+      >
+        <CardHeader className="space-y-3 pb-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge
+              variant="outline"
+              className={cn(
+                "font-mono text-[10px] uppercase tracking-wider",
+                isAi && "border-accent/40 text-foreground"
+              )}
+            >
+              {SUMMARY_BADGE[summarySource]}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <p className="text-base leading-[1.75] text-foreground/90 sm:text-lg">
+            {aiSummary}
+          </p>
+        </CardContent>
+      </Card>
+    </section>
+  );
+}
+
+interface AuditRecommendationsProps {
+  recommendations: ToolRecommendation[];
+}
+
+export function AuditRecommendations({
+  recommendations,
+}: AuditRecommendationsProps) {
+  const sorted = [...recommendations].sort((a, b) => b.savings - a.savings);
+
+  return (
+    <section aria-labelledby="audit-recommendations-heading">
+      <SectionLabel
+        number="02"
+        title="Recommendations"
+        description="Per-tool actions ranked by monthly savings. Apply the highest-impact items first."
+      />
+      <div
+        id="audit-recommendations-heading"
+        className="relative space-y-6 border-l border-border/80 pl-6 sm:pl-8"
+      >
+        {sorted.map((rec, index) => {
+          const hasSavings = rec.savings > 0;
+          return (
+            <div
+              key={`${rec.tool}-${rec.currentPlan}`}
+              className="relative"
+            >
+              <span className="absolute -left-[1.85rem] top-5 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-background font-mono text-[10px] font-medium text-muted-foreground sm:-left-[2.35rem]">
+                {index + 1}
+              </span>
+              <Card
+                className={cn(
+                  "rounded-xl border bg-card shadow-sm transition-colors",
+                  hasSavings
+                    ? "border-l-[3px] border-l-accent border-border"
+                    : "border-border opacity-95"
+                )}
+              >
+                <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3 pt-5">
+                  <div className="flex items-start gap-4">
+                    <ToolLogo tool={rec.tool} className="h-10 w-10" />
+                    <div className="space-y-1">
+                      <CardTitle className="text-base font-semibold">
+                        {rec.toolName}
+                      </CardTitle>
+                      <CardDescription className="font-mono text-xs capitalize">
+                        {rec.currentPlan} · ${rec.currentSpend}/mo
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge
+                    variant={hasSavings ? "outline" : "secondary"}
+                    className="shrink-0 font-mono text-[10px] uppercase tracking-wide"
+                  >
+                    {TYPE_LABELS[rec.recommendationType]}
+                  </Badge>
+                </CardHeader>
+                <CardContent className="space-y-4 pb-5">
+                  <div className="flex flex-col gap-2.5 text-sm sm:flex-row sm:items-stretch">
+                    <span className="flex flex-1 items-center rounded-lg border border-border bg-muted/40 px-4 py-3 capitalize text-muted-foreground">
+                      {rec.currentPlan}
+                    </span>
+                    <ArrowRight className="hidden h-4 w-4 shrink-0 self-center text-muted-foreground sm:block" />
+                    <span className="flex flex-1 items-center rounded-lg border border-border bg-muted/30 px-4 py-3 font-medium text-foreground">
+                      {rec.recommendedAction}
+                    </span>
+                  </div>
+                  {hasSavings && (
+                    <p className="font-mono text-base font-semibold tracking-tight text-savings">
+                      Save ${rec.savings}/mo · ${rec.annualSavings}/yr
+                    </p>
+                  )}
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {rec.reason}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 interface AuditResultsProps {
   recommendations: ToolRecommendation[];
   aiSummary: string;
   summarySource: SummarySource;
 }
 
+/** Summary first, then recommendations (default report layout). */
 export default function AuditResults({
   recommendations,
   aiSummary,
   summarySource,
 }: AuditResultsProps) {
   return (
-    <div className="space-y-0">
-      <div className="relative space-y-0 border-l border-border pl-8">
-        {recommendations.map((rec, index) => (
-          <div key={`${rec.tool}-${rec.currentPlan}`} className="relative pb-8">
-            <span className="absolute -left-[2.125rem] top-1 flex h-4 w-4 items-center justify-center rounded-sm border border-border bg-card font-mono text-[9px] font-medium text-muted-foreground">
-              {index + 1}
-            </span>
-            <Card
-              className={`rounded-lg border-border bg-card ${
-                rec.savings > 0 ? "border-l-2 border-l-accent" : ""
-              }`}
-            >
-              <CardHeader className="flex flex-row items-start justify-between gap-2 pb-2">
-                <div className="flex items-start gap-3">
-                  <ToolLogo tool={rec.tool} className="h-9 w-9" />
-                  <div>
-                    <CardTitle className="text-base font-semibold">
-                      {rec.toolName}
-                    </CardTitle>
-                    <CardDescription className="font-mono text-xs capitalize">
-                      {rec.currentPlan} · ${rec.currentSpend}/mo
-                    </CardDescription>
-                  </div>
-                </div>
-                <Badge variant="outline" className="font-mono text-xs">
-                  {TYPE_LABELS[rec.recommendationType]}
-                </Badge>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center">
-                  <span className="flex-1 rounded-md border border-border bg-muted/50 px-3 py-2 capitalize text-muted-foreground">
-                    {rec.currentPlan}
-                  </span>
-                  <ArrowRight className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
-                  <span className="flex-1 rounded-md border border-border bg-muted/50 px-3 py-2 font-medium text-foreground">
-                    {rec.recommendedAction}
-                  </span>
-                </div>
-                {rec.savings > 0 && (
-                  <p className="font-mono text-sm font-medium text-savings">
-                    Save ${rec.savings}/mo · ${rec.annualSavings}/yr
-                  </p>
-                )}
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {rec.reason}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
-      </div>
-
-      <Separator className="my-10" />
-
-      <Card className="rounded-lg border-border bg-card">
-        <CardHeader>
-          <CardTitle className="font-display text-base font-semibold">
-            Personalized summary
-          </CardTitle>
-          <Badge variant="outline" className="w-fit font-mono text-xs">
-            {SUMMARY_BADGE[summarySource]}
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <p className="leading-relaxed text-muted-foreground">{aiSummary}</p>
-        </CardContent>
-      </Card>
+    <div className="space-y-14 sm:space-y-16">
+      <AuditSummary aiSummary={aiSummary} summarySource={summarySource} />
+      <AuditRecommendations recommendations={recommendations} />
     </div>
   );
 }
